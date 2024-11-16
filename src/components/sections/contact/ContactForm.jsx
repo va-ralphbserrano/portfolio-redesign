@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { HiOutlineMail, HiOutlineUser, HiOutlinePhone, HiOutlinePaperAirplane } from 'react-icons/hi';
+import emailjs from '@emailjs/browser';
 
 const ContactForm = () => {
+  const form = useRef();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -11,6 +13,7 @@ const ContactForm = () => {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [status, setStatus] = useState({ type: '', message: '' });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -23,23 +26,55 @@ const ContactForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setStatus({ type: '', message: '' });
 
-    // Here you would typically send the form data to your backend
-    // For now, we'll just simulate a delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    try {
+      const result = await emailjs.sendForm(
+        'service_4hnmvwg', // Replace with your EmailJS service ID
+        'template_8yzqmzd', // Replace with your EmailJS template ID
+        form.current,
+        'sWZbPe8_2RQQVQqSj' // Replace with your EmailJS public key
+      );
 
-    // Reset form
-    setFormData({
-      name: '',
-      email: '',
-      phone: '',
-      message: ''
-    });
+      if (result.text === 'OK') {
+        setStatus({
+          type: 'success',
+          message: 'Thank you! Your message has been sent successfully.'
+        });
+        setFormData({
+          name: '',
+          email: '',
+          phone: '',
+          message: ''
+        });
+      }
+    } catch (error) {
+      setStatus({
+        type: 'error',
+        message: 'Oops! Something went wrong. Please try again later.'
+      });
+      console.error('Email error:', error);
+    }
+
     setIsSubmitting(false);
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form ref={form} onSubmit={handleSubmit} className="space-y-6">
+      {status.message && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className={`p-4 rounded-lg ${
+            status.type === 'success'
+              ? 'bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-200'
+              : 'bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-200'
+          }`}
+        >
+          {status.message}
+        </motion.div>
+      )}
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <motion.div
           initial={{ opacity: 0, x: -20 }}
@@ -50,24 +85,24 @@ const ContactForm = () => {
             Full Name
           </label>
           <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500 dark:text-gray-400">
-              <HiOutlineUser className="w-5 h-5" />
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <HiOutlineUser className="h-5 w-5 text-gray-400" />
             </div>
             <input
               type="text"
-              id="name"
               name="name"
+              id="name"
+              required
               value={formData.name}
               onChange={handleChange}
-              className="w-full pl-10 pr-4 py-2.5 bg-white/50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:border-transparent dark:text-white transition-colors duration-200"
-              required
+              className="block w-full pl-10 pr-4 py-2.5 text-gray-900 dark:text-white bg-white/50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg shadow-sm backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
               placeholder="John Doe"
             />
           </div>
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, x: 20 }}
+          initial={{ opacity: 0, x: -20 }}
           whileInView={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
@@ -75,46 +110,46 @@ const ContactForm = () => {
             Email Address
           </label>
           <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500 dark:text-gray-400">
-              <HiOutlineMail className="w-5 h-5" />
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <HiOutlineMail className="h-5 w-5 text-gray-400" />
             </div>
             <input
               type="email"
-              id="email"
               name="email"
+              id="email"
+              required
               value={formData.email}
               onChange={handleChange}
-              className="w-full pl-10 pr-4 py-2.5 bg-white/50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:border-transparent dark:text-white transition-colors duration-200"
-              required
+              className="block w-full pl-10 pr-4 py-2.5 text-gray-900 dark:text-white bg-white/50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg shadow-sm backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
               placeholder="john@example.com"
             />
           </div>
         </motion.div>
-      </div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.3 }}
-      >
-        <label htmlFor="phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-          Phone Number (Optional)
-        </label>
-        <div className="relative">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500 dark:text-gray-400">
-            <HiOutlinePhone className="w-5 h-5" />
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+        >
+          <label htmlFor="phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Phone Number
+          </label>
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <HiOutlinePhone className="h-5 w-5 text-gray-400" />
+            </div>
+            <input
+              type="tel"
+              name="phone"
+              id="phone"
+              value={formData.phone}
+              onChange={handleChange}
+              className="block w-full pl-10 pr-4 py-2.5 text-gray-900 dark:text-white bg-white/50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg shadow-sm backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              placeholder="+1 (555) 000-0000"
+            />
           </div>
-          <input
-            type="tel"
-            id="phone"
-            name="phone"
-            value={formData.phone}
-            onChange={handleChange}
-            className="w-full pl-10 pr-4 py-2.5 bg-white/50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:border-transparent dark:text-white transition-colors duration-200"
-            placeholder="+1 (555) 000-0000"
-          />
-        </div>
-      </motion.div>
+        </motion.div>
+      </div>
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -125,41 +160,36 @@ const ContactForm = () => {
           Your Message
         </label>
         <textarea
-          id="message"
           name="message"
+          id="message"
+          required
           value={formData.message}
           onChange={handleChange}
-          rows="5"
-          className="w-full px-4 py-2.5 bg-white/50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:border-transparent dark:text-white transition-colors duration-200"
-          required
-          placeholder="Tell me about your project..."
-        ></textarea>
+          rows={4}
+          className="block w-full px-4 py-2.5 text-gray-900 dark:text-white bg-white/50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg shadow-sm backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+          placeholder="Write your message here..."
+        />
       </motion.div>
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.5 }}
-        className="text-right"
+        className="flex justify-end"
       >
-        <motion.button
+        <button
           type="submit"
           disabled={isSubmitting}
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          className={`
-            inline-flex items-center gap-2 px-6 py-3 rounded-xl text-white
-            ${isSubmitting
-              ? 'bg-primary-400 cursor-not-allowed'
-              : 'bg-primary-500 hover:bg-primary-600 dark:bg-primary-600 dark:hover:bg-primary-700'}
-            font-medium shadow-lg shadow-primary-500/25 dark:shadow-primary-600/25
-            focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500
-            transition-all duration-200
-          `}
+          className="group relative inline-flex items-center px-8 py-3.5 rounded-full bg-gradient-to-r from-primary-600 to-primary-500 text-white overflow-hidden shadow-lg transition-all duration-300 hover:shadow-primary-500/25 hover:scale-[1.02] disabled:opacity-70 disabled:cursor-not-allowed"
         >
-          <HiOutlinePaperAirplane className={`w-5 h-5 ${isSubmitting ? 'animate-ping' : 'animate-none'}`} />
-          {isSubmitting ? 'Sending...' : 'Send Message'}
-        </motion.button>
+          <span className="absolute inset-0 bg-white/10 group-hover:bg-white/20 transition-colors duration-300" />
+          <span className="relative flex items-center">
+            {isSubmitting ? 'Sending...' : 'Send Message'}
+            <HiOutlinePaperAirplane className={`ml-2 transition-transform duration-300 ${
+              isSubmitting ? 'animate-pulse' : 'group-hover:translate-x-1'
+            }`} />
+          </span>
+        </button>
       </motion.div>
     </form>
   );
