@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import diceRollerImg from '@images/projects/diceroller.png';
 
 const MockProjects = () => {
   const mockProjects = [
@@ -7,7 +8,7 @@ const MockProjects = () => {
       id: 1,
       title: "Random Dice Roller",
       description: "Interactive dice rolling simulator",
-      image: "/images/projects/diceroller.png",
+      image: diceRollerImg,
       link: "https://va-ralphbserrano.github.io/randomDice/",
       technologies: ['HTML', 'CSS', 'JavaScript']
     }
@@ -48,6 +49,7 @@ const MockProjects = () => {
                     src={project.image}
                     alt={project.title}
                     className="absolute top-0 left-0 w-full h-full object-cover transform hover:scale-105 transition-transform duration-300"
+                    loading="lazy"
                   />
                   <div className="absolute inset-0 bg-black/50 opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                     <span className="text-white font-medium">View Project</span>
