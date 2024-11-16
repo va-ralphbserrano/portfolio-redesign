@@ -1,81 +1,162 @@
-# Ralph Bernard Serrano - Portfolio
+# Ralph Bernard Serrano - Portfolio Website
 
-A modern, responsive portfolio website built with React, Vite, and Tailwind CSS.
+[![Deploy to GitHub Pages](https://github.com/va-ralphbserrano/va-rb-portfolio/actions/workflows/ci.yml/badge.svg)](https://github.com/va-ralphbserrano/va-rb-portfolio/actions/workflows/ci.yml)
+[![Website](https://img.shields.io/website?url=https%3A%2F%2Fva-ralphbserrano.github.io%2Fva-rb-portfolio%2F)](https://va-ralphbserrano.github.io/va-rb-portfolio/)
+[![Made with React](https://img.shields.io/badge/Made%20with-React-61DAFB.svg)](https://reactjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue.svg)](https://www.typescriptlang.org/)
+
+A modern, responsive portfolio website showcasing my work as a Virtual Assistant and Web Developer. Built with React, TypeScript, and Vite.
 
 ## 🌟 Features
 
-- **Modern Design**: Clean and professional UI with dark/light mode support
-- **Responsive**: Mobile-first approach, works on all devices
-- **Fast**: Built with Vite for optimal performance
-- **Interactive**: Smooth animations and transitions
-- **Accessible**: WCAG compliant and screen-reader friendly
+- **Modern Design**
+  - Responsive layout for all devices
+  - Dark/Light mode support
+  - Smooth animations with Framer Motion
+  - Custom cursor effects
+  - Glassmorphic design elements
 
-## 🚀 Sections
+- **Technical Stack**
+  - React 18 with TypeScript
+  - Vite for fast development and building
+  - Tailwind CSS for styling
+  - Framer Motion for animations
+  - React Router for navigation
 
-- **Home**: Professional introduction and overview
-- **About**: Detailed background, skills, and tools
-- **Services**: Professional services offered
-- **Portfolio**: Showcase of work and projects
-- **Certificates**: Professional certifications
-- **Mock Projects**: Practice and learning projects
-- **Contact**: Get in touch form
+- **Performance Optimizations**
+  - Code splitting and lazy loading
+  - Image optimization
+  - SEO best practices
+  - Fast page transitions
+  - PWA support
 
-## 🛠️ Built With
+- **Interactive Elements**
+  - Dynamic project filtering
+  - Smooth scrolling
+  - Form validation
+  - Loading animations
+  - Hover effects
 
-- React 18
-- Vite
-- Tailwind CSS
-- Framer Motion
-- React Router
-- Swiper
-- TypeScript
+## 🚀 Getting Started
 
-## 📦 Installation
+### Prerequisites
+
+- Node.js (v18 or higher)
+- npm or yarn
+
+### Installation
 
 1. Clone the repository:
-```bash
-git clone https://github.com/va-ralphbserrano/portfolio-redesign.git
-```
+   ```bash
+   git clone https://github.com/va-ralphbserrano/va-rb-portfolio.git
+   cd va-rb-portfolio
+   ```
 
 2. Install dependencies:
-```bash
-cd portfolio-redesign
-npm install
-```
+   ```bash
+   npm install
+   ```
 
-3. Start development server:
-```bash
-npm run dev
-```
+3. Start the development server:
+   ```bash
+   npm run dev
+   ```
 
 4. Build for production:
-```bash
-npm run build
+   ```bash
+   npm run build
+   ```
+
+5. Preview production build:
+   ```bash
+   npm run preview
+   ```
+
+## 🛠️ Development
+
+### Available Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run preview` - Preview production build
+- `npm run lint` - Run ESLint
+- `npm run lint:fix` - Fix ESLint errors
+- `npm run typecheck` - Run TypeScript type checking
+- `npm run deploy` - Deploy to GitHub Pages
+
+### Project Structure
+
+```
+va-rb-portfolio/
+├── public/                 # Static assets
+│   ├── assets/            # Images and documents
+│   ├── favicon/           # Favicon files
+│   └── manifest.json      # PWA manifest
+├── src/
+│   ├── components/        # React components
+│   │   ├── common/       # Shared components
+│   │   ├── layout/       # Layout components
+│   │   └── sections/     # Page sections
+│   ├── contexts/         # React contexts
+│   ├── hooks/            # Custom hooks
+│   ├── styles/           # Global styles
+│   └── types/            # TypeScript types
+└── package.json          # Dependencies and scripts
 ```
 
-## 🎨 Customization
+## 🎨 Features & Components
 
-- **Colors**: Edit `tailwind.config.js` to modify the color scheme
-- **Content**: Update components in `src/components/sections`
-- **Styles**: Modify styles in `src/styles`
-- **Images**: Add images to `public/images`
+### Key Components
 
-## 🚀 Deployment
+- **Navigation**
+  - Responsive navbar with mobile menu
+  - Smooth scroll links
+  - Active link highlighting
 
-The site is deployed using GitHub Pages. Visit [va-ralphbserrano.github.io/portfolio-redesign](https://va-ralphbserrano.github.io/portfolio-redesign)
+- **Portfolio Section**
+  - Project cards with hover effects
+  - Category filtering
+  - Modal project details
 
-## 📝 License
+- **Contact Form**
+  - Form validation
+  - EmailJS integration
+  - Success/Error notifications
 
-This project is open source and available under the MIT License.
+- **Common Components**
+  - Custom cursor
+  - Loading spinner
+  - Page transitions
+  - Error boundary
 
-## 👤 Contact
+### Styling
 
-- **Website**: [va-ralphbserrano.github.io](https://va-ralphbserrano.github.io)
-- **Email**: ralphbserrano@gmail.com
-- **Phone**: +63 945 849 0223
+- Tailwind CSS for utility-first styling
+- Custom animations and transitions
+- Dark mode support
+- Responsive design principles
 
-## 🙏 Acknowledgments
+## 📱 PWA Support
 
-- Icons from [React Icons](https://react-icons.github.io/react-icons/)
-- Animations by [Framer Motion](https://www.framer.com/motion/)
-- Slider by [Swiper](https://swiperjs.com/)
+- Installable on mobile devices
+- Offline support
+- App-like experience
+- Fast loading times
+
+## 🔍 SEO
+
+- Meta tags optimization
+- Open Graph protocol
+- Twitter Cards
+- Structured data
+- Sitemap and robots.txt
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🤝 Contact
+
+Ralph Bernard Serrano - [LinkedIn](https://www.linkedin.com/in/ralphbserrano/)
+
+Project Link: [https://github.com/va-ralphbserrano/va-rb-portfolio](https://github.com/va-ralphbserrano/va-rb-portfolio)

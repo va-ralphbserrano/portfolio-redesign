@@ -1,128 +1,91 @@
-# Contributing to Portfolio Redesign
+# Contributing to Ralph Bernard Serrano's Portfolio
 
-Thank you for your interest in contributing to this project! This document provides guidelines and instructions for contributing.
+Thank you for considering contributing to my portfolio website! This document outlines the process and guidelines for contributing.
 
-## 🚀 Getting Started
+## Code of Conduct
+
+By participating in this project, you agree to abide by its terms and maintain a respectful and inclusive environment for everyone.
+
+## How to Contribute
 
 1. Fork the repository
-2. Clone your fork:
-```bash
-git clone https://github.com/your-username/portfolio-redesign.git
-```
-3. Create a new branch:
-```bash
-git checkout -b feature/your-feature-name
-```
+2. Create a new branch (`git checkout -b feature/improvement`)
+3. Make your changes
+4. Run tests and linting
+5. Commit your changes (`git commit -am 'Add new feature'`)
+6. Push to the branch (`git push origin feature/improvement`)
+7. Create a Pull Request
 
-## 💻 Development
+## Development Setup
 
 1. Install dependencies:
-```bash
-npm install
-```
+   ```bash
+   npm install
+   ```
 
 2. Start development server:
-```bash
-npm run dev
+   ```bash
+   npm run dev
+   ```
+
+3. Before committing:
+   ```bash
+   npm run typecheck
+   npm run lint
+   ```
+
+## Pull Request Guidelines
+
+- Update documentation if needed
+- Add tests if applicable
+- Follow the existing code style
+- Keep pull requests focused in scope
+- Welcome feedback and be open to improvements
+
+## Commit Messages
+
+Follow the [Conventional Commits](https://www.conventionalcommits.org/) specification:
+
+- `feat:` New feature
+- `fix:` Bug fix
+- `docs:` Documentation
+- `style:` Formatting
+- `refactor:` Code restructuring
+- `test:` Tests
+- `chore:` Maintenance
+
+Example:
+```
+feat: add dark mode toggle
 ```
 
-3. Follow the coding standards:
-- Use TypeScript for new components
-- Follow the existing file structure
-- Use Tailwind CSS for styling
-- Add JSDoc comments for functions
-- Ensure responsive design
+## Development Guidelines
 
-## 🧪 Testing
+### Code Style
 
-1. Run tests:
-```bash
-npm run test
-```
+- Use TypeScript
+- Follow ESLint rules
+- Use Prettier for formatting
+- Write meaningful comments
+- Keep components focused
 
-2. Ensure your code:
-- Has no console errors
-- Works in both light and dark modes
-- Is responsive on all devices
-- Follows accessibility guidelines
+### Components
 
-## 📝 Pull Request Process
+- Use functional components
+- Implement proper TypeScript types
+- Follow React best practices
+- Keep components small and reusable
+- Use proper naming conventions
 
-1. Update documentation if needed
-2. Add descriptive commit messages
-3. Test all changes thoroughly
-4. Create a pull request with:
-   - Clear description
-   - Screenshots if UI changes
-   - List of changes made
+### Testing
 
-## 🎨 Style Guide
+- Write unit tests for new features
+- Ensure existing tests pass
+- Test across different browsers
+- Check mobile responsiveness
 
-### Component Structure
-```jsx
-import React from 'react';
-import { motion } from 'framer-motion';
+## Questions?
 
-const ComponentName = () => {
-  // State and hooks
-  const [state, setState] = useState();
+Feel free to open an issue or contact me directly.
 
-  // Effects
-  useEffect(() => {
-    // Effect logic
-  }, []);
-
-  // Event handlers
-  const handleEvent = () => {
-    // Handler logic
-  };
-
-  return (
-    <motion.div>
-      {/* Component JSX */}
-    </motion.div>
-  );
-};
-
-export default ComponentName;
-```
-
-### File Structure
-```
-src/
-├── components/
-│   ├── common/       # Reusable components
-│   ├── layout/       # Layout components
-│   └── sections/     # Page sections
-├── hooks/            # Custom hooks
-├── styles/           # Global styles
-└── utils/            # Utility functions
-```
-
-## 📦 Dependencies
-
-Before adding new dependencies:
-1. Check if functionality exists in current deps
-2. Evaluate bundle size impact
-3. Check package maintenance status
-4. Consider writing custom implementation
-
-## 🐛 Bug Reports
-
-When reporting bugs:
-1. Use the issue template
-2. Include browser/OS details
-3. Provide steps to reproduce
-4. Add screenshots if possible
-
-## 💡 Feature Requests
-
-For feature requests:
-1. Check existing issues first
-2. Use the feature request template
-3. Provide clear use cases
-4. Include mockups if possible
-
-## 📄 License
-
-By contributing, you agree that your contributions will be licensed under the MIT License.
+Thank you for contributing! 🎉
