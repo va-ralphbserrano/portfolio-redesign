@@ -1,8 +1,8 @@
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+export default {
   content: [
-    "./src/**/*.{js,jsx,ts,tsx}",
-    "./index.html"
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
   ],
   darkMode: 'class',
   theme: {
@@ -14,33 +14,49 @@ module.exports = {
           200: '#bbf7d0',
           300: '#86efac',
           400: '#4ade80',
-          500: '#2ecc71',
+          500: '#22c55e',
           600: '#16a34a',
           700: '#15803d',
           800: '#166534',
           900: '#14532d',
-          950: '#052e16'
         }
-      },
-      fontFamily: {
-        sans: ['Plus Jakarta Sans', 'system-ui', 'sans-serif'],
-        mono: ['Fira Code', 'monospace']
       },
       animation: {
-        'fade-in': 'fadeIn 0.5s ease-in',
-        'slide-up': 'slideUp 0.5s ease-out'
+        'blob': 'blob 7s infinite',
+        'float': 'float 6s ease-in-out infinite',
+        'typing': 'typing 2s steps(20, end), blink .7s step-end infinite',
+        'slide-up': 'slideUp 0.5s ease-out',
+        'fade-in': 'fadeIn 0.5s ease-out',
       },
       keyframes: {
-        fadeIn: {
-          '0%': { opacity: '0' },
-          '100%': { opacity: '1' }
+        blob: {
+          '0%': { transform: 'translate(0px, 0px) scale(1)' },
+          '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+          '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+          '100%': { transform: 'translate(0px, 0px) scale(1)' },
+        },
+        float: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-20px)' },
+        },
+        typing: {
+          from: { width: '0' },
+          to: { width: '100%' },
         },
         slideUp: {
-          '0%': { transform: 'translateY(20px)', opacity: '0' },
-          '100%': { transform: 'translateY(0)', opacity: '1' }
-        }
-      }
-    }
+          '0%': { transform: 'translateY(100%)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+      },
+      fontFamily: {
+        sans: ['Inter var', 'sans-serif'],
+        display: ['Lexend', 'sans-serif'],
+      },
+    },
   },
-  plugins: []
+  plugins: [],
 }

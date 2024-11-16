@@ -11,23 +11,33 @@ export const NAV_LINKS = [
 export const SOCIAL_LINKS = [
   {
     name: 'GitHub',
-    url: 'https://github.com/yourusername',
+    url: 'https://github.com/va-ralphbserrano',
     icon: 'FaGithub'
   },
   {
     name: 'LinkedIn',
-    url: 'https://linkedin.com/in/yourusername',
+    url: 'https://www.linkedin.com/in/ralphbserrano/',
     icon: 'FaLinkedin'
   },
   {
-    name: 'Twitter',
-    url: 'https://twitter.com/yourusername',
-    icon: 'FaTwitter'
+    name: 'YouTube',
+    url: 'https://www.youtube.com/@RalphBernardSerrano',
+    icon: 'FaYoutube'
+  },
+  {
+    name: 'Facebook',
+    url: 'https://www.facebook.com/va.ralphbserrano/',
+    icon: 'FaFacebook'
   },
   {
     name: 'Instagram',
-    url: 'https://instagram.com/yourusername',
+    url: 'https://www.instagram.com/half21dead/',
     icon: 'FaInstagram'
+  },
+  {
+    name: 'Upwork',
+    url: 'https://www.upwork.com/freelancers/~01fc7b069d50ef3e6c?viewMode=1',
+    icon: 'FaUpwork'
   }
 ];
 

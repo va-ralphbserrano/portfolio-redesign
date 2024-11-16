@@ -2,19 +2,24 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Import custom styles */
+@import './animations.css';
+@import './background-utilities.css';
+@import './swiper.css';
+
 @layer base {
   html {
     scroll-behavior: smooth;
   }
 
   body {
-    @apply font-sans antialiased text-gray-900 dark:text-white bg-white dark:bg-gray-900;
+    @apply font-sans antialiased bg-white dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-300;
   }
 }
 
 @layer components {
   .container {
-    @apply px-4 mx-auto max-w-7xl;
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
   }
 
   .btn {
@@ -33,5 +38,12 @@
 
   .transition-default {
     @apply transition-all duration-300 ease-in-out;
+  }
+
+  .animation-delay-2000 {
+    animation-delay: 2s;
+  }
+  .animation-delay-4000 {
+    animation-delay: 4s;
   }
 }
