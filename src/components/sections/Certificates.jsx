@@ -9,43 +9,51 @@ import 'swiper/css/effect-cards';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 
+// Import certificate images
+import apprenticeship from '@images/certificate/Apprenticeship Certificate.png';
+import masterclass from '@images/certificate/Gold Certificate Masterclass virtual assistant.png';
+import freelancingBrand from '@images/certificate/Best in Setting a Freelancing Brand.png';
+import websiteManagement from '@images/certificate/Best in Website Management.png';
+import amazonVA from '@images/certificate/Getting Hired with these amazon virtual assistant task.png';
+import contentMarketing from '@images/certificate/Content Marketing Strategy in social media.png';
+
 const Certificates = () => {
   const certificates = [
     {
       id: 1,
       title: "Executive Assistant Apprenticeship",
       description: "Surge Freelancing Marketplace, 2024",
-      image: "/images/certificate/Apprenticeship Certificate.png"
+      image: apprenticeship
     },
     {
       id: 2,
       title: "Masterclass in Virtual Assistant",
       description: "Surge Freelancing Marketplace, 2024",
-      image: "/images/certificate/Gold Certificate Masterclass virtual assistant.png"
+      image: masterclass
     },
     {
       id: 3,
       title: "Best in Setting a Freelancing Brand",
       description: "Surge Freelancing Marketplace, 2024",
-      image: "/images/certificate/Best in Setting a Freelancing Brand.png"
+      image: freelancingBrand
     },
     {
       id: 4,
       title: "Best in Website Management",
       description: "Surge Freelancing Marketplace, 2024",
-      image: "/images/certificate/Best in Website Management.png"
+      image: websiteManagement
     },
     {
       id: 5,
       title: "Amazon Virtual Assistant Tasks",
       description: "Surge Freelancing Marketplace, 2024",
-      image: "/images/certificate/Getting Hired with these amazon virtual assistant task.png"
+      image: amazonVA
     },
     {
       id: 6,
       title: "Content Marketing Strategy",
       description: "Surge Freelancing Marketplace, 2024",
-      image: "/images/certificate/Content Marketing Strategy in social media.png"
+      image: contentMarketing
     }
   ];
 

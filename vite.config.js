@@ -8,17 +8,14 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
+      '@assets': path.resolve(__dirname, './public/assets'),
+      '@images': path.resolve(__dirname, './public/images')
     },
-  },
-  server: {
-    port: 3000,
-    open: true
   },
   build: {
     outDir: 'dist',
     sourcemap: true,
     assetsDir: 'assets',
-    minify: 'terser',
     rollupOptions: {
       output: {
         manualChunks: {
@@ -27,9 +24,20 @@ export default defineConfig({
           'animation-vendor': ['framer-motion'],
           'slider-vendor': ['swiper'],
           'three-vendor': ['three', '@react-three/fiber', '@react-three/drei']
+        },
+        assetFileNames: (assetInfo) => {
+          let extType = assetInfo.name.split('.').at(1);
+          if (/png|jpe?g|svg|gif|tiff|bmp|ico/i.test(extType)) {
+            extType = 'img';
+          }
+          return `assets/${extType}/[name]-[hash][extname]`;
         }
       }
     }
+  },
+  server: {
+    port: 3000,
+    open: true
   },
   optimizeDeps: {
     esbuildOptions: {
