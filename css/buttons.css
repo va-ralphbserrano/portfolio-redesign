@@ -1,0 +1,217 @@
+/*=============== BUTTONS ===============*/
+.button {
+    display: inline-flex;
+    align-items: center;
+    column-gap: 0.5rem;
+    background-color: var(--primary-color);
+    padding: 1rem 1.5rem;
+    border-radius: 0.5rem;
+    color: var(--body-color);
+    font-weight: var(--font-medium);
+    transition: .3s;
+    cursor: pointer;
+}
+
+.button:hover {
+    background-color: var(--primary-color-alt);
+    transform: translateY(-2px);
+}
+
+.button__icon {
+    font-size: 1.25rem;
+    transition: .3s;
+}
+
+.button:hover .button__icon {
+    transform: translateX(0.25rem);
+}
+
+.button--small {
+    padding: 0.75rem 1rem;
+    font-size: var(--small-font-size);
+}
+
+.button--link {
+    padding: 0;
+    background-color: transparent;
+    color: var(--primary-color);
+}
+
+.button--link:hover {
+    background-color: transparent;
+    color: var(--primary-color-alt);
+    transform: none;
+}
+
+.button--flex {
+    display: inline-flex;
+    align-items: center;
+}
+
+/* Service Modal Buttons */
+.services__button {
+    cursor: pointer;
+    font-size: var(--small-font-size);
+    position: relative;
+    overflow: hidden;
+}
+
+.services__button::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: var(--primary-color);
+    transition: width .3s ease;
+}
+
+.services__button:hover::before {
+    width: 100%;
+}
+
+.services__modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    cursor: pointer;
+    transition: .3s;
+}
+
+.services__modal-close:hover {
+    color: var(--primary-color-alt);
+    transform: rotate(90deg);
+}
+
+/* Portfolio Filter Buttons */
+#portfolio-filters li {
+    padding: 0.25rem 0.75rem;
+    border-radius: 0.5rem;
+    font-weight: var(--font-medium);
+    cursor: pointer;
+    transition: .3s;
+}
+
+#portfolio-filters li:hover {
+    background-color: var(--primary-color);
+    color: var(--body-color);
+}
+
+#portfolio-filters li.filter-active {
+    background-color: var(--primary-color);
+    color: var(--body-color);
+}
+
+/* Contact Form Button */
+.contact__form button[type="submit"] {
+    border: none;
+    outline: none;
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+}
+
+.contact__form button[type="submit"]:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* Scroll Up Button */
+.scrollup {
+    position: fixed;
+    right: 1rem;
+    bottom: -20%;
+    background-color: var(--primary-color);
+    opacity: 0.8;
+    padding: 0.3rem 0.5rem;
+    border-radius: 0.4rem;
+    z-index: var(--z-tooltip);
+    transition: .4s;
+}
+
+.scrollup:hover {
+    background-color: var(--primary-color-alt);
+    opacity: 1;
+}
+
+.scrollup__icon {
+    font-size: 1.5rem;
+    color: var(--body-color);
+}
+
+.show-scroll {
+    bottom: 5rem;
+}
+
+/* Theme Change Button */
+.change-theme {
+    font-size: 1.25rem;
+    color: var(--title-color);
+    margin-right: var(--mb-1);
+    cursor: pointer;
+    transition: .3s;
+}
+
+.change-theme:hover {
+    color: var(--primary-color);
+}
+
+/* Navigation Toggle Button */
+.nav__toggle {
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: .3s;
+}
+
+.nav__toggle:hover {
+    color: var(--primary-color);
+}
+
+/* Social Media Buttons */
+.footer__social-link {
+    font-size: 1.25rem;
+    color: var(--title-color);
+    margin-right: var(--mb-1-5);
+    transition: .3s;
+}
+
+.footer__social-link:hover {
+    color: var(--primary-color);
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    .button {
+        padding: 0.75rem 1.25rem;
+    }
+
+    .button--small {
+        padding: 0.5rem 0.75rem;
+    }
+
+    .scrollup {
+        right: 0.5rem;
+        padding: 0.25rem 0.4rem;
+    }
+
+    .scrollup__icon {
+        font-size: 1.25rem;
+    }
+
+    .show-scroll {
+        bottom: 4rem;
+    }
+}
+
+@media screen and (max-width: 350px) {
+    .button {
+        padding: 0.5rem 1rem;
+    }
+
+    .button--small {
+        padding: 0.25rem 0.5rem;
+    }
+}

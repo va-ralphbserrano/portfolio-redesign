@@ -1,0 +1,238 @@
+/*=============== ANIMATIONS ===============*/
+/* Preloader */
+.preloader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--body-color);
+    z-index: var(--z-modal);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: .5s;
+}
+
+.loader {
+    width: 50px;
+    height: 50px;
+    border: 5px solid var(--text-color-light);
+    border-top-color: var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Fade animations */
+.fade-in {
+    animation: fadeIn .5s ease-in;
+}
+
+.fade-out {
+    animation: fadeOut .5s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+}
+
+/* Typing animation */
+.typing::after {
+    content: '|';
+    animation: blink .7s infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+/* Scroll animations */
+.scroll-header {
+    animation: slideDown .5s ease;
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-100%);
+    }
+    to {
+        transform: translateY(0);
+    }
+}
+
+/* Button hover effects */
+.button {
+    position: relative;
+    overflow: hidden;
+}
+
+.button::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: -100%;
+    background: linear-gradient(
+        120deg,
+        transparent,
+        rgba(255, 255, 255, .2),
+        transparent
+    );
+    transition: .5s;
+}
+
+.button:hover::after {
+    left: 100%;
+}
+
+/* Image hover effects */
+.portfolio__item {
+    position: relative;
+    overflow: hidden;
+}
+
+.portfolio__item img {
+    transition: transform .5s;
+}
+
+.portfolio__item:hover img {
+    transform: scale(1.1);
+}
+
+.portfolio__item-details {
+    position: absolute;
+    bottom: -100%;
+    left: 0;
+    width: 100%;
+    padding: 1.5rem;
+    background: rgba(0, 0, 0, .7);
+    color: var(--body-color);
+    transition: .5s;
+}
+
+.portfolio__item:hover .portfolio__item-details {
+    bottom: 0;
+}
+
+/* Skill bar animations */
+.skills__bar {
+    background-color: var(--text-color-light);
+    height: 5px;
+    border-radius: .25rem;
+}
+
+.skills__percentage {
+    display: block;
+    height: 100%;
+    background-color: var(--primary-color);
+    border-radius: .25rem;
+    position: relative;
+    animation: skillsBar 1s cubic-bezier(0.65, 0.05, 0.36, 1);
+}
+
+@keyframes skillsBar {
+    from {
+        width: 0;
+    }
+}
+
+/* Certificate hover effects */
+.certificate__item {
+    transition: transform .3s;
+}
+
+.certificate__item:hover {
+    transform: translateY(-5px);
+}
+
+/* Social media hover effects */
+.home__social-icon {
+    transition: .3s;
+}
+
+.home__social-icon:hover {
+    transform: translateY(-5px);
+}
+
+/* Scroll up button */
+.scrollup {
+    position: fixed;
+    right: 1rem;
+    bottom: -20%;
+    background-color: var(--primary-color);
+    opacity: .8;
+    padding: .3rem .5rem;
+    border-radius: .4rem;
+    z-index: var(--z-tooltip);
+    transition: .4s;
+}
+
+.scrollup:hover {
+    background-color: var(--primary-color-alt);
+}
+
+.scrollup__icon {
+    font-size: 1.5rem;
+    color: #fff;
+}
+
+/* Show scroll up */
+.show-scroll {
+    bottom: 5rem;
+}
+
+/* Navigation menu animations */
+.nav__link {
+    position: relative;
+}
+
+.nav__link::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    background-color: var(--primary-color);
+    left: 0;
+    bottom: -5px;
+    transition: .3s;
+}
+
+.nav__link:hover::after {
+    width: 100%;
+}
+
+/* Section transitions */
+[data-aos] {
+    opacity: 0;
+    transition-property: transform, opacity;
+}
+
+[data-aos].aos-animate {
+    opacity: 1;
+}
