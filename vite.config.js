@@ -1,9 +1,10 @@
 import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react-swc';
+import react from '@vitejs/plugin-react';
 import path from 'path';
 
 export default defineConfig({
   plugins: [react()],
+  base: '/portfolio-redesign/',
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
@@ -16,6 +17,7 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: true,
+    assetsDir: 'assets',
     minify: 'terser',
     rollupOptions: {
       output: {
@@ -23,6 +25,7 @@ export default defineConfig({
           'react-vendor': ['react', 'react-dom'],
           'router-vendor': ['react-router-dom'],
           'animation-vendor': ['framer-motion'],
+          'slider-vendor': ['swiper'],
           'three-vendor': ['three', '@react-three/fiber', '@react-three/drei']
         }
       }

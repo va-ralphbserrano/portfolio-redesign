@@ -1,42 +1,49 @@
-# Portfolio Website
+# Ralph Bernard Serrano - Portfolio
 
-A modern, responsive portfolio website built with React, TypeScript, and Tailwind CSS.
+A modern, responsive portfolio website built with React, Vite, and Tailwind CSS.
 
-## 🚀 Features
+## 🌟 Features
 
-- Modern React with TypeScript
-- Responsive design with Tailwind CSS
-- 3D animations with Three.js
-- Smooth page transitions with Framer Motion
-- Interactive UI components
-- Performance optimized
-- PWA support
+- **Modern Design**: Clean and professional UI with dark/light mode support
+- **Responsive**: Mobile-first approach, works on all devices
+- **Fast**: Built with Vite for optimal performance
+- **Interactive**: Smooth animations and transitions
+- **Accessible**: WCAG compliant and screen-reader friendly
 
-## 🛠️ Tech Stack
+## 🚀 Sections
+
+- **Home**: Professional introduction and overview
+- **About**: Detailed background, skills, and tools
+- **Services**: Professional services offered
+- **Portfolio**: Showcase of work and projects
+- **Certificates**: Professional certifications
+- **Mock Projects**: Practice and learning projects
+- **Contact**: Get in touch form
+
+## 🛠️ Built With
 
 - React 18
-- TypeScript
-- Tailwind CSS
 - Vite
-- Three.js
+- Tailwind CSS
 - Framer Motion
 - React Router
-- GSAP for animations
+- Swiper
+- TypeScript
 
 ## 📦 Installation
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/portfolio-redesign.git
-cd portfolio-redesign
+git clone https://github.com/va-ralphbserrano/portfolio-redesign.git
 ```
 
 2. Install dependencies:
 ```bash
+cd portfolio-redesign
 npm install
 ```
 
-3. Start the development server:
+3. Start development server:
 ```bash
 npm run dev
 ```
@@ -46,43 +53,29 @@ npm run dev
 npm run build
 ```
 
-## 🔧 Project Structure
-
-```
-portfolio-redesign/
-├── src/
-│   ├── components/     # Reusable UI components
-│   ├── config/        # Configuration files
-│   ├── contexts/      # React contexts
-│   ├── hooks/         # Custom React hooks
-│   ├── styles/        # Global styles and Tailwind
-│   └── utils/         # Utility functions
-├── public/            # Static assets
-└── ...config files
-```
-
 ## 🎨 Customization
 
-1. Update `src/config` files with your personal information
-2. Modify theme colors in `tailwind.config.js`
-3. Add your own assets to the `public` directory
+- **Colors**: Edit `tailwind.config.js` to modify the color scheme
+- **Content**: Update components in `src/components/sections`
+- **Styles**: Modify styles in `src/styles`
+- **Images**: Add images to `public/images`
 
-## 📱 PWA Support
+## 🚀 Deployment
 
-This website includes PWA support with:
-- Offline functionality
-- App manifest
-- Service worker
-- Install prompts
+The site is deployed using GitHub Pages. Visit [va-ralphbserrano.github.io/portfolio-redesign](https://va-ralphbserrano.github.io/portfolio-redesign)
 
-## 🔍 Scripts
+## 📝 License
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run lint` - Lint code
-- `npm run format` - Format code
+This project is open source and available under the MIT License.
 
-## 📄 License
+## 👤 Contact
 
-MIT License - feel free to use this code for your own portfolio!
+- **Website**: [va-ralphbserrano.github.io](https://va-ralphbserrano.github.io)
+- **Email**: ralphbserrano@gmail.com
+- **Phone**: +63 945 849 0223
+
+## 🙏 Acknowledgments
+
+- Icons from [React Icons](https://react-icons.github.io/react-icons/)
+- Animations by [Framer Motion](https://www.framer.com/motion/)
+- Slider by [Swiper](https://swiperjs.com/)
