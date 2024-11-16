@@ -18,12 +18,6 @@ import Portfolio from './components/sections/Portfolio';
 import Contact from './components/sections/Contact';
 import Certificates from './components/sections/Certificates';
 
-// Declare module for JSX files
-declare module "*.jsx" {
-  const content: any;
-  export default content;
-}
-
 const App: React.FC = () => {
   const location = useLocation();
 

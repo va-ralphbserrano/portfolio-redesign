@@ -70,8 +70,8 @@ const HeroContent = () => {
           </span>
         </button>
         <a
-          href="/assets/docs/resume.pdf"
-          download
+          href="/portfolio-redesign/assets/docs/resume.pdf"
+          download="Ralph_Bernard_Serrano_CV.pdf"
           className="group relative inline-flex items-center px-8 py-3.5 rounded-full bg-white/5 dark:bg-gray-900/20 backdrop-blur-[2px] border border-white/10 dark:border-gray-700/20 text-gray-800 dark:text-gray-200 overflow-hidden shadow-lg transition-all duration-300 hover:shadow-white/25 hover:scale-[1.02]"
         >
           <span className="absolute inset-0 bg-white/10 group-hover:bg-white/20 transition-colors duration-300" />
