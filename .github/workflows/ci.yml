@@ -1,10 +1,13 @@
-name: CI and Deploy to GitHub Pages
+name: Deploy to GitHub Pages
 
 on:
   push:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+
+permissions:
+  contents: write
 
 jobs:
   build-and-deploy:
@@ -35,19 +38,12 @@ jobs:
     - name: Build
       run: npm run build
     
-    - name: Cache build
-      uses: actions/cache@v3
-      with:
-        path: |
-          dist
-          .next
-        key: ${{ runner.os }}-build-${{ github.sha }}
-        restore-keys: |
-          ${{ runner.os }}-build-
-
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       if: github.ref == 'refs/heads/main'
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./dist
+        user_name: 'github-actions[bot]'
+        user_email: 'github-actions[bot]@users.noreply.github.com'
+        commit_message: 'deploy: update GitHub Pages'
