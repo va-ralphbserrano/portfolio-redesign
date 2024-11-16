@@ -13,7 +13,7 @@ export default defineConfig(({ mode }) => ({
       brotliSize: true,
     }),
   ].filter(Boolean),
-  base: '/portfolio-redesign/',
+  base: '/va-rb-portfolio/',
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),

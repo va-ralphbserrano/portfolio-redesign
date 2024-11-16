@@ -14,7 +14,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <ErrorBoundary>
       <ThemeProvider>
-        <BrowserRouter basename="/portfolio-redesign" future={{ v7_startTransition: true }}>
+        <BrowserRouter basename="/va-rb-portfolio" future={{ v7_startTransition: true }}>
           <App />
         </BrowserRouter>
       </ThemeProvider>
