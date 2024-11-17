@@ -1,124 +1,162 @@
-const CACHE_NAME = 'portfolio-cache-v1';
+/* eslint-env serviceworker */
+
+// Service Worker Version
+const CACHE_VERSION = 'v1.0.0';
+const CACHE_NAME = `rb-portfolio-${CACHE_VERSION}`;
+
+// Assets to cache
 const ASSETS_TO_CACHE = [
-    '/',
-    '/index.html',
-    '/css/style.css',
-    '/css/utilities.css',
-    '/css/animations.css',
-    '/css/sections.css',
-    '/css/dark-theme.css',
-    '/css/notifications.css',
-    '/css/preloader.css',
-    '/js/main.js',
-    '/js/animations.js',
-    '/js/typing.js',
-    '/js/content-loader.js',
-    '/js/services.js',
-    '/js/contact.js',
-    '/js/theme.js',
-    '/js/navigation.js',
-    '/js/scroll-top.js',
-    '/js/init.js',
-    '/js/image-optimization.js',
-    '/js/performance.js',
-    '/assets/images/hero.png',
-    '/assets/favicon/favicon-32x32.png',
-    '/assets/favicon/favicon-16x16.png'
+  '/va-rb-portfolio/',
+  '/va-rb-portfolio/index.html',
+  '/va-rb-portfolio/manifest.json',
+  '/va-rb-portfolio/favicon.ico',
+  '/va-rb-portfolio/robots.txt',
+  '/va-rb-portfolio/sitemap.xml'
 ];
 
-// Install Service Worker
+// Install event
 self.addEventListener('install', (event) => {
-    event.waitUntil(
-        caches.open(CACHE_NAME)
-            .then((cache) => {
-                return cache.addAll(ASSETS_TO_CACHE);
-            })
-            .then(() => self.skipWaiting())
-    );
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(ASSETS_TO_CACHE);
+    })
+  );
+  self.skipWaiting();
 });
 
-// Activate Service Worker
+// Activate event
 self.addEventListener('activate', (event) => {
-    event.waitUntil(
-        caches.keys().then((cacheNames) => {
-            return Promise.all(
-                cacheNames.map((cacheName) => {
-                    if (cacheName !== CACHE_NAME) {
-                        return caches.delete(cacheName);
-                    }
-                })
-            );
-        }).then(() => self.clients.claim())
-    );
+  event.waitUntil(
+    caches.keys().then((cacheNames) => {
+      return Promise.all(
+        cacheNames
+          .filter((name) => name.startsWith('rb-portfolio-'))
+          .filter((name) => name !== CACHE_NAME)
+          .map((name) => caches.delete(name))
+      );
+    })
+  );
+  self.clients.claim();
 });
 
-// Fetch Event Strategy: Cache First, Network Fallback
+// Fetch event
 self.addEventListener('fetch', (event) => {
-    // Skip cross-origin requests
-    if (!event.request.url.startsWith(self.location.origin)) return;
+  // Skip cross-origin requests
+  if (!event.request.url.startsWith(self.location.origin)) {
+    return;
+  }
 
+  // Network-first strategy for API requests
+  if (event.request.url.includes('/api/')) {
     event.respondWith(
-        caches.match(event.request)
-            .then((response) => {
-                // Return cached response if found
-                if (response) {
-                    // Update cache in background (stale-while-revalidate)
-                    fetch(event.request)
-                        .then((freshResponse) => {
-                            if (freshResponse) {
-                                caches.open(CACHE_NAME)
-                                    .then((cache) => cache.put(event.request, freshResponse));
-                            }
-                        });
-                    return response;
-                }
-
-                // If not in cache, fetch from network
-                return fetch(event.request)
-                    .then((response) => {
-                        // Cache successful responses
-                        if (response && response.status === 200) {
-                            const responseToCache = response.clone();
-                            caches.open(CACHE_NAME)
-                                .then((cache) => {
-                                    cache.put(event.request, responseToCache);
-                                });
-                        }
-                        return response;
-                    })
-                    .catch(() => {
-                        // Return offline fallback for HTML requests
-                        if (event.request.headers.get('accept').includes('text/html')) {
-                            return caches.match('/offline.html');
-                        }
-                    });
-            })
+      fetch(event.request)
+        .then((response) => {
+          const clonedResponse = response.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, clonedResponse);
+          });
+          return response;
+        })
+        .catch(() => {
+          return caches.match(event.request);
+        })
     );
-});
+    return;
+  }
 
-// Background Sync for Contact Form
-self.addEventListener('sync', (event) => {
-    if (event.tag === 'contact-form-sync') {
-        event.waitUntil(
-            syncContactForm()
+  // Cache-first strategy for static assets
+  if (
+    event.request.destination === 'style' ||
+    event.request.destination === 'script' ||
+    event.request.destination === 'image'
+  ) {
+    event.respondWith(
+      caches.match(event.request).then((response) => {
+        return (
+          response ||
+          fetch(event.request).then((response) => {
+            const clonedResponse = response.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, clonedResponse);
+            });
+            return response;
+          })
         );
-    }
+      })
+    );
+    return;
+  }
+
+  // Network-first strategy for HTML
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          const clonedResponse = response.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, clonedResponse);
+          });
+          return response;
+        })
+        .catch(() => {
+          return caches.match('/va-rb-portfolio/index.html');
+        })
+    );
+    return;
+  }
+
+  // Default: Network-first strategy
+  event.respondWith(
+    fetch(event.request)
+      .then((response) => {
+        const clonedResponse = response.clone();
+        caches.open(CACHE_NAME).then((cache) => {
+          cache.put(event.request, clonedResponse);
+        });
+        return response;
+      })
+      .catch(() => {
+        return caches.match(event.request);
+      })
+  );
 });
 
-// Handle Push Notifications
+// Push notification event
 self.addEventListener('push', (event) => {
-    const options = {
-        body: event.data.text(),
-        icon: '/assets/favicon/favicon-32x32.png',
-        badge: '/assets/favicon/favicon-16x16.png',
-        vibrate: [100, 50, 100],
-        data: {
-            dateOfArrival: Date.now(),
-            primaryKey: 1
-        }
-    };
+  const options = {
+    body: event.data.text(),
+    icon: '/va-rb-portfolio/favicon/android-chrome-192x192.png',
+    badge: '/va-rb-portfolio/favicon/android-chrome-192x192.png',
+    vibrate: [100, 50, 100],
+    data: {
+      dateOfArrival: Date.now(),
+      primaryKey: 1
+    },
+    actions: [
+      {
+        action: 'explore',
+        title: 'View Portfolio',
+        icon: '/va-rb-portfolio/favicon/android-chrome-192x192.png'
+      }
+    ]
+  };
 
+  event.waitUntil(
+    self.registration.showNotification('Ralph Bernard Serrano Portfolio', options)
+  );
+});
+
+// Notification click event
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+
+  if (event.action === 'explore') {
     event.waitUntil(
-        self.registration.showNotification('Portfolio Update', options)
+      self.clients.openWindow('/va-rb-portfolio/portfolio')
     );
+  } else {
+    event.waitUntil(
+      self.clients.openWindow('/va-rb-portfolio/')
+    );
+  }
 });

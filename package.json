@@ -1,8 +1,13 @@
 {
   "name": "portfolio-redesign",
   "version": "1.0.0",
-  "description": "Ralph Bernard Serrano's Portfolio Website",
+  "description": "Ralph Bernard Serrano's Portfolio Website - A modern, responsive portfolio built with React and TypeScript",
   "type": "module",
+  "homepage": "https://va-ralphbserrano.github.io/va-rb-portfolio/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/va-ralphbserrano/va-rb-portfolio.git"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -18,19 +23,25 @@
     "start": "vite preview --port 3000",
     "prebuild": "npm run typecheck",
     "postinstall": "husky install",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "test": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
+    "@emotion/react": "^11.13.3",
+    "@emotion/styled": "^11.13.0",
     "@headlessui/react": "^1.7.17",
     "@heroicons/react": "^2.1.1",
     "@react-three/drei": "^9.92.7",
     "@react-three/fiber": "^8.15.12",
+    "@types/react-helmet-async": "^1.0.1",
     "axios": "^1.6.3",
     "framer-motion": "^10.16.16",
     "gsap": "^3.12.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-helmet-async": "^2.0.5",
     "react-icons": "^4.12.0",
     "react-intersection-observer": "^9.5.3",
     "react-router-dom": "^6.21.1",
@@ -41,6 +52,11 @@
   "devDependencies": {
     "@commitlint/cli": "^19.5.0",
     "@commitlint/config-conventional": "^19.5.0",
+    "@tailwindcss/aspect-ratio": "^0.4.2",
+    "@tailwindcss/forms": "^0.5.9",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^14.3.1",
+    "@testing-library/user-event": "^14.5.2",
     "@types/node": "^20.10.5",
     "@types/react": "^18.2.45",
     "@types/react-dom": "^18.2.18",
@@ -48,6 +64,7 @@
     "@typescript-eslint/eslint-plugin": "^6.15.0",
     "@typescript-eslint/parser": "^6.15.0",
     "@vitejs/plugin-react": "^4.2.1",
+    "@vitest/coverage-v8": "^1.6.0",
     "autoprefixer": "^10.4.16",
     "eslint": "^8.56.0",
     "eslint-plugin-react": "^7.33.2",
@@ -55,6 +72,7 @@
     "gh-pages": "^6.2.0",
     "glob": "^10.3.10",
     "husky": "^9.1.6",
+    "jsdom": "^24.0.0",
     "lint-staged": "^15.2.10",
     "lru-cache": "^10.1.0",
     "postcss": "^8.4.32",
@@ -62,14 +80,44 @@
     "prettier": "^3.1.1",
     "rimraf": "^5.0.5",
     "rollup-plugin-visualizer": "^5.12.0",
+    "sharp": "^0.33.5",
     "tailwindcss": "^3.4.0",
     "terser": "^5.36.0",
     "typescript": "^5.3.3",
-    "vite": "^5.0.10"
+    "vite": "^5.0.10",
+    "vite-plugin-image-optimizer": "^1.1.8",
+    "vitest": "^1.6.0"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "portfolio",
+    "react",
+    "typescript",
+    "vite",
+    "tailwindcss",
+    "framer-motion",
+    "three.js",
+    "responsive",
+    "dark-mode",
+    "animations"
+  ],
+  "author": "Ralph Bernard Serrano",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
   "lint-staged": {
     "*.{ts,tsx}": [
       "eslint --fix",

@@ -1,0 +1,86 @@
+name: Portfolio Enhancement Project
+description: Track and manage portfolio enhancement tasks
+
+columns:
+  - name: 📋 Backlog
+    description: Tasks that are queued for enhancement
+    
+  - name: 🔍 Analysis
+    description: Tasks currently being analyzed
+    
+  - name: 🚧 In Progress
+    description: Tasks actively being worked on
+    
+  - name: 🔄 Review
+    description: Tasks ready for review
+    
+  - name: ✅ Done
+    description: Completed tasks
+
+labels:
+  - name: "phase:analysis"
+    color: "1d76db"
+    description: "Phase 1: Analysis & Audit tasks"
+    
+  - name: "phase:core"
+    color: "0e8a16"
+    description: "Phase 2: Core Optimizations"
+    
+  - name: "phase:performance"
+    color: "fbca04"
+    description: "Phase 3: Performance & UX"
+    
+  - name: "phase:quality"
+    color: "d93f0b"
+    description: "Phase 4: Quality & Testing"
+    
+  - name: "type:enhancement"
+    color: "5319e7"
+    description: "Enhancement tasks"
+    
+  - name: "type:optimization"
+    color: "0052cc"
+    description: "Optimization tasks"
+    
+  - name: "type:testing"
+    color: "ff9900"
+    description: "Testing related tasks"
+    
+  - name: "priority:high"
+    color: "b60205"
+    description: "High priority tasks"
+    
+  - name: "priority:medium"
+    color: "fbca04"
+    description: "Medium priority tasks"
+    
+  - name: "priority:low"
+    color: "0e8a16"
+    description: "Low priority tasks"
+
+issue_templates:
+  - name: Enhancement Task
+    template: |
+      ## Description
+      [Detailed description of the enhancement]
+      
+      ## Current State
+      [Description of current implementation]
+      
+      ## Proposed Changes
+      - [ ] Change 1
+      - [ ] Change 2
+      
+      ## Testing Checklist
+      - [ ] Unit tests
+      - [ ] Integration tests
+      - [ ] Performance impact
+      - [ ] Cross-browser compatibility
+      - [ ] Mobile responsiveness
+      
+      ## Performance Metrics
+      - Before:
+      - After:
+      
+      ## Additional Notes
+      [Any additional information]

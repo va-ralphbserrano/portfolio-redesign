@@ -2,60 +2,67 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 import { visualizer } from 'rollup-plugin-visualizer';
+import { ViteImageOptimizer } from 'vite-plugin-image-optimizer';
 
-export default defineConfig(({ mode }) => ({
+const imageOptimizerConfig = {
+  jpg: {
+    quality: 80,
+    progressive: true
+  },
+  jpeg: {
+    quality: 80,
+    progressive: true
+  },
+  png: {
+    quality: 80,
+    progressive: true
+  },
+  webp: {
+    lossless: true
+  }
+};
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  base: '/va-rb-portfolio/',
   plugins: [
     react(),
-    mode === 'analyze' && visualizer({
-      open: true,
+    ViteImageOptimizer(imageOptimizerConfig),
+    visualizer({
       filename: 'dist/stats.html',
       gzipSize: true,
       brotliSize: true,
-    }),
-  ].filter(Boolean),
-  base: '/va-rb-portfolio/',
+      open: false
+    })
+  ],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
-      '@components': path.resolve(__dirname, './src/components'),
-      '@styles': path.resolve(__dirname, './src/styles'),
-      '@utils': path.resolve(__dirname, './src/utils'),
-      '@images': path.resolve(__dirname, './src/assets/images'),
-      '@models': path.resolve(__dirname, './public/models')
-    }
-  },
-  server: {
-    port: 3000,
-    open: true,
-    hmr: {
-      overlay: true
-    }
+    },
   },
   build: {
-    outDir: 'dist',
-    sourcemap: true,
+    target: 'esnext',
+    assetsInlineLimit: 0,
     rollupOptions: {
       output: {
         manualChunks: {
-          'react-vendor': ['react', 'react-dom'],
-          'three-vendor': ['three', '@react-three/fiber', '@react-three/drei'],
-          'ui-vendor': ['@headlessui/react', '@heroicons/react', 'framer-motion']
-        }
-      }
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          'ui-vendor': ['framer-motion', '@headlessui/react', 'react-icons'],
+          'three-vendor': ['three'],
+        },
+        assetFileNames: (assetInfo) => {
+          let extType = assetInfo.name.split('.').at(1);
+          if (/png|jpe?g|svg|gif|tiff|bmp|ico/i.test(extType)) {
+            extType = 'img';
+          } else if (/pdf|docx?|xlsx?|pptx?/i.test(extType)) {
+            extType = 'docs';
+          }
+          return `assets/${extType}/[name]-[hash][extname]`;
+        },
+        chunkFileNames: 'assets/js/[name]-[hash].js',
+        entryFileNames: 'assets/js/[name]-[hash].js',
+      },
     },
     chunkSizeWarningLimit: 1000,
-    minify: 'terser',
-    terserOptions: {
-      compress: {
-        drop_console: true,
-        drop_debugger: true
-      }
-    }
   },
-  optimizeDeps: {
-    include: ['react', 'react-dom', 'three']
-  },
-  esbuild: {
-    logOverride: { 'this-is-undefined-in-esm': 'silent' }
-  }
-}));
+});

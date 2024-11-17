@@ -1,64 +1,69 @@
 {
-    "name": "Ralph Bernard Serrano Portfolio",
-    "short_name": "Ralph Portfolio",
-    "description": "Professional portfolio showcasing web design, video editing, and AutoCAD services",
-    "start_url": "/",
-    "display": "standalone",
-    "background_color": "#ffffff",
-    "theme_color": "#2ecc71",
-    "orientation": "any",
-    "icons": [
-        {
-            "src": "/favicon/android-chrome-192x192.png",
-            "sizes": "192x192",
-            "type": "image/png",
-            "purpose": "any maskable"
-        },
-        {
-            "src": "/favicon/android-chrome-512x512.png",
-            "sizes": "512x512",
-            "type": "image/png",
-            "purpose": "any maskable"
-        }
-    ],
-    "shortcuts": [
-        {
-            "name": "Portfolio",
-            "short_name": "Portfolio",
-            "description": "View my portfolio work",
-            "url": "/#portfolio",
-            "icons": [{ "src": "/favicon/android-chrome-192x192.png", "sizes": "192x192" }]
-        },
-        {
-            "name": "Contact",
-            "short_name": "Contact",
-            "description": "Contact me",
-            "url": "/#contact",
-            "icons": [{ "src": "/favicon/android-chrome-192x192.png", "sizes": "192x192" }]
-        }
-    ],
-    "screenshots": [
-        {
-            "src": "/images/screenshots/desktop.jpg",
-            "sizes": "1920x1080",
-            "type": "image/jpeg",
-            "form_factor": "wide",
-            "label": "Desktop view of Ralph Bernard Serrano's Portfolio"
-        },
-        {
-            "src": "/images/screenshots/mobile.jpg",
-            "sizes": "1080x1920",
-            "type": "image/jpeg",
-            "form_factor": "narrow",
-            "label": "Mobile view of Ralph Bernard Serrano's Portfolio"
-        }
-    ],
-    "categories": ["portfolio", "web development", "design"],
-    "lang": "en",
-    "dir": "ltr",
-    "prefer_related_applications": false,
-    "related_applications": [],
-    "iarc_rating_id": "",
-    "scope": "/",
-    "id": "portfolio_v1"
+  "name": "Ralph Bernard Serrano - Portfolio",
+  "short_name": "RB Portfolio",
+  "description": "A modern portfolio website showcasing my work as a Virtual Assistant and Web Developer",
+  "start_url": "/va-rb-portfolio/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#111827",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/va-rb-portfolio/favicon/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/va-rb-portfolio/favicon/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/va-rb-portfolio/screenshots/desktop.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Desktop view of Ralph Bernard Serrano's Portfolio"
+    },
+    {
+      "src": "/va-rb-portfolio/screenshots/mobile.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Mobile view of Ralph Bernard Serrano's Portfolio"
+    }
+  ],
+  "categories": ["portfolio", "web development", "design"],
+  "lang": "en",
+  "dir": "ltr",
+  "prefer_related_applications": false,
+  "related_applications": [],
+  "shortcuts": [
+    {
+      "name": "About",
+      "url": "/va-rb-portfolio/about",
+      "description": "Learn more about me"
+    },
+    {
+      "name": "Portfolio",
+      "url": "/va-rb-portfolio/portfolio",
+      "description": "View my work"
+    },
+    {
+      "name": "Contact",
+      "url": "/va-rb-portfolio/contact",
+      "description": "Get in touch"
+    }
+  ],
+  "features": [
+    "Cross Platform",
+    "Responsive",
+    "Dark Mode",
+    "Fast",
+    "Offline Support"
+  ]
 }

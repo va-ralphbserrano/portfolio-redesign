@@ -32,6 +32,7 @@ By participating in this project, you agree to abide by its terms and maintain a
    ```bash
    npm run typecheck
    npm run lint
+   npm run build
    ```
 
 ## Pull Request Guidelines
@@ -41,6 +42,8 @@ By participating in this project, you agree to abide by its terms and maintain a
 - Follow the existing code style
 - Keep pull requests focused in scope
 - Welcome feedback and be open to improvements
+- Ensure type safety
+- Test performance impact
 
 ## Commit Messages
 
@@ -53,10 +56,12 @@ Follow the [Conventional Commits](https://www.conventionalcommits.org/) specific
 - `refactor:` Code restructuring
 - `test:` Tests
 - `chore:` Maintenance
+- `perf:` Performance improvements
+- `security:` Security enhancements
 
 Example:
 ```
-feat: add dark mode toggle
+feat: add dark mode toggle with theme persistence
 ```
 
 ## Development Guidelines
@@ -68,6 +73,8 @@ feat: add dark mode toggle
 - Use Prettier for formatting
 - Write meaningful comments
 - Keep components focused
+- Ensure type safety
+- Follow DRY principle
 
 ### Components
 
@@ -76,6 +83,8 @@ feat: add dark mode toggle
 - Follow React best practices
 - Keep components small and reusable
 - Use proper naming conventions
+- Add component documentation
+- Test performance impact
 
 ### Testing
 
@@ -83,9 +92,46 @@ feat: add dark mode toggle
 - Ensure existing tests pass
 - Test across different browsers
 - Check mobile responsiveness
+- Test dark mode
+- Verify animations
+- Check accessibility
+
+### Performance
+
+- Optimize images
+- Use lazy loading
+- Minimize bundle size
+- Test load times
+- Monitor renders
+- Check animations
+- Verify PWA
+
+### Security
+
+- Validate inputs
+- Sanitize data
+- Handle errors
+- Follow security best practices
+- Implement rate limiting
+- Test edge cases
+- Check dependencies
+
+## Documentation
+
+- Update relevant docs
+- Add inline comments
+- Document types
+- Explain complex logic
+- Update changelogs
+- Add usage examples
+- Include screenshots
 
 ## Questions?
 
-Feel free to open an issue or contact me directly.
+Feel free to:
+- Open an issue
+- Start a discussion
+- Contact me directly
+- Check existing docs
 
-Thank you for contributing! 🎉
+Thank you for contributing! 

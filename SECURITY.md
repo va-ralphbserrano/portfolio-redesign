@@ -1,4 +1,5 @@
 # Security Policy
+Last Updated: February 19, 2024
 
 ## Supported Versions
 
@@ -8,48 +9,147 @@ Currently being supported with security updates:
 | ------- | ------------------ |
 | 1.x.x   | :white_check_mark: |
 
-## Reporting a Vulnerability
+## 🔒 Security Features
 
-If you discover a security vulnerability within this project, please send an email to ralphbserrano@gmail.com. All security vulnerabilities will be promptly addressed.
+### Rate Limiting
+- Email service: 5 requests per minute per IP
+- Form submissions: 50 requests per hour per IP
+- API endpoints: 500 requests per day per IP
 
-Please include the following information:
-- Type of vulnerability
-- Full paths of source file(s) related to the vulnerability
-- Location of the vulnerability within the file(s)
-- Any special configuration required to reproduce the issue
-- Step-by-step instructions to reproduce the issue
-- Proof-of-concept or exploit code (if possible)
-- Impact of the vulnerability
+### Input Validation
+- Form fields validated on client and server
+- Custom validation rules per field type
+- Sanitization of user inputs
+- Type-safe data handling
 
-## Security Update Process
+### Error Handling
+- Custom error types for different scenarios
+- Secure error logging
+- User-friendly error messages
+- No sensitive data exposure
 
-1. The vulnerability report will be acknowledged within 48 hours
-2. We will confirm the vulnerability and determine its impact
-3. We will release a patch as soon as possible depending on complexity
-4. We will notify users via GitHub release notes
+### Type Safety
+- Strict TypeScript configuration
+- Runtime type checking
+- Props validation
+- API type definitions
 
-## Security Best Practices
+### Data Protection
+- Secure form handling
+- Email service security
+- Environment variable protection
+- API key management
 
-When contributing to this project:
+## 🛡️ Security Measures
 
-1. Always validate user input
-2. Use secure dependencies
-3. Keep dependencies updated
-4. Follow secure coding practices
-5. Implement proper error handling
-6. Use HTTPS for all requests
-7. Implement proper authentication
-8. Follow the principle of least privilege
+### XSS Prevention (Planned)
+- Content security policy
+- Input sanitization
+- Output encoding
+- HTML escaping
 
-## Third-Party Services
+### CSRF Protection (Planned)
+- CSRF tokens
+- SameSite cookies
+- Origin validation
+- Referrer checking
 
-This project uses the following third-party services:
-- GitHub Pages for hosting
-- GitHub Actions for CI/CD
-- NPM for package management
+### Access Control
+- Rate limiting 
+- IP blocking (Planned)
+- Request validation 
+- Origin checking (Planned)
 
-## Contact
+### Code Security
+- Dependency auditing 
+- Regular updates 
+- Security patches 
+- Code reviews 
 
-For any security-related questions, please contact:
-- Email: ralphbserrano@gmail.com
-- GitHub: @va-ralphbserrano
+## 📝 Best Practices
+
+### Development
+- Use strict TypeScript 
+- Follow OWASP guidelines
+- Implement error boundaries 
+- Regular security audits
+
+### Deployment
+- HTTPS only 
+- Secure headers (Planned)
+- Environment variables 
+- Production checks 
+
+### Monitoring
+- Error tracking (Planned)
+- Security logging (Planned)
+- Rate limit monitoring 
+- Performance metrics (Planned)
+
+### Maintenance
+- Regular updates 
+- Security patches 
+- Dependency audits 
+- Code reviews 
+
+## 🚨 Reporting a Vulnerability
+
+If you discover a security vulnerability, please follow these steps:
+
+1. **Do Not** disclose the issue publicly
+2. Email details to ralph.b.serrano@gmail.com
+3. Include:
+   - Description of the vulnerability
+   - Steps to reproduce
+   - Potential impact
+   - Suggested fix (if any)
+
+## 🔄 Update Process
+
+1. Security patches released ASAP
+2. Regular dependency updates
+3. Monthly security audits
+4. Continuous monitoring
+
+## 📊 Security Status
+
+### Implemented (25%)
+- Rate limiting
+- Input validation
+- Error handling
+- Type safety
+- Form security
+- Email service protection
+
+### In Progress (50%)
+- CSRF protection
+- Content security policy
+- Security headers
+- Advanced monitoring
+
+### Planned (25%)
+- Advanced rate limiting
+- IP blocking system
+- Security logging
+- Audit system
+
+## 📚 Security Documentation
+
+- [Architecture Guide](./docs/ARCHITECTURE.md)
+- [Development Guide](./docs/DEVELOPMENT.md)
+- [API Documentation](./docs/API.md)
+- [Contributing Guide](./CONTRIBUTING.md)
+
+## 🤝 Contributing
+
+Please read [CONTRIBUTING.md](./CONTRIBUTING.md) for details on our security practices and requirements for contributors.
+
+## 📞 Contact
+
+For security concerns, please contact:
+- Email: ralph.b.serrano@gmail.com
+- GitHub: [@va-ralphbserrano](https://github.com/va-ralphbserrano)
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.
