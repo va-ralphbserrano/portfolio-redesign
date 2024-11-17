@@ -1,5 +1,0 @@
-# https://va-ralphbserrano.github.io/va-rb-portfolio/
-User-agent: *
-Allow: /
-
-Sitemap: https://va-ralphbserrano.github.io/va-rb-portfolio/sitemap.xml
