@@ -8,8 +8,9 @@ import { ContactForm } from './contact/ContactForm';
 import { FormState, FormResponse } from './contact/types';
 import ErrorBoundary from '@/components/common/ErrorBoundary';
 import { sendEmail, EmailError } from '@/utils/email';
+import { IconType } from 'react-icons';
 
-const iconMap = {
+const iconMap: Record<string, IconType> = {
   mail: HiMail,
   phone: HiPhone,
   location: HiLocationMarker,
@@ -81,6 +82,7 @@ const Contact: React.FC = () => {
               {/* Contact Info */}
               {contactData.info.map((item, index) => {
                 const Icon = iconMap[item.icon];
+                if (!Icon) return null;
                 return (
                   <div key={index} className="flex items-start space-x-4">
                     <div className="flex-shrink-0">
@@ -102,6 +104,7 @@ const Contact: React.FC = () => {
               <div className="flex space-x-4 mt-8">
                 {contactData.social.map((item, index) => {
                   const Icon = iconMap[item.icon];
+                  if (!Icon) return null;
                   return (
                     <a
                       key={index}

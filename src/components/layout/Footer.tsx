@@ -5,8 +5,7 @@ import {
   HiHeart,
   HiMail,
   HiPhone,
-  HiLocationMarker,
-  HiExternalLink
+  HiLocationMarker
 } from 'react-icons/hi';
 import {
   FaGithub,
