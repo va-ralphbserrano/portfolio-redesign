@@ -1,40 +1,38 @@
-import React, { Suspense } from 'react';
-import { Routes, Route } from 'react-router-dom';
-import Layout from '@/components/layout/Layout';
-import Loading from '@/components/common/Loading';
-import ErrorBoundary from '@/components/common/ErrorBoundary';
-
-// Lazy load route components
-const Hero = React.lazy(() => import('@/components/sections/Hero'));
-const About = React.lazy(() => import('@/components/sections/About'));
-const Services = React.lazy(() => import('@/components/sections/Services'));
-const Portfolio = React.lazy(() => import('@/components/sections/Portfolio'));
-const Certificates = React.lazy(() => import('@/components/sections/Certificates'));
-const Contact = React.lazy(() => import('@/components/sections/Contact'));
-
-// Wrap component with error boundary
-const withErrorBoundary = (Component: React.ComponentType) => (
-  <ErrorBoundary>
-    <Component />
-  </ErrorBoundary>
-);
+import React from 'react';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { AnimatePresence } from 'framer-motion';
+import { Navbar } from '@/components/common/Navbar';
+import { Footer } from '@/components/layout/footer/Footer';
+import { RouteWrapper } from '@/components/common/RouteWrapper';
+import { Hero } from '@/components/sections/Hero';
+import About from '@/components/sections/About';
+import Portfolio from '@/components/sections/Portfolio';
+import Services from '@/components/sections/Services';
+import Contact from '@/components/sections/Contact';
+import Certificates from '@/components/sections/Certificates';
 
 const App: React.FC = () => {
+  const location = useLocation();
+
   return (
-    <Layout>
-      <ErrorBoundary>
-        <Suspense fallback={<Loading />}>
-          <Routes>
-            <Route path="/" element={withErrorBoundary(Hero)} />
-            <Route path="/about" element={withErrorBoundary(About)} />
-            <Route path="/services" element={withErrorBoundary(Services)} />
-            <Route path="/portfolio" element={withErrorBoundary(Portfolio)} />
-            <Route path="/certificates" element={withErrorBoundary(Certificates)} />
-            <Route path="/contact" element={withErrorBoundary(Contact)} />
+    <div className="min-h-screen flex flex-col bg-white dark:bg-gray-900">
+      <Navbar />
+      <main className="flex-grow pt-16 sm:pt-20">
+        <AnimatePresence mode="wait">
+          <Routes location={location} key={location.pathname}>
+            <Route path="/" element={<RouteWrapper><Hero /></RouteWrapper>} />
+            <Route path="/about" element={<RouteWrapper><About /></RouteWrapper>} />
+            <Route path="/portfolio" element={<RouteWrapper><Portfolio /></RouteWrapper>} />
+            <Route path="/services" element={<RouteWrapper><Services /></RouteWrapper>} />
+            <Route path="/certificates" element={<RouteWrapper><Certificates /></RouteWrapper>} />
+            <Route path="/contact" element={<RouteWrapper><Contact /></RouteWrapper>} />
+            {/* Catch all route - redirect to home */}
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
-        </Suspense>
-      </ErrorBoundary>
-    </Layout>
+        </AnimatePresence>
+      </main>
+      <Footer />
+    </div>
   );
 };
 

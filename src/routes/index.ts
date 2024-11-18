@@ -1,8 +1,13 @@
 import { lazy } from 'react';
+import { RouteConfig } from '@/types/route';
 
-export const Hero = lazy(() => import('../components/sections/Hero'));
-export const About = lazy(() => import('../components/sections/About'));
-export const Services = lazy(() => import('../components/sections/Services'));
-export const Portfolio = lazy(() => import('../components/sections/Portfolio'));
-export const Contact = lazy(() => import('../components/sections/Contact'));
-export const Certificates = lazy(() => import('../components/sections/Certificates'));
+const routes: RouteConfig[] = [
+  { path: '/', component: lazy(() => import('@/components/sections/Hero')) },
+  { path: '/about', component: lazy(() => import('@/components/sections/About')) },
+  { path: '/services', component: lazy(() => import('@/components/sections/Services')) },
+  { path: '/portfolio', component: lazy(() => import('@/components/sections/Portfolio')) },
+  { path: '/contact', component: lazy(() => import('@/components/sections/Contact')) },
+  { path: '/certificates', component: lazy(() => import('@/components/sections/Certificates')) }
+];
+
+export default routes;

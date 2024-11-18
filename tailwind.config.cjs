@@ -6,7 +6,28 @@ module.exports = {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   darkMode: 'class',
   theme: {
+    screens: {
+      'xs': '375px',
+      'sm': '640px',
+      'md': '768px',
+      'lg': '1024px',
+      'xl': '1280px',
+      '2xl': '1536px',
+    },
     extend: {
+      spacing: {
+        '18': '4.5rem',
+        '22': '5.5rem',
+        '30': '7.5rem',
+      },
+      fontSize: {
+        'fluid-sm': 'clamp(0.875rem, 0.8rem + 0.25vw, 1rem)',
+        'fluid-base': 'clamp(1rem, 0.925rem + 0.375vw, 1.125rem)',
+        'fluid-lg': 'clamp(1.125rem, 1rem + 0.5vw, 1.25rem)',
+        'fluid-xl': 'clamp(1.25rem, 1.125rem + 0.625vw, 1.5rem)',
+        'fluid-2xl': 'clamp(1.5rem, 1.375rem + 0.75vw, 2rem)',
+        'fluid-3xl': 'clamp(2rem, 1.75rem + 1vw, 2.5rem)',
+      },
       colors: {
         primary: {
           50: '#f0fdfa',
@@ -81,6 +102,8 @@ module.exports = {
     },
   },
   plugins: [
+    aspectRatio,
+    forms,
     require('@tailwindcss/forms'),
     require('@tailwindcss/aspect-ratio'),
   ],

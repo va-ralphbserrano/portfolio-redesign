@@ -1,7 +1,7 @@
 {
   "name": "portfolio-redesign",
   "private": true,
-  "version": "0.25.34",
+  "version": "0.25.45",
   "description": "Ralph Bernard Serrano's Portfolio Website - A modern, responsive portfolio built with React and TypeScript",
   "type": "module",
   "homepage": "https://va-ralphbserrano.github.io/va-rb-portfolio/",
