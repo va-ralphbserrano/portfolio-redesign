@@ -1,7 +1,7 @@
 import { WithClassName } from '@/types/component';
 
 export type LoadingColor = 'primary' | 'secondary' | 'white';
-export type LoadingSize = 'sm' | 'md' | 'lg';
+export type LoadingSize = 'small' | 'medium' | 'large';
 export type LoadingType = 'spinner' | 'dots' | 'pulse';
 
 export const colors = {
@@ -11,18 +11,13 @@ export const colors = {
 } as const;
 
 export const sizes = {
-  sm: 'w-4 h-4',
-  md: 'w-8 h-8',
-  lg: 'w-12 h-12'
+  small: 'w-4 h-4',
+  medium: 'w-8 h-8',
+  large: 'w-12 h-12'
 } as const;
 
-export interface LoaderProps extends WithClassName {
-  type?: LoadingType;
-  size?: LoadingSize;
-  color?: LoadingColor;
-}
-
 export interface LoadingProps extends WithClassName {
+  type?: LoadingType;
   size?: LoadingSize;
   color?: LoadingColor;
 }

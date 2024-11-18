@@ -1,11 +1,11 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { classNames } from '@/utils/helpers';
-import { LoaderProps } from './types';
+import { classNames } from '../../../utils/helpers';
+import { LoadingProps } from './types';
 
-const Loader: React.FC<LoaderProps> = ({
+const Loader: React.FC<LoadingProps> = ({
   type = 'spinner',
-  size = 'md',
+  size = 'medium',
   color = 'primary',
   className
 }) => {
@@ -24,11 +24,11 @@ const Loader: React.FC<LoaderProps> = ({
 
   const getSizeClass = (size: string) => {
     switch (size) {
-      case 'sm':
+      case 'small':
         return 'w-4 h-4';
-      case 'md':
+      case 'medium':
         return 'w-6 h-6';
-      case 'lg':
+      case 'large':
         return 'w-8 h-8';
       default:
         return 'w-6 h-6';
