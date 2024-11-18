@@ -1,0 +1,93 @@
+name: Performance Monitoring
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '0 */6 * * *'  # Run every 6 hours
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Build project
+      run: npm run build
+
+    - name: Run performance tests
+      run: npm run test:performance
+      env:
+        ERROR_REPORTING_API: ${{ secrets.ERROR_REPORTING_API }}
+        METRIC_API: ${{ secrets.METRIC_API }}
+        NODE_ENV: production
+
+    - name: Run Lighthouse CI
+      run: |
+        npm install -g @lhci/cli@0.11.x
+        lhci autorun
+      env:
+        LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+
+    - name: Upload performance results
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: performance-results
+        path: |
+          .lighthouseci/
+          coverage/
+          test-results/
+
+    - name: Send performance alert
+      if: failure()
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const issue = await github.rest.issues.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: '🚨 Performance Regression Detected',
+            body: `Performance regression detected in workflow [${context.workflow}](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}).
+            
+            Please check the workflow logs for details.`,
+            labels: ['performance', 'regression']
+          });
+          
+          await github.rest.issues.addAssignees({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: issue.data.number,
+            assignees: ['va-ralphbserrano']
+          });
+
+    - name: Store performance metrics
+      if: success()
+      run: |
+        METRICS_FILE="./.lighthouseci/metrics.json"
+        echo "{
+          \"timestamp\": \"$(date -u +"%Y-%m-%dT%H:%M:%SZ")\",
+          \"commit\": \"${{ github.sha }}\",
+          \"branch\": \"${{ github.ref }}\",
+          \"workflow\": \"${{ github.workflow }}\",
+          \"metrics\": $(cat .lighthouseci/lhr-*.json | jq -s '[.[].categories.performance.score]')
+        }" > $METRICS_FILE
+        
+        # Upload metrics to monitoring service
+        curl -X POST \
+          -H "Content-Type: application/json" \
+          -H "Authorization: Bearer ${{ secrets.MONITORING_TOKEN }}" \
+          -d @$METRICS_FILE \
+          ${{ secrets.METRIC_API }}/ci

@@ -1,0 +1,89 @@
+.monitoring-dashboard {
+  padding: 2rem;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+}
+
+.dashboard-header {
+  margin-bottom: 2rem;
+}
+
+.dashboard-header h1 {
+  margin: 0 0 1rem;
+  color: #2c3e50;
+  font-size: 2rem;
+}
+
+.time-range-selector {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.time-range-selector button {
+  padding: 0.5rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.time-range-selector button:hover {
+  background: #f0f0f0;
+}
+
+.time-range-selector button.active {
+  background: #2c3e50;
+  color: white;
+  border-color: #2c3e50;
+}
+
+.metrics-section,
+.resource-section {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.metrics-section h2,
+.resource-section h2 {
+  margin: 0 0 1.5rem;
+  color: #2c3e50;
+  font-size: 1.5rem;
+}
+
+.recharts-default-tooltip {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  border: 1px solid #ddd !important;
+  border-radius: 4px;
+  padding: 0.5rem !important;
+}
+
+.recharts-tooltip-label {
+  color: #2c3e50;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.recharts-tooltip-item {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+  .monitoring-dashboard {
+    padding: 1rem;
+  }
+
+  .time-range-selector {
+    flex-wrap: wrap;
+  }
+
+  .time-range-selector button {
+    flex: 1;
+    min-width: calc(50% - 0.5rem);
+  }
+}

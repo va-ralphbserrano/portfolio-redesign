@@ -17,12 +17,11 @@ import {
 import { SiUpwork } from 'react-icons/si';
 import { classNames } from '../../utils/helpers';
 import { FooterProps, footerVariants, footerLinkVariants } from './types';
-import type { IconType } from 'react-icons';
 
 interface SocialLink {
   name: string;
   url: string;
-  icon: IconType;
+  icon: any;
 }
 
 interface QuickLink {
@@ -73,6 +72,7 @@ export const Footer: React.FC<FooterProps> = ({
     { name: 'About', path: '/about' },
     { name: 'Services', path: '/services' },
     { name: 'Portfolio', path: '/portfolio' },
+    { name: 'Certificates', path: '/certificates' },
     { name: 'Contact', path: '/contact' }
   ];
 
@@ -82,14 +82,14 @@ export const Footer: React.FC<FooterProps> = ({
       className
     )}>
       <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* About Section */}
           <motion.div
             variants={footerVariants}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
-            className="col-span-1 md:col-span-2"
+            className="col-span-1"
           >
             <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
               About Me
