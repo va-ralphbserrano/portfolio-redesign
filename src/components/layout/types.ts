@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, HTMLAttributes } from 'react';
 import { Variants } from 'framer-motion';
 
 type ElementType = keyof JSX.IntrinsicElements;
@@ -8,7 +8,7 @@ export interface AnimatedLayoutProps {
   className?: string;
 }
 
-export interface ContainerProps<T extends ElementType = 'div'> {
+export interface ContainerProps<T extends keyof JSX.IntrinsicElements> {
   children: ReactNode;
   className?: string;
   as?: T;
@@ -18,22 +18,35 @@ export interface FooterProps {
   className?: string;
 }
 
-export interface GridProps {
+export interface GridProps extends HTMLAttributes<HTMLDivElement> {
   children: ReactNode;
-  className?: string;
-  columns?: number;
+  cols?: {
+    xs?: number;
+    sm?: number;
+    md?: number;
+    lg?: number;
+    xl?: number;
+  };
   gap?: number;
+  className?: string;
 }
 
 export interface NavbarProps {
   className?: string;
 }
 
-export interface SectionProps<T extends ElementType = 'section'> {
+export interface SectionProps<T extends ElementType = 'section'> extends HTMLAttributes<HTMLElement> {
   children: ReactNode;
   className?: string;
   id?: string;
   as?: T;
+  fullWidth?: boolean;
+  noPadding?: boolean;
+  animate?: boolean;
+}
+
+export interface MobileNavProps {
+  navLinks: Array<{ name: string; path: string }>;
 }
 
 export const layoutVariants: Variants = {
@@ -59,7 +72,7 @@ export const layoutVariants: Variants = {
   }
 };
 
-export const navbarVariants: Variants = {
+export const navbarVariants = {
   hidden: {
     opacity: 0,
     y: -20
@@ -68,22 +81,23 @@ export const navbarVariants: Variants = {
     opacity: 1,
     y: 0,
     transition: {
-      duration: 0.5,
+      duration: 0.6,
       ease: 'easeOut'
     }
   }
 };
 
-export const navLinkVariants: Variants = {
+export const navLinkVariants = {
   hidden: {
     opacity: 0,
-    y: -10
+    x: -10
   },
   visible: {
     opacity: 1,
-    y: 0,
+    x: 0,
     transition: {
-      duration: 0.3
+      duration: 0.4,
+      ease: 'easeOut'
     }
   },
   hover: {
@@ -109,7 +123,7 @@ export const footerVariants: Variants = {
   }
 };
 
-export const footerLinkVariants: Variants = {
+export const footerLinkVariants = {
   hidden: {
     opacity: 0,
     y: 10

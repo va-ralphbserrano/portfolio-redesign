@@ -9,7 +9,12 @@ export const Container = <T extends ElementType = 'div'>({
   as: Component = 'div' as T
 }: ContainerProps<T>) => {
   const props = {
-    className: classNames('container mx-auto px-4', className)
+    className: classNames(
+      'container mx-auto',
+      'px-4 sm:px-6 lg:px-8',
+      'max-w-7xl',
+      className
+    )
   };
 
   return (

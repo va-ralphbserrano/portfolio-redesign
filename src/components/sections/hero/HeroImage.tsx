@@ -1,30 +1,37 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { WithClassName } from '@/types/component';
-import { heroData } from '@/data/hero';
+import { HeroImageProps, heroImageVariants } from './types';
+import { useReducedMotion } from '@/hooks/useReducedMotion';
+import { classNames } from '@/utils/helpers';
+import heroImage from '@/assets/images/hero.png';
 
-interface HeroImageProps extends WithClassName {
-  priority?: boolean;
-}
+const HeroImage: React.FC<HeroImageProps> = ({ 
+  className, 
+  width = 400,
+  height = 400,
+  loading = 'eager'
+}) => {
+  const prefersReducedMotion = useReducedMotion();
 
-const HeroImage: React.FC<HeroImageProps> = ({ className, priority = true }) => {
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.5 }}
-      className={className}
+      initial="hidden"
+      animate="visible"
+      variants={prefersReducedMotion ? {} : heroImageVariants}
+      className={classNames('relative', className)}
     >
       <div className="relative w-full h-full max-w-md mx-auto">
-        <div className="absolute inset-0 bg-gradient-to-tr from-primary-500/20 to-transparent rounded-3xl transform -rotate-6" />
-        <img
-          src={heroData.image.src}
-          alt={heroData.image.alt}
-          width={400}
-          height={400}
-          loading={priority ? 'eager' : 'lazy'}
-          className="relative w-full h-auto rounded-3xl shadow-xl"
-        />
+        <div className="relative aspect-square overflow-hidden rounded-3xl shadow-xl">
+          <img
+            src={heroImage}
+            alt="Ralph Bernard Serrano - Virtual Assistant & Web Developer"
+            width={width}
+            height={height}
+            loading={loading}
+            decoding="async"
+            className="w-full h-full object-cover transition-opacity duration-500"
+          />
+        </div>
       </div>
     </motion.div>
   );

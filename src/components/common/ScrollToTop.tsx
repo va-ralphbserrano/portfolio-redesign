@@ -3,6 +3,8 @@ import { motion } from 'framer-motion';
 import { HiArrowUp } from 'react-icons/hi';
 import { classNames } from '../../utils/helpers';
 import { ScrollToTopProps, scrollToTopVariants } from './types';
+import { throttle } from 'lodash';
+// import type { ThrottleSettings } from 'lodash'; // added import statement
 
 export const ScrollToTop: React.FC<ScrollToTopProps> = ({
   className,
@@ -19,8 +21,10 @@ export const ScrollToTop: React.FC<ScrollToTopProps> = ({
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    const throttledHandleScroll = throttle(handleScroll, 200);
+
+    window.addEventListener('scroll', throttledHandleScroll);
+    return () => window.removeEventListener('scroll', throttledHandleScroll);
   }, [show, showBelow]);
 
   const handleClick = () => {

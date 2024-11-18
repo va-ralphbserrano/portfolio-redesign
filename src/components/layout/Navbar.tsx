@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';
 import { classNames } from '../../utils/helpers';
-import { NavbarProps, navbarVariants, navLinkVariants } from './types';
+import { NavbarProps, navbarVariants } from './types';
+import MobileNav from './MobileNav';
 
 export const Navbar: React.FC<NavbarProps> = ({
   className
@@ -43,7 +44,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center">
-            <h1 className="text-2xl font-bold">
+            <h1 className="text-fluid-xl font-bold">
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-primary-400">
                 Ralph
               </span>
@@ -51,24 +52,26 @@ export const Navbar: React.FC<NavbarProps> = ({
             </h1>
           </Link>
 
-          {/* Navigation Links */}
-          <div className="hidden md:flex items-center space-x-8">
+          {/* Desktop Navigation */}
+          <div className="hidden lg:flex items-center space-x-8">
             {navLinks.map((link) => (
-              <motion.div key={link.name} variants={navLinkVariants}>
-                <Link
-                  to={link.path}
-                  className={classNames(
-                    'text-sm font-medium transition-colors hover:text-primary-500',
-                    location.pathname === link.path
-                      ? 'text-primary-500'
-                      : 'text-gray-700 dark:text-gray-300'
-                  )}
-                >
-                  {link.name}
-                </Link>
-              </motion.div>
+              <Link
+                key={link.path}
+                to={link.path}
+                className={classNames(
+                  'text-fluid-base font-medium transition-colors hover:text-primary-600 dark:hover:text-primary-400',
+                  location.pathname === link.path
+                    ? 'text-primary-600 dark:text-primary-400'
+                    : 'text-gray-700 dark:text-gray-300'
+                )}
+              >
+                {link.name}
+              </Link>
             ))}
           </div>
+
+          {/* Mobile Navigation */}
+          <MobileNav navLinks={navLinks} />
         </div>
       </div>
     </motion.nav>

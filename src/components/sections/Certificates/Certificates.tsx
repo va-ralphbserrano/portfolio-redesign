@@ -1,11 +1,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import Image from '../common/Image';
+import Image from '@/components/common/Image';
 import { certificates } from '@/data/certificates';
 import { classNames } from '@/utils/helpers';
-import { WithClassName } from '@/types/component';
-
-export interface CertificatesProps extends WithClassName {}
+import { CertificatesProps } from './types';
 
 export const Certificates: React.FC<CertificatesProps> = ({ className }) => {
   return (
