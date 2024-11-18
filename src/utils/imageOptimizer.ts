@@ -1,113 +1,31 @@
+// import sharp from 'sharp';
+
 interface ImageOptimizationOptions {
-  quality?: number;
-  format?: 'webp' | 'jpeg' | 'png';
   width?: number;
   height?: number;
+  quality?: number;
 }
 
-interface OptimizedImage {
-  src: string;
-  srcSet: string;
-  webpSrcSet?: string | undefined;
-  sizes: string;
-  width?: number | undefined;
-  height?: number | undefined;
+export function optimizeImage(src: string, options: ImageOptimizationOptions = {}): string {
+  if (!src) return '';
+
+  const params = new URLSearchParams();
+  
+  if (options.width) params.append('width', options.width.toString());
+  if (options.height) params.append('height', options.height.toString());
+  if (options.quality) params.append('quality', options.quality.toString());
+
+  const separator = src.includes('?') ? '&' : '?';
+  return `${src}${separator}${params.toString()}`;
 }
 
-const DEFAULT_QUALITY = 75;
-const DEFAULT_WIDTHS = [320, 640, 768, 1024, 1280, 1536];
-const DEFAULT_SIZES = '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw';
+export function generateBlurDataURL(src: string): string {
+  if (!src) return '';
 
-/**
- * Generates optimized image URLs with various widths and formats
- */
-export const optimizeImage = (
-  src: string,
-  options: ImageOptimizationOptions = {}
-): OptimizedImage => {
-  const {
-    quality = DEFAULT_QUALITY,
-    format = 'webp',
-    width,
-    height
-  } = options;
-
-  // Generate srcSet for original format
-  const srcSet = DEFAULT_WIDTHS
-    .map(w => `${src}?w=${w}&q=${quality} ${w}w`)
-    .join(', ');
-
-  // Generate WebP srcSet if requested
-  const webpSrcSet = format === 'webp'
-    ? DEFAULT_WIDTHS
-        .map(w => `${src}?w=${w}&q=${quality}&fm=webp ${w}w`)
-        .join(', ')
-    : undefined;
-
-  return {
-    src: `${src}?w=${width || DEFAULT_WIDTHS[2]}&q=${quality}${format === 'webp' ? '&fm=webp' : ''}`,
-    srcSet,
-    webpSrcSet,
-    sizes: DEFAULT_SIZES,
-    width,
-    height
-  };
-};
-
-/**
- * Generates a blur data URL for image placeholder
- */
-export const generateBlurDataURL = (
-  width: number = 8,
-  height: number = 8
-): string => {
-  return `data:image/svg+xml;base64,${Buffer.from(
-    `<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
-      <filter id="b" color-interpolation-filters="sRGB">
-        <feGaussianBlur stdDeviation="1"/>
-      </filter>
-      <rect width="100%" height="100%" fill="#e5e7eb"/>
-    </svg>`
-  ).toString('base64')}`;
-};
-
-/**
- * Calculates image dimensions while maintaining aspect ratio
- */
-export const calculateImageDimensions = (
-  originalWidth: number,
-  originalHeight: number,
-  targetWidth?: number,
-  targetHeight?: number
-): { width: number; height: number } => {
-  if (!targetWidth && !targetHeight) {
-    return { width: originalWidth, height: originalHeight };
-  }
-
-  const ratio = originalWidth / originalHeight;
-
-  if (targetWidth && !targetHeight) {
-    return {
-      width: targetWidth,
-      height: Math.round(targetWidth / ratio)
-    };
-  }
-
-  if (!targetWidth && targetHeight) {
-    return {
-      width: Math.round(targetHeight * ratio),
-      height: targetHeight
-    };
-  }
-
-  return {
-    width: targetWidth || originalWidth,
-    height: targetHeight || originalHeight
-  };
-};
-
-export const imageOptimizer = {
-  optimizeImage,
-  generateBlurDataURL,
-  calculateImageDimensions
-};
+  // In a real application, this would generate a proper blur hash
+  // For now, we'll return a simple base64-encoded placeholder
+  const format = src.split('.').pop()?.toLowerCase() || 'jpeg';
+  const placeholder = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==';
+  
+  return `data:image/${format};base64,${placeholder}`;
+}

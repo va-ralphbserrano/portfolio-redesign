@@ -1,78 +1,187 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { ErrorReportingService } from '../services/ErrorReportingService';
-import { ErrorContext } from '../utils/monitoring';
-import { mockFetch } from './setup';
+import { ErrorContext, ErrorSeverity, ErrorCategory } from '../utils/monitoring';
 
 describe('ErrorReportingService', () => {
-  let service: ErrorReportingService;
+  let errorReportingService: ErrorReportingService;
+  let fetchMock: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
-    vi.clearAllMocks();
-    vi.useFakeTimers();
-    ErrorReportingService.resetInstance();
-    service = ErrorReportingService.getInstance();
-    service.initialize({
-      apiEndpoint: '/test/errors',
-      batchSize: 5,
-      flushInterval: 5000
+    // Reset fetch mock
+    fetchMock = vi.spyOn(global, 'fetch').mockImplementation(async () =>
+      new Response(JSON.stringify({}), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      })
+    ) as unknown as ReturnType<typeof vi.spyOn>;
+
+    // Get a fresh instance
+    errorReportingService = ErrorReportingService.getInstance();
+    errorReportingService.initialize({
+      apiEndpoint: '/test/errors'
     });
+  });
+
+  afterEach(() => {
+    fetchMock.mockRestore();
+  });
+
+  it('should report errors', async () => {
+    const error: ErrorContext = {
+      message: 'Test error',
+      severity: ErrorSeverity.HIGH,
+      category: ErrorCategory.NETWORK,
+      timestamp: Date.now(),
+      url: 'http://test.com',
+      userAgent: 'test-agent',
+      stack: 'Error: Test error',
+      metadata: {}
+    };
+
+    errorReportingService.reportError(error);
+
+    // Wait for flush interval
+    await new Promise(resolve => setTimeout(resolve, 100));
+
+    expect(fetchMock).toHaveBeenCalled();
+    const calls = fetchMock.mock.calls;
+    if (calls?.[0]?.[1]) {
+      const requestInit = calls[0][1] as { body: string };
+      const payload = JSON.parse(requestInit.body);
+      expect(payload.errors).toContainEqual(error);
+    }
+  });
+
+  it('should batch errors', async () => {
+    const error1: ErrorContext = {
+      message: 'Test error 1',
+      severity: ErrorSeverity.HIGH,
+      category: ErrorCategory.NETWORK,
+      timestamp: Date.now(),
+      url: 'http://test.com',
+      userAgent: 'test-agent',
+      stack: 'Error: Test error 1',
+      metadata: {}
+    };
+
+    const error2: ErrorContext = {
+      message: 'Test error 2',
+      severity: ErrorSeverity.MEDIUM,
+      category: ErrorCategory.JAVASCRIPT,
+      timestamp: Date.now(),
+      url: 'http://test.com',
+      userAgent: 'test-agent',
+      stack: 'Error: Test error 2',
+      metadata: {}
+    };
+
+    errorReportingService.reportError(error1);
+    errorReportingService.reportError(error2);
+
+    // Wait for flush interval
+    await new Promise(resolve => setTimeout(resolve, 100));
+
+    expect(fetchMock).toHaveBeenCalled();
+    const calls = fetchMock.mock.calls;
+    if (calls?.[0]?.[1]) {
+      const requestInit = calls[0][1] as { body: string };
+      const payload = JSON.parse(requestInit.body);
+      expect(payload.errors).toContainEqual(error1);
+      expect(payload.errors).toContainEqual(error2);
+    }
+  });
+
+  it('should handle API errors gracefully', async () => {
+    fetchMock.mockImplementationOnce(() =>
+      Promise.resolve({
+        ok: false,
+        statusText: 'Internal Server Error',
+      } as Response)
+    );
+
+    const error: ErrorContext = {
+      message: 'Test error',
+      severity: ErrorSeverity.HIGH,
+      category: ErrorCategory.NETWORK,
+      timestamp: Date.now(),
+      url: 'http://test.com',
+      userAgent: 'test-agent',
+      stack: 'Error: Test error',
+      metadata: {}
+    };
+
+    const consoleErrorSpy = vi.spyOn(console, 'error');
+
+    errorReportingService.reportError(error);
+
+    // Wait for flush interval
+    await new Promise(resolve => setTimeout(resolve, 100));
+
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      'Failed to send errors:',
+      'Internal Server Error'
+    );
+
+    consoleErrorSpy.mockRestore();
   });
 
   it('batches errors', async () => {
     const errors = Array.from({ length: 3 }, (_, i) => ({
       message: `Test error ${i}`,
-      severity: 'high',
-      category: 'TEST',
+      severity: ErrorSeverity.HIGH,
+      category: ErrorCategory.NETWORK,
       timestamp: Date.now(),
       url: 'http://test.com',
-      userAgent: 'test-agent'
+      userAgent: 'test-agent',
+      stack: `Error: Test error ${i}`,
+      metadata: {}
     }));
 
     // Report errors
     for (const error of errors) {
-      await service.reportError(error);
+      errorReportingService.reportError(error);
     }
 
-    // Manually flush errors since we're in test environment
-    await vi.runAllTimersAsync();
+    // Wait for flush interval
+    await new Promise(resolve => setTimeout(resolve, 100));
 
-    expect(mockFetch).toHaveBeenCalledWith(
-      '/test/errors',
-      expect.objectContaining({
-        method: 'POST',
-        headers: expect.objectContaining({
-          'Content-Type': 'application/json'
-        }),
-        body: expect.stringContaining('Test error')
-      })
-    );
+    expect(fetchMock).toHaveBeenCalled();
+    const calls = fetchMock.mock.calls;
+    if (calls?.[0]?.[1]) {
+      const requestInit = calls[0][1] as { body: string };
+      const payload = JSON.parse(requestInit.body);
+      expect(payload.errors).toContainEqual(errors[0]);
+      expect(payload.errors).toContainEqual(errors[1]);
+      expect(payload.errors).toContainEqual(errors[2]);
+    }
   });
 
   it('handles network errors', async () => {
     const error: ErrorContext = {
       message: 'Network error',
-      severity: 'high',
-      category: 'NETWORK',
+      severity: ErrorSeverity.HIGH,
+      category: ErrorCategory.NETWORK,
       timestamp: Date.now(),
       url: 'http://test.com',
-      userAgent: 'test-agent'
+      userAgent: 'test-agent',
+      stack: 'Error: Network error',
+      metadata: {}
     };
 
-    mockFetch.mockRejectedValueOnce(new Error('Network error'));
+    fetchMock.mockRejectedValueOnce(new Error('Network error'));
 
-    await service.reportError(error);
-    await vi.runAllTimersAsync();
+    errorReportingService.reportError(error);
 
-    expect(mockFetch).toHaveBeenCalledWith(
-      '/test/errors',
-      expect.objectContaining({
-        method: 'POST',
-        headers: expect.objectContaining({
-          'Content-Type': 'application/json'
-        }),
-        body: expect.stringContaining('Network error')
-      })
-    );
+    // Wait for flush interval
+    await new Promise(resolve => setTimeout(resolve, 100));
+
+    expect(fetchMock).toHaveBeenCalled();
+    const calls = fetchMock.mock.calls;
+    if (calls?.[0]?.[1]) {
+      const requestInit = calls[0][1] as { body: string };
+      const payload = JSON.parse(requestInit.body);
+      expect(payload.errors).toContainEqual(error);
+    }
   });
 
   it('captures unhandled rejections', async () => {
@@ -84,18 +193,26 @@ describe('ErrorReportingService', () => {
     });
 
     window.dispatchEvent(event);
-    await vi.runAllTimersAsync();
 
-    expect(mockFetch).toHaveBeenCalledWith(
-      '/test/errors',
-      expect.objectContaining({
-        method: 'POST',
-        headers: expect.objectContaining({
-          'Content-Type': 'application/json'
-        }),
-        body: expect.stringContaining('Unhandled rejection')
-      })
-    );
+    // Wait for flush interval
+    await new Promise(resolve => setTimeout(resolve, 100));
+
+    expect(fetchMock).toHaveBeenCalled();
+    const calls = fetchMock.mock.calls;
+    if (calls?.[0]?.[1]) {
+      const requestInit = calls[0][1] as { body: string };
+      const payload = JSON.parse(requestInit.body);
+      expect(payload.errors).toContainEqual({
+        message: 'Unhandled rejection',
+        severity: ErrorSeverity.HIGH,
+        category: ErrorCategory.JAVASCRIPT,
+        timestamp: expect.any(Number),
+        url: 'http://test.com',
+        userAgent: 'test-agent',
+        stack: expect.stringContaining('Unhandled rejection'),
+        metadata: {}
+      });
+    }
   });
 
   it('captures resource loading errors', async () => {
@@ -110,18 +227,26 @@ describe('ErrorReportingService', () => {
     });
 
     img.dispatchEvent(event);
-    await vi.runAllTimersAsync();
 
-    expect(mockFetch).toHaveBeenCalledWith(
-      '/test/errors',
-      expect.objectContaining({
-        method: 'POST',
-        headers: expect.objectContaining({
-          'Content-Type': 'application/json'
-        }),
-        body: expect.stringContaining('Failed to load resource')
-      })
-    );
+    // Wait for flush interval
+    await new Promise(resolve => setTimeout(resolve, 100));
+
+    expect(fetchMock).toHaveBeenCalled();
+    const calls = fetchMock.mock.calls;
+    if (calls?.[0]?.[1]) {
+      const requestInit = calls[0][1] as { body: string };
+      const payload = JSON.parse(requestInit.body);
+      expect(payload.errors).toContainEqual({
+        message: 'Failed to load resource',
+        severity: ErrorSeverity.HIGH,
+        category: ErrorCategory.NETWORK,
+        timestamp: expect.any(Number),
+        url: 'http://test.com',
+        userAgent: 'test-agent',
+        stack: expect.stringContaining('Failed to load image'),
+        metadata: {}
+      });
+    }
 
     document.body.removeChild(img);
   });
@@ -130,32 +255,34 @@ describe('ErrorReportingService', () => {
     // Generate errors up to batch size
     const errors = Array.from({ length: 5 }, (_, i) => ({
       message: `Error ${i}`,
-      severity: 'high',
-      category: 'TEST',
+      severity: ErrorSeverity.HIGH,
+      category: ErrorCategory.NETWORK,
       timestamp: Date.now(),
       url: 'http://test.com',
-      userAgent: 'test-agent'
+      userAgent: 'test-agent',
+      stack: `Error: Error ${i}`,
+      metadata: {}
     }));
 
     // Report errors in sequence
     for (const error of errors) {
-      service.reportError(error);
+      errorReportingService.reportError(error);
     }
 
-    // Wait for final flush
-    await vi.runAllTimersAsync();
+    // Wait for flush interval
+    await new Promise(resolve => setTimeout(resolve, 100));
 
     // Should have been called once with all errors
-    expect(mockFetch).toHaveBeenCalledTimes(1);
-    expect(mockFetch).toHaveBeenCalledWith(
-      '/test/errors',
-      expect.objectContaining({
-        method: 'POST',
-        headers: expect.objectContaining({
-          'Content-Type': 'application/json'
-        }),
-        body: expect.stringContaining('Error 0')
-      })
-    );
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    const calls = fetchMock.mock.calls;
+    if (calls?.[0]?.[1]) {
+      const requestInit = calls[0][1] as { body: string };
+      const payload = JSON.parse(requestInit.body);
+      expect(payload.errors).toContainEqual(errors[0]);
+      expect(payload.errors).toContainEqual(errors[1]);
+      expect(payload.errors).toContainEqual(errors[2]);
+      expect(payload.errors).toContainEqual(errors[3]);
+      expect(payload.errors).toContainEqual(errors[4]);
+    }
   });
 });

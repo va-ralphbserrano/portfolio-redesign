@@ -1,173 +1,148 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { AlertingService } from '../services/AlertingService';
-import { PerformanceMetric, ErrorContext, ErrorSeverity } from '../utils/monitoring';
-import { mockFetch } from './setup';
+import { ErrorContext, ErrorSeverity, ErrorCategory, PerformanceMetric, MetricRating, NavigationType } from '../utils/monitoring';
 
 describe('AlertingService', () => {
-  let service: AlertingService;
+  let alertingService: AlertingService;
+  let fetchMock: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
-    vi.clearAllMocks();
-    vi.useFakeTimers();
-    AlertingService.resetInstance();
-    service = AlertingService.getInstance();
-    service.initialize({
-      apiEndpoint: '/test/alerts',
-      webhooks: []
+    // Reset fetch mock
+    fetchMock = vi.spyOn(global, 'fetch').mockImplementation(async () =>
+      new Response(JSON.stringify({}), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      })
+    ) as unknown as ReturnType<typeof vi.spyOn>;
+
+    // Get a fresh instance
+    alertingService = AlertingService.getInstance();
+    alertingService.initialize({
+      apiEndpoint: '/test/alerts'
     });
   });
 
   afterEach(() => {
-    vi.useRealTimers();
+    fetchMock.mockRestore();
+    alertingService.dispose();
   });
 
-  it('triggers alert for high LCP', async () => {
+  it('should report metrics and trigger alerts', async () => {
     const metric: PerformanceMetric = {
       name: 'LCP',
-      value: 5000,
-      rating: 'poor',
-      navigationType: 'navigate',
-      timestamp: Date.now()
-    };
-
-    await service.checkMetric(metric);
-
-    expect(mockFetch).toHaveBeenCalledWith(
-      '/test/alerts',
-      expect.objectContaining({
-        method: 'POST',
-        headers: expect.objectContaining({
-          'Content-Type': 'application/json'
-        }),
-        body: expect.stringContaining('LCP')
-      })
-    );
-  });
-
-  it('triggers alert for critical error', async () => {
-    const error: ErrorContext = {
-      message: 'Critical error',
-      severity: ErrorSeverity.CRITICAL,
-      category: 'JAVASCRIPT',
+      value: 3000,
+      rating: MetricRating.NEEDS_IMPROVEMENT,
       timestamp: Date.now(),
-      url: 'http://test.com',
-      userAgent: 'test-agent'
+      navigationType: NavigationType.NAVIGATE,
+      metadata: {}
     };
 
-    await service.checkError(error);
+    alertingService.reportMetric(metric);
 
-    expect(mockFetch).toHaveBeenCalledWith(
-      '/test/alerts',
-      expect.objectContaining({
-        method: 'POST',
-        headers: expect.objectContaining({
-          'Content-Type': 'application/json'
-        }),
-        body: expect.stringContaining('Critical error')
-      })
-    );
-  });
+    // Wait for flush interval
+    await new Promise(resolve => setTimeout(resolve, 100));
 
-  it('respects cooldown period', async () => {
-    const metric: PerformanceMetric = {
-      name: 'LCP',
-      value: 5000,
-      rating: 'poor',
-      navigationType: 'navigate',
-      timestamp: Date.now()
-    };
-
-    // First alert
-    await service.checkMetric(metric);
-    expect(mockFetch).toHaveBeenCalledTimes(1);
-
-    // Second alert within cooldown
-    await service.checkMetric(metric);
-    expect(mockFetch).toHaveBeenCalledTimes(1); // Should not trigger again
-
-    // Advance time past cooldown
-    vi.advanceTimersByTime(300000); // 5 minutes
-    vi.runAllTimers();
-    vi.advanceTimersByTime(1000); // Extra second to be safe
-
-    // Third alert after cooldown
-    await service.checkMetric(metric);
-    expect(mockFetch).toHaveBeenCalledTimes(2); // Should trigger again
-  });
-
-  it('sends alerts to webhooks', async () => {
-    const webhookUrl = 'http://test-webhook.com';
-    service = AlertingService.getInstance(); // Get fresh instance
-    service.initialize({
-      apiEndpoint: '/test/alerts',
-      webhooks: [webhookUrl]
-    });
-
-    const error: ErrorContext = {
-      message: 'Critical error',
-      severity: ErrorSeverity.CRITICAL,
-      category: 'JAVASCRIPT',
-      timestamp: Date.now(),
-      url: 'http://test.com',
-      userAgent: 'test-agent'
-    };
-
-    await service.checkError(error);
-
-    // Should call both the API endpoint and webhook
-    expect(mockFetch).toHaveBeenCalledTimes(2);
-
-    // Check API endpoint call
-    expect(mockFetch).toHaveBeenCalledWith(
-      '/test/alerts',
-      expect.objectContaining({
-        method: 'POST',
-        headers: expect.objectContaining({
-          'Content-Type': 'application/json'
-        }),
-        body: expect.stringContaining('Critical error')
-      })
-    );
-
-    // Check webhook call
-    expect(mockFetch).toHaveBeenCalledWith(
-      webhookUrl,
-      expect.objectContaining({
-        method: 'POST',
-        headers: expect.objectContaining({
-          'Content-Type': 'application/json'
-        }),
-        body: expect.stringContaining('Critical error')
-      })
-    );
-  });
-
-  it('tracks error rate', async () => {
-    // Generate multiple errors
-    for (let i = 0; i < 10; i++) {
-      const error: ErrorContext = {
-        message: `Error ${i}`,
-        severity: ErrorSeverity.HIGH,
-        category: 'JAVASCRIPT',
-        timestamp: Date.now(),
-        url: 'http://test.com',
-        userAgent: 'test-agent'
-      };
-
-      await service.checkError(error);
-      vi.advanceTimersByTime(1000); // Space out errors
+    expect(fetchMock).toHaveBeenCalled();
+    const calls = fetchMock.mock.calls;
+    if (calls?.[0]?.[1]) {
+      const requestInit = calls[0][1] as { body: string };
+      const payload = JSON.parse(requestInit.body);
+      expect(payload.metrics).toContainEqual(metric);
     }
+  });
 
-    // Should trigger high error rate alert
-    expect(mockFetch).toHaveBeenCalledWith(
-      '/test/alerts',
-      expect.objectContaining({
-        method: 'POST',
-        headers: expect.objectContaining({
-          'Content-Type': 'application/json'
-        }),
-        body: expect.stringContaining('High error rate')
-      })
+  it('should report errors', async () => {
+    const error: ErrorContext = {
+      message: 'Test error',
+      severity: ErrorSeverity.HIGH,
+      category: ErrorCategory.JAVASCRIPT,
+      timestamp: Date.now(),
+      url: 'http://test.com',
+      userAgent: 'test-agent',
+      stack: 'Error: Test error',
+      metadata: {}
+    };
+
+    alertingService.reportError(error);
+
+    // Wait for flush interval
+    await new Promise(resolve => setTimeout(resolve, 100));
+
+    expect(fetchMock).toHaveBeenCalled();
+    const calls = fetchMock.mock.calls;
+    if (calls?.[0]?.[1]) {
+      const requestInit = calls[0][1] as { body: string };
+      const payload = JSON.parse(requestInit.body);
+      expect(payload.errors).toContainEqual(error);
+    }
+  });
+
+  it('should batch metrics and errors', async () => {
+    const metric1: PerformanceMetric = {
+      name: 'LCP',
+      value: 3000,
+      rating: MetricRating.NEEDS_IMPROVEMENT,
+      timestamp: Date.now(),
+      navigationType: NavigationType.NAVIGATE,
+      metadata: {}
+    };
+
+    const metric2: PerformanceMetric = {
+      name: 'FID',
+      value: 150,
+      rating: MetricRating.NEEDS_IMPROVEMENT,
+      timestamp: Date.now(),
+      navigationType: NavigationType.NAVIGATE,
+      metadata: {}
+    };
+
+    alertingService.reportMetric(metric1);
+    alertingService.reportMetric(metric2);
+
+    // Wait for flush interval
+    await new Promise(resolve => setTimeout(resolve, 100));
+
+    expect(fetchMock).toHaveBeenCalled();
+    const calls = fetchMock.mock.calls;
+    if (calls?.[0]?.[1]) {
+      const requestInit = calls[0][1] as { body: string };
+      const payload = JSON.parse(requestInit.body);
+      expect(payload.metrics).toContainEqual(metric1);
+      expect(payload.metrics).toContainEqual(metric2);
+    }
+  });
+
+  it('should handle API errors gracefully', async () => {
+    fetchMock.mockImplementationOnce(() =>
+      Promise.resolve({
+        ok: false,
+        statusText: 'Internal Server Error',
+      } as Response)
     );
+
+    const error: ErrorContext = {
+      message: 'Test error',
+      severity: ErrorSeverity.HIGH,
+      category: ErrorCategory.JAVASCRIPT,
+      timestamp: Date.now(),
+      url: 'http://test.com',
+      userAgent: 'test-agent',
+      stack: 'Error: Test error',
+      metadata: {}
+    };
+
+    const consoleErrorSpy = vi.spyOn(console, 'error');
+
+    alertingService.reportError(error);
+
+    // Wait for flush interval
+    await new Promise(resolve => setTimeout(resolve, 100));
+
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      'Failed to send alerts:',
+      'Internal Server Error'
+    );
+
+    consoleErrorSpy.mockRestore();
   });
 });

@@ -20,20 +20,61 @@ global.performance = {
 } as any;
 
 // Mock ResizeObserver
-class MockResizeObserver {
-  observe() {}
-  unobserve() {}
-  disconnect() {}
+class MockResizeObserver implements ResizeObserver {
+  constructor(callback: ResizeObserverCallback) {
+    void callback;
+  }
+
+  observe(): void {}
+  unobserve(): void {}
+  disconnect(): void {}
 }
-global.ResizeObserver = MockResizeObserver;
+
+Object.defineProperty(window, 'ResizeObserver', {
+  writable: true,
+  configurable: true,
+  value: MockResizeObserver
+});
 
 // Mock IntersectionObserver
-class MockIntersectionObserver {
-  observe() {}
-  unobserve() {}
-  disconnect() {}
+class MockIntersectionObserver implements IntersectionObserver {
+  readonly root: Element | null = null;
+  readonly rootMargin: string = '';
+  readonly thresholds: ReadonlyArray<number> = [];
+
+  constructor(callback: IntersectionObserverCallback) {
+    void callback;
+  }
+
+  observe(): void {}
+  unobserve(): void {}
+  disconnect(): void {}
+  takeRecords(): IntersectionObserverEntry[] { return []; }
 }
-global.IntersectionObserver = MockIntersectionObserver;
+
+Object.defineProperty(window, 'IntersectionObserver', {
+  writable: true,
+  configurable: true,
+  value: MockIntersectionObserver
+});
+
+// Mock PromiseRejectionEvent
+class MockPromiseRejectionEvent extends Event implements PromiseRejectionEvent {
+  readonly promise: Promise<any>;
+  readonly reason: any;
+
+  constructor(type: string, init: PromiseRejectionEventInit) {
+    super(type, { cancelable: true });
+    this.promise = init.promise;
+    this.reason = init.reason;
+  }
+}
+
+Object.defineProperty(window, 'PromiseRejectionEvent', {
+  writable: true,
+  configurable: true,
+  value: MockPromiseRejectionEvent
+});
 
 // Mock matchMedia
 global.matchMedia = vi.fn().mockImplementation(query => ({
@@ -57,19 +98,6 @@ global.console = {
   debug: vi.fn()
 };
 
-// Mock PromiseRejectionEvent
-class MockPromiseRejectionEvent extends Event {
-  promise: Promise<any>;
-  reason: any;
-
-  constructor(type: string, init: { promise: Promise<any>, reason: any, cancelable?: boolean }) {
-    super(type, { cancelable: init.cancelable });
-    this.promise = init.promise;
-    this.reason = init.reason;
-  }
-}
-global.PromiseRejectionEvent = MockPromiseRejectionEvent;
-
 // Mock Web Vitals
 vi.mock('web-vitals', () => ({
   onLCP: vi.fn(),
@@ -79,11 +107,41 @@ vi.mock('web-vitals', () => ({
   onFCP: vi.fn()
 }));
 
+// Mock window.scrollTo
+window.scrollTo = vi.fn().mockImplementation((x: number, y: number) => {
+  window.pageXOffset = x;
+  window.pageYOffset = y;
+});
+
+// Mock Framer Motion
+vi.mock('framer-motion', () => ({
+  motion: {
+    div: 'div',
+    nav: 'nav',
+    button: 'button'
+  },
+  AnimatePresence: ({ children }: { children: React.ReactNode }) => children,
+}));
+
+// Mock window.getComputedStyle
+global.getComputedStyle = vi.fn().mockImplementation(() => ({
+  getPropertyValue: vi.fn(),
+}));
+
 // Reset mocks before each test
 beforeEach(() => {
+  vi.clearAllMocks();
   mockFetch.mockReset();
   mockFetch.mockImplementation(() => Promise.resolve({
     ok: true,
     json: () => Promise.resolve({}),
   }));
+  document.body.innerHTML = '';
+  document.body.style.overflow = '';
+});
+
+// Clean up after each test
+afterEach(() => {
+  document.body.innerHTML = '';
+  document.body.style.overflow = '';
 });

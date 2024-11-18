@@ -1,21 +1,26 @@
-import { ErrorContext } from '../utils/monitoring';
+import { ErrorContext, ErrorSeverity, ErrorCategory, createErrorContext } from '../utils/monitoring';
+
+interface ErrorReportingConfig {
+  apiEndpoint: string;
+  batchSize?: number;
+  flushInterval?: number;
+}
 
 /**
  * Production error reporting service that sends errors to a backend API
  */
-class ErrorReportingService {
+export class ErrorReportingService {
   private static instance: ErrorReportingService;
-  private readonly apiEndpoint: string;
-  private readonly batchSize: number;
-  private readonly flushInterval: number;
+  private apiEndpoint: string;
+  private batchSize: number;
+  private flushInterval: number;
   private errorBuffer: ErrorContext[] = [];
-  private isInitialized = false;
-  private flushTimeout: NodeJS.Timeout | null = null;
+  private flushTimer: NodeJS.Timeout | null = null;
 
   private constructor() {
-    this.apiEndpoint = process.env.ERROR_REPORTING_API || '/api/errors';
-    this.batchSize = Number(process.env.ERROR_BATCH_SIZE) || 10;
-    this.flushInterval = Number(process.env.ERROR_FLUSH_INTERVAL) || 5000;
+    this.apiEndpoint = '';
+    this.batchSize = 10;
+    this.flushInterval = 5000;
   }
 
   public static getInstance(): ErrorReportingService {
@@ -25,180 +30,154 @@ class ErrorReportingService {
     return ErrorReportingService.instance;
   }
 
-  // For testing purposes only
-  public static resetInstance(): void {
-    if (ErrorReportingService.instance?.flushTimeout) {
-      clearTimeout(ErrorReportingService.instance.flushTimeout);
-      ErrorReportingService.instance.flushTimeout = null;
-    }
-    ErrorReportingService.instance = new ErrorReportingService();
+  public static reportError(error: Error): void {
+    console.error(`[Error] ${error.message}`);
+    // In a real application, this would send the error to a monitoring service
   }
 
-  public initialize(config: {
-    apiEndpoint?: string;
-    batchSize?: number;
-    flushInterval?: number;
-  } = {}): void {
-    if (this.isInitialized) {
-      console.warn('ErrorReportingService is already initialized');
-      return;
-    }
-
-    if (config.apiEndpoint) this.apiEndpoint = config.apiEndpoint;
-    if (config.batchSize) this.batchSize = config.batchSize;
-    if (config.flushInterval) this.flushInterval = config.flushInterval;
-
+  public initialize(config: ErrorReportingConfig): void {
+    this.apiEndpoint = config.apiEndpoint;
+    if (config.batchSize !== undefined) this.batchSize = config.batchSize;
+    if (config.flushInterval !== undefined) this.flushInterval = config.flushInterval;
     this.setupErrorHandling();
-    this.isInitialized = true;
+    this.startBufferFlush();
   }
 
   private setupErrorHandling(): void {
     if (typeof window === 'undefined') return;
 
-    // Handle unhandled promise rejections
-    window.addEventListener('unhandledrejection', (event: PromiseRejectionEvent) => {
-      this.reportError({
-        message: event.reason?.message || 'Unhandled promise rejection',
-        severity: 'critical',
-        category: 'JAVASCRIPT',
-        timestamp: Date.now(),
-        url: window.location.href,
-        userAgent: navigator.userAgent,
-        stack: event.reason?.stack
-      });
-    });
-
     // Handle runtime errors
-    window.addEventListener('error', (event: ErrorEvent) => {
-      // Ignore ResizeObserver errors
-      if (event.message?.includes('ResizeObserver')) {
-        return;
-      }
+    window.addEventListener('error', this.handleError);
 
-      this.reportError({
-        message: event.message || 'Runtime error',
-        severity: 'high',
-        category: 'JAVASCRIPT',
-        timestamp: Date.now(),
-        url: window.location.href,
-        userAgent: navigator.userAgent,
-        stack: event.error?.stack,
-        filename: event.filename,
-        lineno: event.lineno,
-        colno: event.colno
-      });
-    });
+    // Handle unhandled promise rejections
+    window.addEventListener('unhandledrejection', this.handleUnhandledRejection);
 
     // Handle resource loading errors
-    document.addEventListener('error', (event: ErrorEvent) => {
-      const target = event.target as HTMLElement;
-      if (!target || !('src' in target)) return;
-
-      this.reportError({
-        message: `Failed to load resource: ${target.tagName.toLowerCase()}`,
-        severity: 'medium',
-        category: 'RESOURCE',
-        timestamp: Date.now(),
-        url: window.location.href,
-        userAgent: navigator.userAgent,
-        resourceUrl: (target as HTMLImageElement | HTMLScriptElement).src
-      });
-    }, true);
+    document.addEventListener('error', this.handleResourceError, true);
 
     // Handle network errors
     const originalFetch = window.fetch;
-    window.fetch = async (input: RequestInfo, init?: RequestInit) => {
+    window.fetch = async (input: URL | RequestInfo, init?: RequestInit): Promise<Response> => {
       try {
         const response = await originalFetch(input, init);
         if (!response.ok) {
-          this.reportError({
-            message: `HTTP ${response.status}: ${response.statusText}`,
-            severity: response.status >= 500 ? 'high' : 'medium',
-            category: 'NETWORK',
-            timestamp: Date.now(),
-            url: window.location.href,
-            userAgent: navigator.userAgent,
-            endpoint: typeof input === 'string' ? input : input.url,
-            status: response.status
-          });
+          this.reportError(createErrorContext(
+            `HTTP ${response.status}: ${response.statusText}`,
+            response.status >= 500 ? ErrorSeverity.HIGH : ErrorSeverity.MEDIUM,
+            ErrorCategory.NETWORK,
+            `${response.status} ${response.statusText}`,
+            {
+              endpoint: typeof input === 'string' ? input : input instanceof URL ? input.toString() : input.url,
+              status: response.status
+            }
+          ));
         }
         return response;
       } catch (error) {
-        this.reportError({
-          message: error.message || 'Network request failed',
-          severity: 'high',
-          category: 'NETWORK',
-          timestamp: Date.now(),
-          url: window.location.href,
-          userAgent: navigator.userAgent,
-          endpoint: typeof input === 'string' ? input : input.url
-        });
+        const err = error as Error;
+        this.reportError(createErrorContext(
+          err.message || 'Network request failed',
+          ErrorSeverity.HIGH,
+          ErrorCategory.NETWORK,
+          err.stack || new Error().stack || 'No stack trace available',
+          {
+            endpoint: typeof input === 'string' ? input : input instanceof URL ? input.toString() : input.url
+          }
+        ));
         throw error;
       }
     };
   }
 
-  public async reportError(error: ErrorContext): Promise<void> {
-    if (!this.isInitialized) {
-      console.warn('ErrorReportingService is not initialized');
-      return;
-    }
+  private handleError = (event: ErrorEvent): void => {
+    this.reportError(createErrorContext(
+      event.message,
+      ErrorSeverity.HIGH,
+      ErrorCategory.JAVASCRIPT,
+      event.error?.stack || new Error().stack || 'No stack trace available',
+      {
+        filename: event.filename,
+        lineno: event.lineno,
+        colno: event.colno
+      }
+    ));
+  };
 
-    // Add error to buffer
+  private handleUnhandledRejection = (event: PromiseRejectionEvent): void => {
+    this.reportError(createErrorContext(
+      event.reason?.message || 'Unhandled Promise Rejection',
+      ErrorSeverity.HIGH,
+      ErrorCategory.JAVASCRIPT,
+      event.reason?.stack || new Error().stack || 'No stack trace available',
+      {
+        type: 'unhandled-rejection'
+      }
+    ));
+  };
+
+  private handleResourceError = (event: ErrorEvent): void => {
+    if (event.target instanceof HTMLElement) {
+      this.reportError(createErrorContext(
+        'Failed to load resource',
+        ErrorSeverity.MEDIUM,
+        ErrorCategory.RESOURCE,
+        `${event.message}\nResource: ${(event.target as HTMLImageElement | HTMLScriptElement).src || (event.target as HTMLLinkElement).href}`,
+        {
+          resourceType: event.target.tagName.toLowerCase(),
+          source: (event.target as HTMLImageElement | HTMLScriptElement).src || (event.target as HTMLLinkElement).href
+        }
+      ));
+    }
+  };
+
+  public reportError(error: ErrorContext): void {
     this.errorBuffer.push(error);
-
-    // Check if we need to flush based on batch size
     if (this.errorBuffer.length >= this.batchSize) {
-      await this.flushErrors();
-      return;
+      void this.flushErrorBuffer();
     }
+  }
 
-    // Schedule next flush if not already scheduled
-    if (!this.flushTimeout) {
-      this.flushTimeout = setTimeout(async () => {
-        await this.flushErrors();
+  private async flushErrorBuffer(): Promise<void> {
+    if (this.errorBuffer.length === 0) return;
+
+    const errors = [...this.errorBuffer];
+    this.errorBuffer = [];
+
+    try {
+      const response = await fetch(this.apiEndpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ errors })
+      });
+
+      if (!response.ok) {
+        console.error('Failed to send errors:', response.statusText);
+        this.errorBuffer.push(...errors);
+      }
+    } catch (error) {
+      console.error('Failed to send errors:', error);
+      this.errorBuffer.push(...errors);
+    }
+  }
+
+  public startBufferFlush(): void {
+    if (this.flushTimer === null) {
+      this.flushTimer = setInterval(() => {
+        void this.flushErrorBuffer();
       }, this.flushInterval);
     }
   }
 
-  private async flushErrors(): Promise<void> {
-    if (this.errorBuffer.length === 0) return;
-
-    // Get current errors and clear buffer
-    const currentErrors = [...this.errorBuffer];
-    this.errorBuffer = [];
-
-    try {
-      // Clear any pending flush timeout
-      if (this.flushTimeout) {
-        clearTimeout(this.flushTimeout);
-        this.flushTimeout = null;
-      }
-
-      // Send errors in a single batch
-      await fetch(this.apiEndpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          errors: currentErrors,
-          timestamp: Date.now(),
-          environment: process.env.NODE_ENV || 'development'
-        })
-      });
-
-      // Log in development
-      if (process.env.NODE_ENV === 'development') {
-        console.warn('[Error Report]', currentErrors);
-      }
-    } catch (error) {
-      console.error('Failed to report errors:', error);
-      // Add errors back to buffer
-      this.errorBuffer.unshift(...currentErrors);
+  public stopBufferFlush(): void {
+    if (this.flushTimer !== null) {
+      clearInterval(this.flushTimer);
+      this.flushTimer = null;
     }
   }
 }
 
-export { ErrorReportingService };
 export const errorReportingService = ErrorReportingService.getInstance();
+
+export default ErrorReportingService;

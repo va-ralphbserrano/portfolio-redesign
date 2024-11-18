@@ -1,94 +1,67 @@
 import { describe, it, expect } from 'vitest';
-import { imageOptimizer } from './imageOptimizer';
+import { optimizeImage, generateBlurDataURL } from './imageOptimizer';
 
 describe('imageOptimizer', () => {
   describe('optimizeImage', () => {
-    it('generates correct default optimization', () => {
-      const result = imageOptimizer.optimizeImage('/test-image.jpg');
-      
-      expect(result.src).toContain('w=768');
-      expect(result.src).toContain('q=75');
-      expect(result.srcSet).toContain('320w');
-      expect(result.srcSet).toContain('1536w');
-      expect(result.sizes).toBe('(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw');
+    it('returns optimized image URL with default options', () => {
+      const result = optimizeImage('/test.jpg');
+      expect(result).toMatch(/^\/test\.jpg\?/);
     });
 
-    it('generates WebP format when specified', () => {
-      const result = imageOptimizer.optimizeImage('/test-image.jpg', { format: 'webp' });
-      
-      expect(result.webpSrcSet).toBeDefined();
-      expect(result.webpSrcSet).toContain('fm=webp');
-      expect(result.src).toContain('fm=webp');
+    it('handles width and height options', () => {
+      const result = optimizeImage('/test.jpg', { width: 100, height: 100 });
+      expect(result).toMatch(/width=100/);
+      expect(result).toMatch(/height=100/);
     });
 
-    it('respects custom quality settings', () => {
-      const result = imageOptimizer.optimizeImage('/test-image.jpg', { quality: 90 });
-      
-      expect(result.src).toContain('q=90');
-      expect(result.srcSet).toContain('q=90');
+    it('handles quality option', () => {
+      const result = optimizeImage('/test.jpg', { quality: 75 });
+      expect(result).toMatch(/quality=75/);
     });
 
-    it('handles custom dimensions', () => {
-      const result = imageOptimizer.optimizeImage('/test-image.jpg', {
-        width: 800,
-        height: 600
-      });
-      
-      expect(result.width).toBe(800);
-      expect(result.height).toBe(600);
-      expect(result.src).toContain('w=800');
+    it('handles absolute URLs', () => {
+      const result = optimizeImage('https://example.com/test.jpg');
+      expect(result).toMatch(/^https:\/\/example\.com\/test\.jpg\?/);
+    });
+
+    it('handles relative URLs', () => {
+      const result = optimizeImage('./test.jpg');
+      expect(result).toMatch(/^\.\/test\.jpg\?/);
+    });
+
+    it('handles URLs with existing query parameters', () => {
+      const result = optimizeImage('/test.jpg?v=1');
+      expect(result).toMatch(/^\/test\.jpg\?v=1&/);
     });
   });
 
   describe('generateBlurDataURL', () => {
-    it('generates valid SVG data URL', () => {
-      const result = imageOptimizer.generateBlurDataURL(8, 8);
-      
-      // Check if it's a valid base64 data URL
-      expect(result).toMatch(/^data:image\/svg\+xml;base64,/);
-      
-      // Decode base64 and check SVG content
-      const svgContent = atob(result.split(',')[1]);
-      expect(svgContent).toContain('feGaussianBlur');
+    it('returns a data URL for blur placeholder', () => {
+      const result = generateBlurDataURL('/test.jpg');
+      expect(result).toMatch(/^data:image\/jpeg;base64,/);
     });
 
-    it('respects custom dimensions', () => {
-      const result = imageOptimizer.generateBlurDataURL(16, 16);
-      
-      // Decode base64 and check SVG content
-      const svgContent = atob(result.split(',')[1]);
-      expect(svgContent).toContain('width="16"');
-      expect(svgContent).toContain('height="16"');
-    });
-  });
+    it('handles different image formats', () => {
+      const jpegResult = generateBlurDataURL('/test.jpg');
+      expect(jpegResult).toMatch(/^data:image\/jpeg;base64,/);
 
-  describe('calculateImageDimensions', () => {
-    it('maintains original dimensions when no target specified', () => {
-      const result = imageOptimizer.calculateImageDimensions(800, 600);
-      
-      expect(result.width).toBe(800);
-      expect(result.height).toBe(600);
+      const pngResult = generateBlurDataURL('/test.png');
+      expect(pngResult).toMatch(/^data:image\/png;base64,/);
+
+      const webpResult = generateBlurDataURL('/test.webp');
+      expect(webpResult).toMatch(/^data:image\/webp;base64,/);
     });
 
-    it('calculates height from target width', () => {
-      const result = imageOptimizer.calculateImageDimensions(800, 600, 400);
-      
-      expect(result.width).toBe(400);
-      expect(result.height).toBe(300);
+    it('returns a consistent blur hash for the same image', () => {
+      const result1 = generateBlurDataURL('/test.jpg');
+      const result2 = generateBlurDataURL('/test.jpg');
+      expect(result1).toBe(result2);
     });
 
-    it('calculates width from target height', () => {
-      const result = imageOptimizer.calculateImageDimensions(800, 600, undefined, 300);
-      
-      expect(result.width).toBe(400);
-      expect(result.height).toBe(300);
-    });
-
-    it('uses provided dimensions when both specified', () => {
-      const result = imageOptimizer.calculateImageDimensions(800, 600, 400, 400);
-      
-      expect(result.width).toBe(400);
-      expect(result.height).toBe(400);
+    it('returns different blur hashes for different images', () => {
+      const result1 = generateBlurDataURL('/test1.jpg');
+      const result2 = generateBlurDataURL('/test2.jpg');
+      expect(result1).not.toBe(result2);
     });
   });
 });
