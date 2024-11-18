@@ -1,137 +1,269 @@
 # Portfolio Website Architecture
 
-## Overview
+## System Overview
 
-The portfolio website is built using a modern React architecture with TypeScript, focusing on maintainability, performance, and type safety.
-
-## Core Technologies
-
-- **React 18.2.0**: Frontend library
-- **TypeScript**: Type safety and developer experience
-- **Vite**: Build tool and development server
-- **Tailwind CSS**: Utility-first styling
-- **Framer Motion**: Animations and transitions
+The portfolio website is built using a modern React architecture with TypeScript, emphasizing performance, accessibility, and user experience. The system follows a modular, component-based architecture with comprehensive monitoring and error handling capabilities.
 
 ## Project Structure
 
 ```
 src/
-├── components/           # React components
-│   ├── common/          # Shared components
-│   ├── layout/          # Layout components
-│   └── sections/        # Page sections
-├── context/             # React contexts
-├── data/               # Data and content
-├── hooks/              # Custom React hooks
-├── styles/             # Global styles
-├── types/              # TypeScript types
-└── utils/              # Utility functions
+├── components/
+│   ├── common/
+│   │   ├── ErrorBoundary/
+│   │   ├── Loading/
+│   │   ├── RouteWrapper/
+│   │   └── ...
+│   ├── layout/
+│   └── sections/
+│       ├── About/
+│       ├── Certificates/
+│       ├── Contact/
+│       ├── Hero/
+│       ├── Portfolio/
+│       └── Services/
+├── types/
+│   ├── component.ts
+│   ├── route.ts
+│   └── ...
+├── routes/
+│   └── index.ts
+└── ...
 ```
 
-## Key Components
+## Component Organization
 
-### Layout Components
-- `Layout`: Main layout wrapper
-- `AnimatedLayout`: Page transition wrapper
-- `Navbar`: Navigation component
-- `Footer`: Footer component
+Each section component follows a standardized structure:
 
-### Section Components
-- `Hero`: Landing section
-- `About`: About section
-- `Services`: Services section
-- `Portfolio`: Portfolio section
-- `Certificates`: Certificates section
-- `Contact`: Contact section
+```
+ComponentName/
+├── index.ts          # Exports
+├── types.ts          # Type definitions
+├── Component.tsx     # Main component
+├── components/       # Sub-components
+└── tests/           # Component tests
+```
 
-### Common Components
-- `Image`: Optimized image component
-- `ErrorBoundary`: Error handling
-- `Loading`: Loading states
-- `Container`: Layout container
+## Routing Architecture
+
+The routing system is built with React Router and includes:
+
+1. **Route Configuration**
+   - Centralized route definitions
+   - Type-safe route parameters
+   - Lazy loading support
+
+2. **Route Wrapper**
+   - Error boundaries
+   - Loading states
+   - Page transitions
+   - Suspense handling
+
+3. **Navigation Features**
+   - Smooth transitions
+   - Loading indicators
+   - Error recovery
+   - 404 handling
+
+4. **Performance Optimizations**
+   - Code splitting
+   - Lazy loading
+   - Route prefetching
+   - Transition animations
 
 ## Type System
 
-### Core Types
-- `WithClassName`: Base component props
-- `BaseAnimationProps`: Animation props
-- `FormState`: Form handling
-- `ProjectData`: Portfolio items
-- `Certificate`: Certificate items
+### Route Configuration
+```typescript
+// types/route.ts
+import { LazyExoticComponent } from 'react';
 
-### Type Safety
-- Strict TypeScript configuration
-- Comprehensive type definitions
-- Proper prop typing
-- Form field validation
+export interface RouteConfig {
+  path: string;
+  component: LazyExoticComponent<any>;
+}
+```
 
-## State Management
+### Component Types
+```typescript
+// types/component.ts
+export interface WithClassName {
+  className?: string;
+}
+```
 
-- React Context for theme
-- Local state with hooks
-- Form state management
-- Navigation state
+## Routing
 
-## Performance Optimizations
+Routes are configured using lazy loading for optimal performance:
 
-### Code Splitting
-- Route-based splitting
-- Component lazy loading
-- Dynamic imports
+```typescript
+// routes/index.ts
+const routes: RouteConfig[] = [
+  { 
+    path: '/about',
+    component: lazy(() => import('@/components/sections/About'))
+  },
+  // ...
+];
+```
 
-### Image Optimization
-- Responsive images
-- Lazy loading
-- Format optimization
-- Size optimization
+## Application Flow
 
-### Build Optimization
-- Chunk management
-- Tree shaking
+1. **Initialization**
+   - Application bootstraps from `main.tsx`
+   - Wraps the app with essential providers:
+     - `ErrorBoundary` for error handling
+     - `ThemeProvider` for dark/light mode
+     - `BrowserRouter` for routing
+   - Loads global styles (Tailwind, animations, Swiper)
+
+2. **Theme Management**
+   - Persists theme preference in localStorage
+   - Syncs with system preferences using `prefers-color-scheme`
+   - Provides theme context throughout the application
+   - Dynamically updates document root classes
+
+3. **Performance Monitoring**
+   - Comprehensive monitoring dashboard
+   - Services:
+     - `AlertingService`: Real-time alerts
+     - `ErrorReportingService`: Error tracking
+     - `MetricCollectionService`: Performance metrics
+     - `MonitoringService`: System monitoring
+
+## Core Components
+
+### Layout Structure
+- `Layout`: Main wrapper component
+  - Handles theme context
+  - Manages navigation state
+  - Controls layout structure
+
+### Navigation System
+- `Navbar`: Main navigation component
+  - Responsive design
+  - Theme toggle
+  - Active route highlighting
+  - Mobile menu handling
+
+### Page Sections
+1. **Hero (Home)**
+   - Landing page content
+   - Optimized image loading
+   - Animation sequences
+   - Call-to-action elements
+
+2. **Other Sections**
+   - Modular section components
+   - Consistent styling
+   - Performance optimized
+   - Accessibility compliant
+
+## Performance Features
+
+### Monitoring & Analytics
+- Real-time performance tracking
+- Error reporting system
+- Metric collection
+- Custom monitoring dashboard
+
+### Optimization Techniques
+- Image optimization
+- Code splitting
+- Route-based chunking
+- Performance metrics tracking
+
+## Custom Hooks
+
+- `useFocusTrap`: Manages focus for modals
+- `useFormValidation`: Form validation logic
+- `useLoading`: Loading state management
+- `useReducedMotion`: Accessibility feature
+- `useScrollTop`: Scroll position management
+
+## Service Layer
+
+### Core Services
+- **AlertingService**: Real-time system alerts
+- **ErrorReportingService**: Error tracking and reporting
+- **MetricCollectionService**: Performance metrics collection
+- **MonitoringService**: System monitoring orchestration
+
+### Features
+- Real-time monitoring
+- Error tracking
+- Performance metrics
+- System health checks
+
+## Development Tools
+
+### Testing Infrastructure
+- Located in `src/tests/setup.ts`
+- Comprehensive test environment configuration:
+  - Mock implementations for browser APIs
+  - Performance measurement mocks
+  - DOM cleanup utilities
+  - Animation mocks
+
+- Service Tests: `src/tests/`
+  - AlertingService tests
+  - ErrorReportingService tests
+  - Performance tests
+  - Monitoring tests
+
+- Component Tests: Co-located with components
+  - Unit tests
+  - Integration tests
+  - Accessibility tests
+
+- Vitest for test running
+- React Testing Library for component testing
+- JSDOM for browser environment
+- Coverage reporting:
+  - HTML reports
+  - JSON data
+  - Console summaries
+
+- Custom test helpers
+- Mock implementations
+- Type definitions
+- Test plugins
+
+### Build System
+- Vite for development and building
+- TypeScript compilation
 - Asset optimization
-- Cache management
+- Development tools integration
 
 ## Security Measures
 
-### Form Security
-- Input validation
-- Rate limiting
-- CSRF protection
+- Form validation
+- Error boundaries
+- Type safety
 - XSS prevention
+- CORS configuration
 
-### API Security
-- Request validation
-- Error handling
-- Rate limiting
-- Sanitization
+## Deployment
 
-## Testing Strategy
+- Automated builds
+- Asset optimization
+- Cache management
+- Performance monitoring
 
-### Unit Testing
-- Component testing
-- Hook testing
-- Utility testing
-- Type testing
+## Future Enhancements
 
-### Integration Testing
-- Form submission
-- Navigation
-- State management
-- API integration
+1. **Performance**
+   - Enhanced code splitting
+   - Advanced caching strategies
+   - Further image optimizations
 
-## Future Considerations
+2. **Monitoring**
+   - Extended metrics collection
+   - Advanced error tracking
+   - User behavior analytics
 
-1. Performance Monitoring
-   - Analytics integration
-   - Error tracking
-   - Performance metrics
-
-2. Enhanced Security
-   - Content security policy
-   - Advanced rate limiting
-   - Security headers
-
-3. Advanced Features
+3. **Features**
    - PWA support
    - Offline capabilities
    - Advanced animations
+   - Internationalization
