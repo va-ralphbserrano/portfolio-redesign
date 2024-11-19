@@ -2,6 +2,11 @@ import { ProjectCategory, CertificateCategory } from './types';
 
 export const projectCategories: ProjectCategory[] = [
   {
+    id: 'technical',
+    name: 'Technical Engineering',
+    description: 'AutoCAD designs and technical engineering projects'
+  },
+  {
     id: 'autocad',
     name: 'AutoCAD',
     description: 'Mechanical design and technical drawings'

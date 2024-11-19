@@ -13,7 +13,62 @@ import {
   diceRollerImg
 } from './images';
 
+// Technical Engineering Projects
+const technicalProjects: Project[] = [
+  {
+    id: 'tech-1',
+    title: 'Kitchen Equipment Design',
+    category: 'technical',
+    image: '/images/projects/Kitchen Hood Final.png',
+    thumbnail: '/images/projects/Kitchen Hood Final.png',
+    description: 'Professional kitchen equipment designs including hoods, racks, and dishwashing systems',
+    technologies: ['AutoCAD', 'Mechanical Design', 'Kitchen Equipment'],
+    type: 'Technical Design'
+  },
+  {
+    id: 'tech-2',
+    title: 'Industrial Equipment',
+    category: 'technical',
+    image: '/images/projects/Pressure Tank 500L 3mm,5mm T.png',
+    thumbnail: '/images/projects/Pressure Tank 500L 3mm,5mm T.png',
+    description: 'Industrial equipment designs including pressure tanks and pipe assemblies',
+    technologies: ['AutoCAD', 'Industrial Design', 'Equipment Engineering'],
+    type: 'Technical Design'
+  },
+  {
+    id: 'tech-3',
+    title: 'Steel Fabrication',
+    category: 'technical',
+    image: '/images/projects/650mm Steel Grates.png',
+    thumbnail: '/images/projects/650mm Steel Grates.png',
+    description: 'Steel fabrication designs including grilles, grates, and custom metal work',
+    technologies: ['AutoCAD', 'Steel Fabrication', 'Metal Work'],
+    type: 'Technical Design'
+  },
+  {
+    id: 'tech-4',
+    title: 'Mobile Store Design',
+    category: 'technical',
+    image: '/images/projects/MOBILE-STORE-Layout1.png',
+    thumbnail: '/images/projects/MOBILE-STORE-Layout1.png',
+    description: 'Complete mobile store layout and design project',
+    technologies: ['AutoCAD', 'Store Design', 'Layout Planning'],
+    type: 'Technical Design'
+  },
+  {
+    id: 'tech-5',
+    title: 'Custom Racks',
+    category: 'technical',
+    image: '/images/projects/Thawing Rack Clark.png',
+    thumbnail: '/images/projects/Thawing Rack Clark.png',
+    description: 'Custom rack designs for various industrial and commercial applications',
+    technologies: ['AutoCAD', 'Custom Design', 'Industrial Storage'],
+    type: 'Technical Design'
+  }
+];
+
 export const projects: Project[] = [
+  ...technicalProjects,
   {
     id: 1,
     title: 'AutoCAD Design',

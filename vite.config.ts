@@ -26,7 +26,7 @@ const imageOptimizerConfig = {
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: '/va-rb-portfolio/',
+  base: process.env.NODE_ENV === 'production' ? '/va-rb-portfolio/' : '/',
   plugins: [
     react(),
     splitVendorChunkPlugin(),
@@ -41,12 +41,15 @@ export default defineConfig({
       gzipSize: true,
       brotliSize: true,
       open: false
-    })
+    }),
   ],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
     },
+  },
+  optimizeDeps: {
+    include: ['react-pdf', 'pdfjs-dist/build/pdf.worker.entry'],
   },
   build: {
     target: 'esnext',
@@ -60,23 +63,29 @@ export default defineConfig({
       },
     },
     rollupOptions: {
+      input: {
+        main: path.resolve(__dirname, 'index.html'),
+      },
       output: {
         manualChunks(id) {
-          // Vendor chunks
           if (id.includes('node_modules')) {
-            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router-dom')) {
+            if (id.includes('pdf.worker')) {
+              return 'pdf-worker';
+            }
+            if (id.includes('react')) {
               return 'react-vendor';
             }
-            if (id.includes('framer-motion') || id.includes('@headlessui/react') || id.includes('react-icons')) {
+            if (id.includes('@headlessui') || id.includes('@heroicons')) {
               return 'ui-vendor';
             }
             if (id.includes('three')) {
               return 'three-vendor';
             }
+            if (id.includes('pdfjs-dist')) {
+              return 'pdf';
+            }
             return 'vendor';
           }
-          
-          // App chunks
           if (id.includes('src/utils')) {
             return 'utils';
           }
@@ -90,7 +99,13 @@ export default defineConfig({
             return 'section-components';
           }
         },
-        assetFileNames: (assetInfo) => {
+        manualChunks: {
+          pdfWorker: ['pdfjs-dist/build/pdf.worker.entry'],
+        },
+        assetFileNames(assetInfo) {
+          if (assetInfo.name === 'pdf.worker.js') {
+            return 'pdf.worker.min.js';
+          }
           let extType = assetInfo.name.split('.').at(1);
           if (/png|jpe?g|svg|gif|tiff|bmp|ico/i.test(extType)) {
             extType = 'img';
@@ -108,8 +123,10 @@ export default defineConfig({
     cssCodeSplit: true,
     modulePreload: true,
   },
-  optimizeDeps: {
-    include: ['react', 'react-dom', 'react-router-dom', 'framer-motion'],
-    exclude: ['three'],
+  server: {
+    fs: {
+      // Allow serving files from node_modules
+      allow: ['..', 'node_modules'],
+    },
   },
 });

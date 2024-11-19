@@ -11,5 +11,7 @@ export { default as PageTransition } from './PageTransition';
 export { default as Preloader } from './Preloader';
 export { default as ScrollLink } from './ScrollLink';
 export { default as ScrollToTop } from './ScrollToTop';
+export { default as SmartLayout } from './adaptive/SmartLayout';
 export { default as Tooltip } from './Tooltip';
+export { SectionHeading } from './SectionHeading';
 export * from './types';

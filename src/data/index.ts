@@ -2,18 +2,18 @@ import { metaConfig } from './meta';
 import { heroData } from './hero';
 import { aboutData } from './about';
 import { servicesData } from './services';
-import { portfolioData } from './portfolio';
 import { certificates } from './certificates';
 import { contactData } from './contact';
+import { projects, getProjectsByCategory } from './projects';
 
 // Export all data
 export * from './meta';
 export * from './hero';
 export * from './about';
 export * from './services';
-export * from './portfolio';
 export * from './certificates';
 export * from './contact';
+export * from './projects';
 
 // Centralized data export
 export const siteData = {
@@ -21,8 +21,8 @@ export const siteData = {
   hero: heroData,
   about: aboutData,
   services: servicesData,
-  portfolio: portfolioData,
-  certificates: certificates,
+  projects,
+  certificates,
   contact: contactData
 } as const;
 

@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext';
 import ErrorBoundary from './components/common/ErrorBoundary';
 import App from './App';
+import { PDFProvider } from './contexts/PDFContext';
 
 // Import styles
 import './styles/tailwind.css';
@@ -21,12 +22,14 @@ const routerFutureConfig = {
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <ErrorBoundary>
+    <BrowserRouter future={routerFutureConfig} basename={base}>
       <ThemeProvider>
-        <BrowserRouter basename={base} future={routerFutureConfig}>
-          <App />
-        </BrowserRouter>
+        <ErrorBoundary>
+          <PDFProvider>
+            <App />
+          </PDFProvider>
+        </ErrorBoundary>
       </ThemeProvider>
-    </ErrorBoundary>
-  </React.StrictMode>
+    </BrowserRouter>
+  </React.StrictMode>,
 );

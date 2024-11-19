@@ -7,6 +7,12 @@ A modern, type-safe portfolio website built with React, TypeScript, and Vite.
 - **Modern Stack**: Built with React 18, TypeScript, and Vite
 - **Type Safety**: Comprehensive type checking and validation
 - **Performance**: Optimized for speed and user experience
+- **Media Optimization**:
+  - Network-aware loading
+  - Progressive image loading
+  - Adaptive video quality
+  - WebP/AVIF support
+  - Background optimization
 - **Responsive**: Mobile-first design that works on all devices
 - **Accessible**: WCAG 2.1 compliant with full keyboard navigation
 - **Dark Mode**: Automatic and manual theme switching
@@ -24,6 +30,7 @@ A modern, type-safe portfolio website built with React, TypeScript, and Vite.
 - **Animations**: Framer Motion
 - **3D Effects**: Three.js
 - **Forms**: EmailJS
+- **Media**: WebP/AVIF with fallbacks
 - **Testing**: Vitest & Testing Library
 - **Linting**: ESLint & Prettier
 - **Package Manager**: npm
@@ -65,16 +72,44 @@ portfolio-redesign/
 ├── src/
 │   ├── components/        # React components
 │   │   ├── common/       # Shared components
+│   │   │   ├── OptimizedImage/  # Image optimization
+│   │   │   ├── OptimizedVideo/  # Video optimization
+│   │   │   └── ...
 │   │   ├── layout/       # Layout components
 │   │   └── sections/     # Page sections
 │   ├── data/             # Static data
 │   ├── hooks/            # Custom hooks
 │   ├── styles/           # Global styles
 │   ├── types/            # TypeScript types
-│   └── utils/            # Utility functions
+│   └── utils/
+│       ├── mediaOptimization.ts  # Media utilities
+│       └── ...           # Other utilities
 ├── test/                  # Test files
 └── vite.config.ts         # Vite configuration
 ```
+
+## 🎨 Media Features
+
+### Image Optimization
+- Progressive loading with blur effect
+- WebP/AVIF format detection
+- Network-aware quality selection
+- Responsive image sizing
+- Lazy loading with priority
+
+### Video Optimization
+- Adaptive quality selection
+- Network-aware preloading
+- Multiple format support
+- Error handling with fallbacks
+- Loading state management
+
+### Network Awareness
+- Connection speed detection
+- Quality adaptation
+- Progressive enhancement
+- Bandwidth optimization
+- Error recovery
 
 ## 🧪 Testing
 
@@ -106,6 +141,7 @@ npm run test:coverage
 - Error handling and logging
 - Type safety throughout
 - Secure data handling
+- Safe media loading
 
 ## 📚 Documentation
 

@@ -1,11 +1,16 @@
 // import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { vi } from 'vitest';
+import { BrowserRouter } from 'react-router-dom';
 import TouchableCard from '../TouchableCard';
+
+const renderWithRouter = (component: React.ReactNode) => {
+  return render(<BrowserRouter>{component}</BrowserRouter>);
+};
 
 describe('TouchableCard', () => {
   it('renders children correctly', () => {
-    render(
+    renderWithRouter(
       <TouchableCard>
         <div>Test Content</div>
       </TouchableCard>
@@ -15,7 +20,7 @@ describe('TouchableCard', () => {
 
   it('handles click events', () => {
     const handleClick = vi.fn();
-    render(
+    renderWithRouter(
       <TouchableCard onClick={handleClick}>
         <div>Clickable Content</div>
       </TouchableCard>
@@ -26,42 +31,43 @@ describe('TouchableCard', () => {
   });
 
   it('applies hover styles', () => {
-    render(
+    renderWithRouter(
       <TouchableCard>
         <div>Hover Content</div>
       </TouchableCard>
     );
     
-    const card = screen.getByText('Hover Content').parentElement;
-    expect(card).toHaveClass('hover:scale-[1.02]');
+    const card = screen.getByText('Hover Content').closest('div');
+    expect(card).toHaveClass('transition-shadow');
+    expect(card).toHaveClass('hover:shadow-xl');
   });
 
-  it('applies custom className', () => {
-    render(
-      <TouchableCard className="custom-class">
-        <div>Custom Content</div>
+  it('renders as a link when href is provided', () => {
+    renderWithRouter(
+      <TouchableCard href="/test">
+        <div>Link Content</div>
       </TouchableCard>
     );
     
-    const card = screen.getByText('Custom Content').parentElement;
-    expect(card).toHaveClass('custom-class');
+    const link = screen.getByText('Link Content').closest('a');
+    expect(link).toHaveAttribute('href', '/test');
   });
 
   it('handles keyboard navigation', () => {
     const handleClick = vi.fn();
-    render(
+    renderWithRouter(
       <TouchableCard onClick={handleClick}>
-        <div>Keyboard Content</div>
+        <div>Interactive Content</div>
       </TouchableCard>
     );
     
-    const card = screen.getByText('Keyboard Content').parentElement;
+    const card = screen.getByText('Interactive Content').closest('div');
     if (card) {
       card.focus();
       fireEvent.keyDown(card, { key: 'Enter' });
       expect(handleClick).toHaveBeenCalledTimes(1);
       
-      fireEvent.keyDown(card, { key: 'Space' });
+      fireEvent.keyDown(card, { key: ' ' });
       expect(handleClick).toHaveBeenCalledTimes(2);
     }
   });

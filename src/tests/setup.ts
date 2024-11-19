@@ -118,9 +118,23 @@ vi.mock('framer-motion', () => ({
   motion: {
     div: 'div',
     nav: 'nav',
-    button: 'button'
+    button: 'button',
+    a: 'a',
+    span: 'span'
   },
   AnimatePresence: ({ children }: { children: React.ReactNode }) => children,
+  easeOut: 'easeOut',
+  useAnimation: () => ({
+    start: vi.fn(),
+    stop: vi.fn(),
+    set: vi.fn()
+  }),
+  useScroll: () => ({
+    scrollY: {
+      get: () => 0,
+      onChange: vi.fn()
+    }
+  })
 }));
 
 // Mock window.getComputedStyle
