@@ -92,6 +92,13 @@ import sheetsLayout from '@/assets/images/projects/Sheets Layout.png';
 import tubeRack from '@/assets/images/projects/Tube Rack.png';
 import waterIntakePipe from '@/assets/images/projects/Water Intake Pipe Assembly.png';
 
+// Import conveyor images
+import conveyorFrameA2 from '@/assets/images/projects/conveyor-a2-white.png';
+import conveyorFrameB1 from '@/assets/images/projects/conveyor-b1-white.png';
+import conveyorFrameB2 from '@/assets/images/projects/conveyor-b2-white.png';
+import conveyorFrameB3 from '@/assets/images/projects/conveyor-b3-white.png';
+import conveyorFrameC2 from '@/assets/images/projects/conveyor-c2-white.png';
+
 // Define available categories
 export const categories = [
   'all',
@@ -396,6 +403,23 @@ export const projects: Project[] = [
     image: cateringTruck,
     technologies: ['AutoCAD', 'Transportation Design', 'Loading Systems'],
     gallery: [cateringTruck, cateringTruckV2, cateringTruckV3, cateringTruckV4]
+  },
+  {
+    id: 'tech-conveyor',
+    title: 'Conveyor System Design',
+    category: ProjectCategory.TECHNICAL,
+    image: conveyorFrameB1,
+    thumbnail: conveyorFrameB1,
+    description: 'Complete conveyor system design including frame assemblies and detailed engineering drawings',
+    technologies: ['AutoCAD', 'Mechanical Design', 'Industrial Equipment'],
+    type: ProjectType.TECHNICAL_DESIGN,
+    gallery: [
+      conveyorFrameA2,
+      conveyorFrameB1,
+      conveyorFrameB2,
+      conveyorFrameB3,
+      conveyorFrameC2
+    ]
   }
 ];
 

@@ -1,57 +1,54 @@
-import { ProjectCategory, CertificateCategory } from './types';
+import { ProjectCategory } from './types';
 
-export const projectCategories: ProjectCategory[] = [
+export const categories = [
   {
-    id: 'technical',
-    name: 'Technical Engineering',
-    description: 'AutoCAD designs and technical engineering projects'
+    id: ProjectCategory.ALL,
+    name: 'All',
+    description: 'All projects'
   },
   {
-    id: 'autocad',
-    name: 'AutoCAD',
-    description: 'Mechanical design and technical drawings'
+    id: ProjectCategory.WEB,
+    name: 'Web Development',
+    description: 'Web applications and websites'
   },
   {
-    id: 'video',
-    name: 'Video',
-    description: 'Professional video editing and production'
+    id: ProjectCategory.TECHNICAL,
+    name: 'Technical',
+    description: 'Technical designs and solutions'
   },
   {
-    id: 'management',
-    name: 'Management',
-    description: 'Project, data, and resource management'
-  },
-  {
-    id: 'design',
+    id: ProjectCategory.DESIGN,
     name: 'Design',
-    description: 'Content creation and design work'
+    description: 'Design projects'
   },
   {
-    id: 'education',
+    id: ProjectCategory.MANAGEMENT,
+    name: 'Management',
+    description: 'Project management and leadership'
+  },
+  {
+    id: ProjectCategory.EDUCATION,
     name: 'Education',
-    description: 'Professional certifications and courses'
+    description: 'Educational projects and materials'
   },
   {
-    id: 'web',
-    name: 'Web',
-    description: 'Web development projects'
-  },
-  {
-    id: 'demo',
+    id: ProjectCategory.DEMO,
     name: 'Demo',
     description: 'Demo projects and prototypes'
-  }
-];
-
-export const certificateCategories: CertificateCategory[] = [
-  {
-    id: 'certification',
-    name: 'Certifications',
-    description: 'Professional certifications and course completions'
   },
   {
-    id: 'achievement',
-    name: 'Achievements',
-    description: 'Awards and special recognitions'
+    id: ProjectCategory.AUTOCAD,
+    name: 'AutoCAD',
+    description: 'AutoCAD designs and drawings'
+  },
+  {
+    id: ProjectCategory.VIDEO,
+    name: 'Video',
+    description: 'Video projects and animations'
+  },
+  {
+    id: ProjectCategory.INVENTOR,
+    name: 'Inventor',
+    description: 'Inventor 3D designs'
   }
 ];

@@ -8,7 +8,7 @@ interface MobileNavProps {
   navLinks: Array<{ name: string; path: string }>;
 }
 
-export const MobileNav: React.FC<MobileNavProps> = ({ navLinks }) => {
+const MobileNav: React.FC<MobileNavProps> = ({ navLinks }) => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
 
@@ -96,6 +96,8 @@ export const MobileNav: React.FC<MobileNavProps> = ({ navLinks }) => {
               animate="open"
               exit="closed"
               className="fixed top-0 right-0 bottom-0 w-[280px] bg-white dark:bg-gray-900 z-50 shadow-xl"
+              role="dialog"
+              aria-label="Mobile navigation menu"
             >
               <div className="flex flex-col h-full">
                 <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
@@ -109,7 +111,11 @@ export const MobileNav: React.FC<MobileNavProps> = ({ navLinks }) => {
                   </button>
                 </div>
 
-                <nav className="flex-1 overflow-y-auto p-4">
+                <nav
+                  className="flex-1 overflow-y-auto py-4"
+                  role="navigation"
+                  aria-label="Mobile navigation"
+                >
                   <ul className="space-y-2">
                     {navLinks.map((link, i) => (
                       <motion.li
@@ -145,4 +151,4 @@ export const MobileNav: React.FC<MobileNavProps> = ({ navLinks }) => {
 
 MobileNav.displayName = 'MobileNav';
 
-export default MobileNav;
+export { MobileNav };

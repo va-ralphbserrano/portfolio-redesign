@@ -32,15 +32,14 @@ export default defineConfig({
     splitVendorChunkPlugin(),
     ViteImageOptimizer(imageOptimizerConfig),
     compression({
-      algorithm: 'brotliCompress',
+      algorithm: 'gzip',
       exclude: [/\.(br)$/, /\.(gz)$/],
-      deleteOriginalAssets: false,
     }),
     visualizer({
       filename: 'dist/stats.html',
       gzipSize: true,
       brotliSize: true,
-      open: false
+      open: true
     }),
   ],
   resolve: {
@@ -54,7 +53,9 @@ export default defineConfig({
   build: {
     target: 'esnext',
     assetsInlineLimit: 0,
-    minify: 'terser',
+    minify: 'esbuild',
+    cssMinify: true,
+    reportCompressedSize: true,
     terserOptions: {
       compress: {
         drop_console: true,
@@ -101,6 +102,13 @@ export default defineConfig({
         },
         manualChunks: {
           pdfWorker: ['pdfjs-dist/build/pdf.worker.entry'],
+          'react-core': ['react', 'react-dom'],
+          'ui-libs': [
+            '@emotion/react',
+            '@emotion/styled',
+            'framer-motion',
+          ],
+          'utils': ['lodash', 'date-fns'],
         },
         assetFileNames(assetInfo) {
           if (assetInfo.name === 'pdf.worker.js') {
@@ -128,5 +136,7 @@ export default defineConfig({
       // Allow serving files from node_modules
       allow: ['..', 'node_modules'],
     },
+    open: true,
+    port: 3000,
   },
 });

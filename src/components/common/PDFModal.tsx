@@ -1,51 +1,50 @@
-import React from 'react';
+import { Dialog } from '@headlessui/react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { XIcon } from '@/components/icons';
 import PDFViewer from './PDFViewer';
-import { XIcon } from './Icons';
 
 interface PDFModalProps {
   isOpen: boolean;
   onClose: () => void;
-  url: string;
+  pdfUrl: string;
 }
 
-const PDFModal: React.FC<PDFModalProps> = ({ isOpen, onClose, url }) => {
-  // Prevent click propagation from modal content to overlay
-  const handleContentClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-  };
-
+export const PDFModal: React.FC<PDFModalProps> = ({ isOpen, onClose, pdfUrl }) => {
   return (
     <AnimatePresence>
       {isOpen && (
-        <motion.div
+        <Dialog
+          static
+          as={motion.div}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          onClick={onClose}
-          className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
+          open={isOpen}
+          onClose={onClose}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
         >
+          <Dialog.Overlay className="fixed inset-0 bg-black/60" />
+
           <motion.div
             initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.95, opacity: 0 }}
-            onClick={handleContentClick}
-            className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-6xl max-h-[90vh] overflow-hidden relative"
+            className="relative w-full max-w-4xl overflow-hidden rounded-2xl bg-white shadow-xl dark:bg-gray-800"
           >
-            {/* Close button */}
+            {/* Close Button */}
             <button
               onClick={onClose}
-              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 z-10"
+              className="absolute right-4 top-4 z-10 rounded-full bg-white/10 p-2 text-white backdrop-blur-sm transition-colors hover:bg-white/20"
             >
-              <XIcon className="w-6 h-6" />
+              <XIcon className="h-6 w-6" />
             </button>
 
             {/* PDF Viewer */}
-            <div className="p-4 h-full overflow-auto">
-              <PDFViewer url={url} className="w-full h-full" />
+            <div className="p-6">
+              <PDFViewer url={pdfUrl} className="w-full" />
             </div>
           </motion.div>
-        </motion.div>
+        </Dialog>
       )}
     </AnimatePresence>
   );

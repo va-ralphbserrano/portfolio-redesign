@@ -1,26 +1,18 @@
-import { ErrorContext, ErrorSeverity, ErrorCategory, createErrorContext } from '../utils/monitoring';
+import { v4 as uuidv4 } from 'uuid';
+import { ErrorCategory, ErrorReport, ErrorReportOptions, ErrorSeverity } from '@types/error';
+import { RateLimitService } from './RateLimitService';
 
-interface ErrorReportingConfig {
-  apiEndpoint: string;
-  batchSize?: number;
-  flushInterval?: number;
-}
-
-/**
- * Production error reporting service that sends errors to a backend API
- */
-export class ErrorReportingService {
+class ErrorReportingService {
   private static instance: ErrorReportingService;
-  private apiEndpoint: string;
-  private batchSize: number;
-  private flushInterval: number;
-  private errorBuffer: ErrorContext[] = [];
-  private flushTimer: NodeJS.Timeout | null = null;
+  private errorQueue: ErrorReport[] = [];
+  private readonly rateLimiter: RateLimitService;
+  private readonly maxQueueSize = 100;
+  private readonly batchSize = 10;
+  private readonly flushInterval = 5000; // 5 seconds
 
   private constructor() {
-    this.apiEndpoint = '';
-    this.batchSize = 10;
-    this.flushInterval = 5000;
+    this.rateLimiter = RateLimitService.getInstance();
+    this.startErrorProcessor();
   }
 
   public static getInstance(): ErrorReportingService {
@@ -30,151 +22,132 @@ export class ErrorReportingService {
     return ErrorReportingService.instance;
   }
 
-  public static reportError(error: Error): void {
-    console.error(`[Error] ${error.message}`);
-    // In a real application, this would send the error to a monitoring service
+  public report(options: ErrorReportOptions): void {
+    const errorReport = this.createErrorReport(options);
+
+    if (options.severity === ErrorSeverity.CRITICAL) {
+      this.processImmediately(errorReport);
+    } else {
+      this.queueError(errorReport);
+    }
   }
 
-  public initialize(config: ErrorReportingConfig): void {
-    this.apiEndpoint = config.apiEndpoint;
-    if (config.batchSize !== undefined) this.batchSize = config.batchSize;
-    if (config.flushInterval !== undefined) this.flushInterval = config.flushInterval;
-    this.setupErrorHandling();
-    this.startBufferFlush();
-  }
-
-  private setupErrorHandling(): void {
-    if (typeof window === 'undefined') return;
-
-    // Handle runtime errors
-    window.addEventListener('error', this.handleError);
-
-    // Handle unhandled promise rejections
-    window.addEventListener('unhandledrejection', this.handleUnhandledRejection);
-
-    // Handle resource loading errors
-    document.addEventListener('error', this.handleResourceError, true);
-
-    // Handle network errors
-    const originalFetch = window.fetch;
-    window.fetch = async (input: URL | RequestInfo, init?: RequestInit): Promise<Response> => {
-      try {
-        const response = await originalFetch(input, init);
-        if (!response.ok) {
-          this.reportError(createErrorContext(
-            `HTTP ${response.status}: ${response.statusText}`,
-            response.status >= 500 ? ErrorSeverity.HIGH : ErrorSeverity.MEDIUM,
-            ErrorCategory.NETWORK,
-            `${response.status} ${response.statusText}`,
-            {
-              endpoint: typeof input === 'string' ? input : input instanceof URL ? input.toString() : input.url,
-              status: response.status
-            }
-          ));
-        }
-        return response;
-      } catch (error) {
-        const err = error as Error;
-        this.reportError(createErrorContext(
-          err.message || 'Network request failed',
-          ErrorSeverity.HIGH,
-          ErrorCategory.NETWORK,
-          err.stack || new Error().stack || 'No stack trace available',
-          {
-            endpoint: typeof input === 'string' ? input : input instanceof URL ? input.toString() : input.url
-          }
-        ));
-        throw error;
-      }
+  private createErrorReport(options: ErrorReportOptions): ErrorReport {
+    const error = new Error();
+    return {
+      id: uuidv4(),
+      timestamp: Date.now(),
+      category: options.category,
+      severity: options.severity,
+      message: options.message,
+      stack: error.stack,
+      context: this.sanitizeContext(options.context),
+      userId: this.getCurrentUserId(),
+      sessionId: this.getCurrentSessionId(),
+      url: typeof window !== 'undefined' ? window.location.href : undefined,
+      userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : undefined,
     };
   }
 
-  private handleError = (event: ErrorEvent): void => {
-    this.reportError(createErrorContext(
-      event.message,
-      ErrorSeverity.HIGH,
-      ErrorCategory.JAVASCRIPT,
-      event.error?.stack || new Error().stack || 'No stack trace available',
-      {
-        filename: event.filename,
-        lineno: event.lineno,
-        colno: event.colno
+  private sanitizeContext(context?: Record<string, unknown>): Record<string, unknown> | undefined {
+    if (!context) return undefined;
+
+    const sensitiveKeys = ['password', 'token', 'secret', 'key', 'auth'];
+    const sanitized: Record<string, unknown> = {};
+
+    Object.entries(context).forEach(([key, value]) => {
+      if (sensitiveKeys.some(sk => key.toLowerCase().includes(sk))) {
+        sanitized[key] = '[REDACTED]';
+      } else {
+        sanitized[key] = value;
       }
-    ));
-  };
+    });
 
-  private handleUnhandledRejection = (event: PromiseRejectionEvent): void => {
-    this.reportError(createErrorContext(
-      event.reason?.message || 'Unhandled Promise Rejection',
-      ErrorSeverity.HIGH,
-      ErrorCategory.JAVASCRIPT,
-      event.reason?.stack || new Error().stack || 'No stack trace available',
-      {
-        type: 'unhandled-rejection'
-      }
-    ));
-  };
-
-  private handleResourceError = (event: ErrorEvent): void => {
-    if (event.target instanceof HTMLElement) {
-      this.reportError(createErrorContext(
-        'Failed to load resource',
-        ErrorSeverity.MEDIUM,
-        ErrorCategory.RESOURCE,
-        `${event.message}\nResource: ${(event.target as HTMLImageElement | HTMLScriptElement).src || (event.target as HTMLLinkElement).href}`,
-        {
-          resourceType: event.target.tagName.toLowerCase(),
-          source: (event.target as HTMLImageElement | HTMLScriptElement).src || (event.target as HTMLLinkElement).href
-        }
-      ));
-    }
-  };
-
-  public reportError(error: ErrorContext): void {
-    this.errorBuffer.push(error);
-    if (this.errorBuffer.length >= this.batchSize) {
-      void this.flushErrorBuffer();
-    }
+    return sanitized;
   }
 
-  private async flushErrorBuffer(): Promise<void> {
-    if (this.errorBuffer.length === 0) return;
-
-    const errors = [...this.errorBuffer];
-    this.errorBuffer = [];
-
+  private async processImmediately(errorReport: ErrorReport): Promise<void> {
     try {
-      const response = await fetch(this.apiEndpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ errors })
-      });
+      if (this.rateLimiter.isRateLimited(`error_${errorReport.category}`)) {
+        console.warn('Error reporting rate limit exceeded for category:', errorReport.category);
+        return;
+      }
 
-      if (!response.ok) {
-        console.error('Failed to send errors:', response.statusText);
-        this.errorBuffer.push(...errors);
+      await this.sendToServer(errorReport);
+      this.logToConsole(errorReport);
+      
+      if (errorReport.severity === ErrorSeverity.CRITICAL) {
+        this.triggerAlert(errorReport);
       }
     } catch (error) {
-      console.error('Failed to send errors:', error);
-      this.errorBuffer.push(...errors);
+      console.error('Failed to process error report:', error);
+      this.queueError(errorReport);
     }
   }
 
-  public startBufferFlush(): void {
-    if (this.flushTimer === null) {
-      this.flushTimer = setInterval(() => {
-        void this.flushErrorBuffer();
-      }, this.flushInterval);
+  private queueError(errorReport: ErrorReport): void {
+    if (this.errorQueue.length >= this.maxQueueSize) {
+      this.errorQueue.shift(); // Remove oldest error
+    }
+    this.errorQueue.push(errorReport);
+  }
+
+  private async processErrorQueue(): Promise<void> {
+    if (this.errorQueue.length === 0) return;
+
+    const batch = this.errorQueue.splice(0, this.batchSize);
+    try {
+      await this.sendBatchToServer(batch);
+    } catch (error) {
+      console.error('Failed to process error batch:', error);
+      // Re-queue failed errors
+      this.errorQueue.unshift(...batch);
     }
   }
 
-  public stopBufferFlush(): void {
-    if (this.flushTimer !== null) {
-      clearInterval(this.flushTimer);
-      this.flushTimer = null;
-    }
+  private startErrorProcessor(): void {
+    setInterval(() => {
+      this.processErrorQueue();
+    }, this.flushInterval);
+  }
+
+  private async sendToServer(errorReport: ErrorReport): Promise<void> {
+    // Implementation for sending to error reporting server
+    // This is a placeholder - implement actual server communication
+    console.log('Sending error to server:', errorReport);
+  }
+
+  private async sendBatchToServer(batch: ErrorReport[]): Promise<void> {
+    // Implementation for sending batch of errors to server
+    // This is a placeholder - implement actual batch processing
+    console.log('Sending error batch to server:', batch);
+  }
+
+  private logToConsole(errorReport: ErrorReport): void {
+    const { severity, category, message, context } = errorReport;
+    console.group(`[${severity}] ${category}`);
+    console.error(message);
+    if (context) console.log('Context:', context);
+    if (errorReport.stack) console.log('Stack:', errorReport.stack);
+    console.groupEnd();
+  }
+
+  private triggerAlert(errorReport: ErrorReport): void {
+    // Implementation for alerting system
+    // This is a placeholder - implement actual alerting mechanism
+    console.warn('CRITICAL ERROR ALERT:', errorReport);
+  }
+
+  private getCurrentUserId(): string | undefined {
+    // Implementation to get current user ID
+    // This is a placeholder - implement actual user ID retrieval
+    return undefined;
+  }
+
+  private getCurrentSessionId(): string | undefined {
+    // Implementation to get current session ID
+    // This is a placeholder - implement actual session ID retrieval
+    return undefined;
   }
 }
 

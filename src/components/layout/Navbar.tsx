@@ -3,9 +3,9 @@ import { motion } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';
 import { classNames } from '../../utils/helpers';
 import { NavbarProps, navbarVariants } from './types';
-import MobileNav from './MobileNav';
+import { MobileNav } from './MobileNav';
 
-export const Navbar: React.FC<NavbarProps> = ({
+const Navbar: React.FC<NavbarProps> = ({
   className
 }) => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -30,7 +30,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   ];
 
   return (
-    <motion.nav
+    <motion.header
+      role="navigation"
       variants={navbarVariants}
       initial="hidden"
       animate="visible"
@@ -74,7 +75,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           <MobileNav navLinks={navLinks} />
         </div>
       </div>
-    </motion.nav>
+    </motion.header>
   );
 };
 

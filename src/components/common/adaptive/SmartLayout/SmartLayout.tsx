@@ -1,19 +1,48 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { useWindowSize } from '@/hooks/useWindowSize';
 import { classNames } from '@/utils/helpers';
+import { SmartLayoutProps } from '../types';
 
-export interface SmartLayoutProps {
-  children: React.ReactNode;
-  className?: string;
-  priority?: number;
-  breakpoint?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
-  reorderPoint?: number;
-  spacing?: 'compact' | 'normal' | 'relaxed';
-  animate?: boolean;
-}
+// Responsive breakpoints matching Tailwind config
+const breakpoints = {
+  sm: 640,
+  md: 768,
+  lg: 1024,
+  xl: 1280,
+  '2xl': 1536,
+} as const;
 
+// Spacing configurations
+const spacingClasses = {
+  compact: 'gap-2 p-2',
+  normal: 'gap-4 p-4',
+  relaxed: 'gap-6 p-6',
+} as const;
+
+/**
+ * SmartLayout Component
+ * 
+ * A responsive layout component that intelligently adapts to viewport size and user preferences.
+ * Features include:
+ * - Responsive reordering based on breakpoints
+ * - Configurable spacing and animations
+ * - Intersection-based animations
+ * - Performance optimizations
+ * 
+ * @example
+ * ```tsx
+ * <SmartLayout
+ *   breakpoint="md"
+ *   spacing="normal"
+ *   priority={1}
+ *   reorderPoint={2}
+ * >
+ *   <YourContent />
+ * </SmartLayout>
+ * ```
+ */
 export const SmartLayout: React.FC<SmartLayoutProps> = ({
   children,
   className,
@@ -29,23 +58,7 @@ export const SmartLayout: React.FC<SmartLayoutProps> = ({
     threshold: 0.1,
     triggerOnce: true,
   });
-  const [order, setOrder] = useState<number>(priority);
-
-  // Responsive breakpoints matching Tailwind config
-  const breakpoints = {
-    sm: 640,
-    md: 768,
-    lg: 1024,
-    xl: 1280,
-    '2xl': 1536,
-  };
-
-  // Spacing configurations
-  const spacingClasses = {
-    compact: 'gap-2 p-2',
-    normal: 'gap-4 p-4',
-    relaxed: 'gap-6 p-6',
-  };
+  const [order, setOrder] = React.useState<number>(priority);
 
   // Handle responsive reordering
   useEffect(() => {

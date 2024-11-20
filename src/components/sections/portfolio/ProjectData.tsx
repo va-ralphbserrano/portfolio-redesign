@@ -22,7 +22,43 @@ export const categories: { id: ProjectCategory; label: string }[] = [
 
 export const projects: readonly Project[] = [
   {
-    id: 1,
+    id: "1",
+    title: "Technical Project 1",
+    category: ProjectCategory.TECHNICAL,
+    image: "/images/projects/technical/project1.jpg",
+    description: "Technical engineering project with detailed specifications",
+    technologies: ["AutoCAD", "SolidWorks", "Technical Drawing"],
+    type: ProjectType.TECHNICAL_DESIGN
+  },
+  {
+    id: "2",
+    title: "Web Development Project",
+    category: ProjectCategory.WEB,
+    image: "/images/projects/web/project1.jpg",
+    description: "Modern web application with responsive design",
+    technologies: ["React", "TypeScript", "Tailwind CSS"],
+    type: ProjectType.WEB_APP
+  },
+  {
+    id: "3",
+    title: "Design Project",
+    category: ProjectCategory.DESIGN,
+    image: "/images/projects/design/project1.jpg",
+    description: "Creative design project",
+    technologies: ["Photoshop", "Illustrator"],
+    type: ProjectType.DESIGN
+  },
+  {
+    id: "4",
+    title: "Management Project",
+    category: ProjectCategory.MANAGEMENT,
+    image: "/images/projects/management/project1.jpg",
+    description: "Project management case study",
+    technologies: ["Project Management", "Agile", "Scrum"],
+    type: ProjectType.MANAGEMENT
+  },
+  {
+    id: "5",
     title: 'Executive Assistant Apprenticeship',
     image: portfolio1,
     description: 'Virtual Assistant Training and Certification',
@@ -31,7 +67,7 @@ export const projects: readonly Project[] = [
     type: 'certification' as ProjectType
   },
   {
-    id: 2,
+    id: "6",
     title: 'Virtual Assistant Masterclass',
     image: portfolio2,
     description: 'Advanced Virtual Assistant Skills',

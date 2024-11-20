@@ -5,6 +5,11 @@
 
 # Testing
 /coverage
+/test-results
+/test-sessions
+/playwright-report
+/.lighthouseci
+.nyc_output
 
 # Production
 /build
@@ -18,9 +23,11 @@
 .env.production.local
 .env
 
+# Logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+*.log
 
 # Editor directories and files
 .vscode/*
@@ -31,3 +38,41 @@ yarn-error.log*
 *.njsproj
 *.sln
 *.sw?
+
+# TypeScript
+*.tsbuildinfo
+tsconfig.*.tsbuildinfo
+
+# Cache
+.cache
+.temp
+.tmp
+
+# Local files
+*.local
+
+# System Files
+Thumbs.db
+Desktop.ini
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Executables
+*.exe
+ghostscript-installer.exe
+
+# Test coverage
+.coverage
+htmlcov/
+
+# Docker
+.docker/
+*.env
+.env.*
+
+# ZAP (Security testing)
+.zap/

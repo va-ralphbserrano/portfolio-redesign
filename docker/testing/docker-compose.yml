@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  test:
+    build:
+      context: ../..
+      dockerfile: docker/testing/Dockerfile
+    environment:
+      - NODE_ENV=test
+      - VITE_API_URL=http://localhost:3000
+      - VITE_MOCK_DATA=true
+    volumes:
+      - ../../coverage:/app/coverage
+    # Resource limits as per Performance Standards (Rule 3)
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+    # Security measures (Rule 2)
+    security_opt:
+      - no-new-privileges:true
+    # Health check for Quality Assurance (Rule 2)
+    healthcheck:
+      test: ["CMD", "npm", "run", "test:health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3

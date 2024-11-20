@@ -1,0 +1,99 @@
+name: Security Testing
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '0 0 * * *'  # Run daily at midnight
+
+jobs:
+  security-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Start OWASP ZAP
+      run: |
+        docker run -d --name zap \
+          -p 8080:8080 \
+          -e ZAP_API_KEY=${{ secrets.ZAP_API_KEY }} \
+          owasp/zap2docker-stable zap.sh \
+          -daemon -port 8080 -host 0.0.0.0 \
+          -config api.key=${{ secrets.ZAP_API_KEY }}
+
+    - name: Wait for ZAP
+      run: |
+        echo "Waiting for ZAP to be ready..."
+        timeout 60 bash -c 'until curl -s http://localhost:8080/ > /dev/null; do sleep 1; done' || exit 1
+
+    - name: Run security tests
+      run: npm run test:security
+      env:
+        ZAP_API_URL: http://localhost:8080
+        ZAP_API_KEY: ${{ secrets.ZAP_API_KEY }}
+        DEPLOY_URL: ${{ secrets.DEPLOY_URL || 'http://localhost:3000' }}
+        NODE_ENV: production
+
+    - name: Generate security report
+      run: npm run test:security:report
+      env:
+        ZAP_API_URL: http://localhost:8080
+        ZAP_API_KEY: ${{ secrets.ZAP_API_KEY }}
+        DEPLOY_URL: ${{ secrets.DEPLOY_URL || 'http://localhost:3000' }}
+
+    - name: Upload security report
+      uses: actions/upload-artifact@v3
+      with:
+        name: security-report
+        path: reports/security/
+        retention-days: 30
+
+    - name: Create issue on failure
+      if: failure()
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const fs = require('fs');
+          const reportPath = './reports/security/security-report-' + new Date().toISOString().split('T')[0] + '.json';
+          
+          let reportData;
+          try {
+            reportData = JSON.parse(fs.readFileSync(reportPath, 'utf8'));
+          } catch (error) {
+            reportData = { summary: { critical: '?', high: '?' } };
+          }
+          
+          const issue = await github.rest.issues.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: '🚨 Security Vulnerabilities Detected',
+            body: `Security vulnerabilities were found in the latest scan.
+            
+            **Summary:**
+            - Critical: ${reportData.summary.critical}
+            - High: ${reportData.summary.high}
+            
+            Please check the [security report](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}) for details.
+            
+            This issue was automatically created by the security testing workflow.`,
+            labels: ['security', 'high-priority']
+          });
+          
+          await github.rest.issues.addAssignees({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: issue.data.number,
+            assignees: ['va-ralphbserrano']
+          });

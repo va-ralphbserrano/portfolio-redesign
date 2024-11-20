@@ -1,0 +1,6 @@
+10016	IGNORE	URL Content Scan	.*\.(gif|jpg|png|css|js|woff|woff2)$
+10020	IGNORE	Missing Anti-CSRF Tokens	^/api/public/.*
+10021	IGNORE	X-Content-Type-Options Header Missing	.*\.(gif|jpg|png|css|js|woff|woff2)$
+10049	IGNORE	Non-Storable Content	.*\.(gif|jpg|png|css|js|woff|woff2)$
+40025	IGNORE	Proxy Disclosure	.*
+90022	IGNORE	Application Error Disclosure	.*\.(gif|jpg|png|css|js|woff|woff2)$

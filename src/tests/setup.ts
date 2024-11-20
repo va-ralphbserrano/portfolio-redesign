@@ -1,161 +1,142 @@
-import { vi } from 'vitest';
 import '@testing-library/jest-dom';
+import { cleanup } from '@testing-library/react';
+import * as matchers from '@testing-library/jest-dom/matchers';
+import React from 'react';
+import { JSDOM } from 'jsdom';
 
-// Mock fetch
-export const mockFetch = vi.fn();
-global.fetch = mockFetch;
+console.log('Setup: Starting test environment configuration');
 
-// Set test environment
-process.env.NODE_ENV = 'test';
-
-// Mock performance API
-global.performance = {
-  now: vi.fn(() => Date.now()),
-  mark: vi.fn(),
-  measure: vi.fn(),
-  getEntriesByType: vi.fn(() => []),
-  getEntriesByName: vi.fn(() => []),
-  clearMarks: vi.fn(),
-  clearMeasures: vi.fn()
-} as any;
-
-// Mock ResizeObserver
-class MockResizeObserver implements ResizeObserver {
-  constructor(callback: ResizeObserverCallback) {
-    void callback;
-  }
-
-  observe(): void {}
-  unobserve(): void {}
-  disconnect(): void {}
+// Extend Window interface
+declare global {
+    interface Window {
+        on: (event: string, handler: Function) => void;
+        off: (event: string, handler: Function) => void;
+        emit: (event: string, ...args: any[]) => void;
+        _eventListeners: { eventName: string; handler: Function }[];
+    }
 }
 
-Object.defineProperty(window, 'ResizeObserver', {
-  writable: true,
-  configurable: true,
-  value: MockResizeObserver
+// Initialize JSDOM environment
+const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>', {
+    url: 'http://localhost',
+    pretendToBeVisual: true,
+    runScripts: 'dangerously',
+    resources: 'usable'
 });
 
-// Mock IntersectionObserver
-class MockIntersectionObserver implements IntersectionObserver {
-  readonly root: Element | null = null;
-  readonly rootMargin: string = '';
-  readonly thresholds: ReadonlyArray<number> = [];
+// Get window instance and set up prototype chain
+const window = dom.window;
+const eventTargetProto = window.EventTarget.prototype;
+const windowProto = Object.getPrototypeOf(window);
 
-  constructor(callback: IntersectionObserverCallback) {
-    void callback;
-  }
+// Create a new prototype that inherits from EventTarget
+const combinedProto = Object.create(eventTargetProto);
 
-  observe(): void {}
-  unobserve(): void {}
-  disconnect(): void {}
-  takeRecords(): IntersectionObserverEntry[] { return []; }
-}
-
-Object.defineProperty(window, 'IntersectionObserver', {
-  writable: true,
-  configurable: true,
-  value: MockIntersectionObserver
+// Copy all Window prototype properties
+Object.getOwnPropertyNames(windowProto).forEach(prop => {
+    const descriptor = Object.getOwnPropertyDescriptor(windowProto, prop);
+    if (descriptor && prop !== 'constructor') {
+        Object.defineProperty(combinedProto, prop, descriptor);
+    }
 });
 
-// Mock PromiseRejectionEvent
-class MockPromiseRejectionEvent extends Event implements PromiseRejectionEvent {
-  readonly promise: Promise<any>;
-  readonly reason: any;
+// Set the prototype chain
+Object.setPrototypeOf(window, combinedProto);
 
-  constructor(type: string, init: PromiseRejectionEventInit) {
-    super(type, { cancelable: true });
-    this.promise = init.promise;
-    this.reason = init.reason;
-  }
-}
+// Set up globals
+global.window = window;
+global.document = window.document;
+global.navigator = window.navigator;
 
-Object.defineProperty(window, 'PromiseRejectionEvent', {
-  writable: true,
-  configurable: true,
-  value: MockPromiseRejectionEvent
-});
+console.log('Setup: Adding event methods to window');
 
-// Mock matchMedia
-global.matchMedia = vi.fn().mockImplementation(query => ({
-  matches: false,
-  media: query,
-  onchange: null,
-  addListener: vi.fn(),
-  removeListener: vi.fn(),
-  addEventListener: vi.fn(),
-  removeEventListener: vi.fn(),
-  dispatchEvent: vi.fn()
-}));
+// Add event method aliases with proper event data handling
+window.on = function(eventName, handler) {
+    if (!handler || typeof handler !== 'function') {
+        console.warn('Invalid event handler provided');
+        return;
+    }
 
-// Mock console methods
-global.console = {
-  ...console,
-  log: vi.fn(),
-  error: vi.fn(),
-  warn: vi.fn(),
-  info: vi.fn(),
-  debug: vi.fn()
+    const wrappedHandler = function(event) {
+        try {
+            handler.call(this, event);
+        } catch (error) {
+            console.error('Error in event handler:', error);
+        }
+    };
+
+    this.addEventListener(eventName, wrappedHandler);
+    window._eventListeners.push({ eventName, handler: wrappedHandler });
 };
 
-// Mock Web Vitals
-vi.mock('web-vitals', () => ({
-  onLCP: vi.fn(),
-  onFID: vi.fn(),
-  onCLS: vi.fn(),
-  onTTFB: vi.fn(),
-  onFCP: vi.fn()
-}));
-
-// Mock window.scrollTo
-window.scrollTo = vi.fn().mockImplementation((x: number, y: number) => {
-  window.pageXOffset = x;
-  window.pageYOffset = y;
-});
-
-// Mock Framer Motion
-vi.mock('framer-motion', () => ({
-  motion: {
-    div: 'div',
-    nav: 'nav',
-    button: 'button',
-    a: 'a',
-    span: 'span'
-  },
-  AnimatePresence: ({ children }: { children: React.ReactNode }) => children,
-  easeOut: 'easeOut',
-  useAnimation: () => ({
-    start: vi.fn(),
-    stop: vi.fn(),
-    set: vi.fn()
-  }),
-  useScroll: () => ({
-    scrollY: {
-      get: () => 0,
-      onChange: vi.fn()
+window.off = function(eventName, handler) {
+    if (!handler || typeof handler !== 'function') {
+        console.warn('Invalid event handler provided');
+        return;
     }
-  })
-}));
 
-// Mock window.getComputedStyle
-global.getComputedStyle = vi.fn().mockImplementation(() => ({
-  getPropertyValue: vi.fn(),
-}));
+    const listenerIndex = window._eventListeners.findIndex(
+        listener => listener.eventName === eventName && listener.handler === handler
+    );
 
-// Reset mocks before each test
-beforeEach(() => {
-  vi.clearAllMocks();
-  mockFetch.mockReset();
-  mockFetch.mockImplementation(() => Promise.resolve({
-    ok: true,
-    json: () => Promise.resolve({}),
-  }));
-  document.body.innerHTML = '';
-  document.body.style.overflow = '';
-});
+    if (listenerIndex > -1) {
+        this.removeEventListener(eventName, window._eventListeners[listenerIndex].handler);
+        window._eventListeners.splice(listenerIndex, 1);
+    }
+};
+
+window.emit = function(eventName, detail = {}) {
+    let event;
+    try {
+        if (typeof detail === 'object') {
+            event = new CustomEvent(eventName, { detail });
+        } else {
+            event = new Event(eventName);
+        }
+        this.dispatchEvent(event);
+    } catch (error) {
+        console.error('Error dispatching event:', error);
+        throw error;
+    }
+};
+
+// Keep track of event listeners for cleanup
+window._eventListeners = [];
+
+// Set up React
+global.React = React;
 
 // Clean up after each test
 afterEach(() => {
-  document.body.innerHTML = '';
-  document.body.style.overflow = '';
+    cleanup();
+    window._eventListeners = [];
 });
+
+// Set up ResizeObserver
+class MockResizeObserver {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+}
+
+Object.defineProperty(global, 'ResizeObserver', {
+    value: MockResizeObserver,
+    writable: true,
+    configurable: true,
+});
+
+// Set up requestAnimationFrame
+if (!window.requestAnimationFrame) {
+    window.requestAnimationFrame = function(callback) {
+        return setTimeout(callback, 0);
+    };
+}
+
+if (!window.cancelAnimationFrame) {
+    window.cancelAnimationFrame = function(id) {
+        clearTimeout(id);
+    };
+}
+
+// Set up test matchers
+expect.extend(matchers);

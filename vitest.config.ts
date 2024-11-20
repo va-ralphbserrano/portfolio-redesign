@@ -7,35 +7,46 @@ import path from 'path';
 export default defineConfig({
   plugins: [react(), tsconfigPaths()],
   test: {
-    environment: 'jsdom',
-    setupFiles: ['./src/tests/setup.ts'],
     globals: true,
-    coverage: {
-      provider: 'v8',
-      reporter: ['text', 'json', 'html'],
-      exclude: [
-        'coverage/**',
-        'dist/**',
-        '**/[.]**',
-        'packages/*/test?(s)/**',
-        '**/*.d.ts',
-        '**/virtual:*',
-        '**/__mocks__/*',
-        '**/node_modules/**',
-      ],
+    environment: 'jsdom',
+    environmentOptions: {
+      jsdom: {
+        resources: 'usable',
+        runScripts: 'dangerously',
+        pretendToBeVisual: true,
+      }
     },
+    setupFiles: [
+      './test/stability/setup.ts'
+    ],
+    include: [
+      'src/**/*.{test,spec}.{js,jsx,ts,tsx}',
+      'test/**/*.{test,spec}.{js,jsx,ts,tsx}'
+    ],
+    exclude: [
+      '**/node_modules/**',
+      '**/dist/**',
+      '**/cypress/**',
+      '**/.{idea,git,cache,output,temp}/**'
+    ],
+    coverage: {
+      provider: 'istanbul',
+      reporter: ['text', 'json', 'html'],
+      include: ['src/**/*.{js,jsx,ts,tsx}'],
+      exclude: [
+        'test/**',
+        '**/*.d.ts',
+        '**/*.test.{js,jsx,ts,tsx}',
+        '**/*.spec.{js,jsx,ts,tsx}'
+      ]
+    }
   },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
-      '@components': path.resolve(__dirname, './src/components'),
-      '@utils': path.resolve(__dirname, './src/utils'),
-      '@services': path.resolve(__dirname, './src/services'),
-      '@assets': path.resolve(__dirname, './src/assets'),
-      '@styles': path.resolve(__dirname, './src/styles'),
-      '@hooks': path.resolve(__dirname, './src/hooks'),
-      '@types': path.resolve(__dirname, './src/types'),
-      '@tests': path.resolve(__dirname, './src/tests'),
+      '@test': path.resolve(__dirname, './test'),
+      '@stability': path.resolve(__dirname, './test/stability')
     },
-  },
+    extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json']
+  }
 });

@@ -1,0 +1,23 @@
+{
+  "files": [
+    {
+      "path": "dist/*.js",
+      "limit": "100 KB",
+      "gzip": true
+    },
+    {
+      "path": "dist/assets/*.css",
+      "limit": "20 KB",
+      "gzip": true
+    },
+    {
+      "path": [
+        "dist/react-core.*.js",
+        "dist/ui-libs.*.js",
+        "dist/utils.*.js"
+      ],
+      "limit": "150 KB",
+      "gzip": true
+    }
+  ]
+}

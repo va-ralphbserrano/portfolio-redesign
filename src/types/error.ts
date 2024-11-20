@@ -32,3 +32,42 @@ export function toErrorWithMessage(maybeError: unknown): ErrorWithMessage {
 export function getErrorMessage(error: unknown): string {
   return toErrorWithMessage(error).message;
 }
+
+export enum ErrorCategory {
+  NETWORK = 'NETWORK',
+  VALIDATION = 'VALIDATION',
+  AUTHENTICATION = 'AUTHENTICATION',
+  AUTHORIZATION = 'AUTHORIZATION',
+  DATABASE = 'DATABASE',
+  BUSINESS_LOGIC = 'BUSINESS_LOGIC',
+  EXTERNAL_SERVICE = 'EXTERNAL_SERVICE',
+  UNKNOWN = 'UNKNOWN'
+}
+
+export enum ErrorSeverity {
+  CRITICAL = 'CRITICAL',
+  ERROR = 'ERROR',
+  WARNING = 'WARNING',
+  INFO = 'INFO'
+}
+
+export interface ErrorReport {
+  id: string;
+  timestamp: number;
+  category: ErrorCategory;
+  severity: ErrorSeverity;
+  message: string;
+  stack?: string;
+  context?: Record<string, unknown>;
+  userId?: string;
+  sessionId?: string;
+  url?: string;
+  userAgent?: string;
+}
+
+export interface ErrorReportOptions {
+  category: ErrorCategory;
+  severity: ErrorSeverity;
+  message: string;
+  context?: Record<string, unknown>;
+}

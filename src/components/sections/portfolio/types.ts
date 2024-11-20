@@ -3,58 +3,49 @@ import { WithClassName } from '@/types/component';
 export enum ProjectCategory {
   ALL = 'all',
   TECHNICAL = 'technical',
-  KITCHEN = 'kitchen',
-  INDUSTRIAL = 'industrial',
-  STORAGE = 'storage',
-  FABRICATION = 'fabrication',
-  CONSTRUCTION = 'construction',
-  COMMERCIAL = 'commercial',
   WEB = 'web',
   DESIGN = 'design',
   MANAGEMENT = 'management',
   EDUCATION = 'education',
   DEMO = 'demo',
-  AUTOCAD = 'autocad',
-  INVENTOR = 'inventor',
-  VIDEO = 'video'
+  VIRTUAL_ASSISTANT = 'virtual_assistant',
+  KITCHEN_EQUIPMENT = 'kitchen_equipment',
+  INDUSTRIAL_EQUIPMENT = 'industrial_equipment',
+  COMMERCIAL = 'commercial',
+  CONSTRUCTION = 'construction',
+  UTILITIES = 'utilities',
+  COMPONENTS = 'components',
+  FOOD_SERVICE = 'food_service',
+  STORAGE = 'storage',
+  MANUFACTURING = 'manufacturing'
 }
 
 export enum ProjectType {
-  FEATURED = 'featured',
-  STANDARD = 'standard',
+  WEB_DESIGN = 'Web Design',
+  WEB_APP = 'Web Application',
   TECHNICAL_DESIGN = 'Technical Design',
+  VIRTUAL_ASSISTANT = 'Virtual Assistant',
   MANAGEMENT = 'Management',
   DESIGN = 'Design',
-  EDUCATION = 'Education',
-  WEB_APP = 'Web App',
-  CERTIFICATION = 'certification'
+  VIDEO = 'Video',
+  EDUCATION = 'Education'
 }
 
 export interface Project {
-  id: number;
+  id: string;
   title: string;
-  description: string;
-  image: string;
-  thumbnail?: string | undefined;
   category: ProjectCategory;
-  subcategory?: string | undefined;
+  subcategory?: string;
+  image: string;
+  thumbnail?: string;
+  description: string;
   technologies: string[];
-  link?: string | undefined;
-  github?: string | undefined;
-  tags?: string[] | undefined;
-  demoLink?: string | undefined;
-  codeLink?: string | undefined;
-  type?: ProjectType | undefined;
-  images?: {
-    main: string;
-    gallery?: string[];
-  } | undefined;
-  details?: {
-    specs?: string[] | undefined;
-    features?: string[] | undefined;
-    timeline?: string | undefined;
-  } | undefined;
-  pdfUrl?: string | undefined;
+  demoLink?: string;
+  codeLink?: string;
+  type: ProjectType;
+  gallery?: string[];
+  github?: string;
+  pdfUrl?: string;
 }
 
 export interface ProjectImages {
@@ -69,14 +60,18 @@ export interface ProjectDetails {
 }
 
 export interface Certificate {
-  id?: string;
+  id: number;
   title: string;
   issuer: string;
   date: string;
-  category: 'certification' | 'education' | 'professional';
-  description?: string;
-  image?: string;
-  link?: string;
+  description: string;
+  category: string;
+}
+
+export interface CertificateCategory {
+  id: string;
+  name: string;
+  description: string;
 }
 
 export interface ProjectCardProps extends WithClassName {
