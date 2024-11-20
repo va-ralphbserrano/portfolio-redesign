@@ -6,7 +6,7 @@ const ZAP_API_URL = process.env.ZAP_API_URL || 'http://localhost:8080';
 const ZAP_API_KEY = process.env.ZAP_API_KEY || '';
 const REPORT_DIR = path.join(process.cwd(), 'reports', 'security');
 
-async function generateReport() {
+async function generateReport(): void {
     try {
         // Create reports directory if it doesn't exist
         await fs.mkdir(REPORT_DIR, { recursive: true });

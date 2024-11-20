@@ -1,137 +1,181 @@
-import type { MonitoringConfig, MetricEvent, PerformanceMetrics, ResourceMetrics } from './types';
-import { DEFAULT_CONFIG, BATCH_SIZE, MAX_RETRY_ATTEMPTS, RETRY_DELAY } from './constants';
-import { PerformanceCollector } from './collectors/performance';
-import { ResourceCollector } from './collectors/resources';
 import { ErrorReportingService } from '../ErrorReportingService';
+import { MetricCollector } from './collectors/MetricCollector';
+import { ResourceCollector } from './collectors/resources';
+import { ErrorSeverity, ErrorCategory } from '../ErrorReportingService/types';
+
+export interface MetricData {
+  name: string;
+  value: number;
+  tags: Record<string, string>;
+  timestamp: number;
+}
+
+export interface MetricCollectorConfig {
+  enabled: boolean;
+  interval: number;
+  batchSize: number;
+}
 
 export class MonitoringService {
-  private static instance: MonitoringService;
-  private config: MonitoringConfig;
-  private performanceCollector: PerformanceCollector;
+  private static instance: MonitoringService | null = null;
+  private collectors: Map<string, MetricCollector>;
   private resourceCollector: ResourceCollector;
-  private metricQueue: MetricEvent[] = [];
-  private isInitialized = false;
+  private metricsQueue: MetricData[];
+  private config: MetricCollectorConfig;
+  private metrics: Map<string, number>;
 
-  private constructor() {
-    this.config = DEFAULT_CONFIG;
-    this.performanceCollector = new PerformanceCollector();
+  private constructor(config: Partial<MetricCollectorConfig> = {}) {
+    this.config = {
+      enabled: true,
+      interval: 60000,
+      batchSize: 100,
+      ...config
+    };
+
+    this.collectors = new Map();
     this.resourceCollector = new ResourceCollector();
+    this.metricsQueue = [];
+    this.metrics = new Map();
+
+    if (this.config.enabled) {
+      this.startCollection();
+    }
   }
 
-  public static getInstance(): MonitoringService {
+  public static getInstance(config?: Partial<MetricCollectorConfig>): MonitoringService {
     if (!MonitoringService.instance) {
-      MonitoringService.instance = new MonitoringService();
+      MonitoringService.instance = new MonitoringService(config);
     }
     return MonitoringService.instance;
   }
 
-  public async initialize(config?: Partial<MonitoringConfig>): Promise<void> {
+  public trackMetric(name: string, value: number, tags: Record<string, string> = {}): void {
     try {
-      if (this.isInitialized) {
-        return;
-      }
+      const metric: MetricData = {
+        name,
+        value,
+        tags,
+        timestamp: Date.now()
+      };
+      this.metricsQueue.push(metric);
 
-      this.config = { ...DEFAULT_CONFIG, ...config };
-      this.startMetricCollection();
-      this.isInitialized = true;
+      if (this.metricsQueue.length >= this.config.batchSize) {
+        this.flushMetrics();
+      }
+      this.metrics.set(name, value);
     } catch (error) {
-      ErrorReportingService.captureError(error);
-      throw new Error('Failed to initialize MonitoringService');
+      ErrorReportingService.getInstance().captureError(error, {
+        severity: ErrorSeverity.ERROR,
+        category: ErrorCategory.MONITORING
+      });
     }
   }
 
-  public trackMetric(name: string, value: number, tags: string[] = []): void {
-    if (!this.isInitialized) {
-      return;
-    }
+  public getMetrics(): Map<string, number> {
+    return new Map(this.metrics);
+  }
 
-    const event: MetricEvent = {
-      name,
-      value,
-      timestamp: Date.now(),
-      tags
-    };
-
-    this.metricQueue.push(event);
-
-    if (this.metricQueue.length >= BATCH_SIZE) {
+  private addMetric(metric: MetricData): void {
+    if (!this.config.enabled) return;
+    this.metricsQueue.push(metric);
+    if (this.metricsQueue.length >= this.config.batchSize) {
       this.flushMetrics();
     }
   }
 
-  private startMetricCollection(): void {
-    setInterval(() => {
-      const performanceMetrics = this.performanceCollector.getMetrics();
-      const resourceMetrics = this.resourceCollector.getMetrics();
+  public track(metric: MetricData): void {
+    try {
+      this.metricsQueue.push(metric);
 
-      this.checkThresholds(performanceMetrics);
-      this.trackResourceMetrics(resourceMetrics);
-    }, 5000);
-  }
-
-  private checkThresholds(metrics: PerformanceMetrics): void {
-    const { performanceThreshold } = this.config;
-
-    if (metrics.fcp > performanceThreshold.fcp) {
-      this.trackMetric('fcp_threshold_exceeded', metrics.fcp, ['performance']);
-    }
-
-    if (metrics.lcp > performanceThreshold.lcp) {
-      this.trackMetric('lcp_threshold_exceeded', metrics.lcp, ['performance']);
-    }
-
-    if (metrics.tti > performanceThreshold.tti) {
-      this.trackMetric('tti_threshold_exceeded', metrics.tti, ['performance']);
-    }
-
-    if (metrics.cls > performanceThreshold.cls) {
-      this.trackMetric('cls_threshold_exceeded', metrics.cls, ['performance']);
+      if (this.metricsQueue.length >= this.config.batchSize) {
+        this.flushMetrics();
+      }
+    } catch (error) {
+      ErrorReportingService.captureError(error instanceof Error ? error : new Error('Failed to track metric'));
     }
   }
 
-  private trackResourceMetrics(metrics: ResourceMetrics): void {
-    this.trackMetric('memory_usage', metrics.memoryUsage, ['resource']);
-    this.trackMetric('cpu_usage', metrics.cpuUsage, ['resource']);
-    this.trackMetric('network_requests', metrics.networkRequests, ['resource']);
-  }
-
-  private async flushMetrics(retryCount = 0): Promise<void> {
-    if (this.metricQueue.length === 0) {
+  private async flushMetrics(): Promise<void> {
+    if (this.metricsQueue.length === 0) {
       return;
     }
 
-    const metrics = [...this.metricQueue];
-    this.metricQueue = [];
-
     try {
-      const response = await fetch(this.config.reportingEndpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(metrics),
-      });
+      const metrics = [...this.metricsQueue];
+      this.metricsQueue = [];
 
-      if (!response.ok) {
-        throw new Error(`Failed to send metrics: ${response.statusText}`);
+      for (const collector of this.collectors.values()) {
+        try {
+          await collector.collect(metrics);
+        } catch (error) {
+          ErrorReportingService.captureError({
+            name: 'MetricCollectionError',
+            message: `Failed to collect metrics for collector ${collector.name}`,
+            severity: ErrorSeverity.ERROR,
+            category: ErrorCategory.MONITORING,
+            metadata: { collector: collector.name, metrics }
+          });
+        }
       }
     } catch (error) {
-      if (retryCount < MAX_RETRY_ATTEMPTS) {
-        setTimeout(() => {
-          this.metricQueue.push(...metrics);
-          this.flushMetrics(retryCount + 1);
-        }, RETRY_DELAY);
-      } else {
-        ErrorReportingService.captureError(error);
-      }
+      ErrorReportingService.captureError({
+        name: 'MetricFlushError',
+        message: 'Failed to flush metrics',
+        severity: ErrorSeverity.ERROR,
+        category: ErrorCategory.MONITORING,
+        metadata: { metrics: this.metricsQueue }
+      });
+      this.metricsQueue = [];
     }
   }
 
-  public reset(): void {
-    this.performanceCollector.reset();
-    this.resourceCollector.reset();
-    this.metricQueue = [];
+  private startCollection(): void {
+    setInterval(() => {
+      try {
+        this.resourceCollector.collect().then(metrics => {
+          metrics.forEach(metric => this.addMetric(metric));
+        });
+      } catch (error) {
+        ErrorReportingService.captureError({
+          name: 'ResourceCollectionError',
+          message: 'Failed to collect resource metrics',
+          severity: ErrorSeverity.ERROR,
+          category: ErrorCategory.MONITORING,
+          metadata: { error }
+        });
+      }
+    }, this.config.interval);
+  }
+
+  public registerCollector(name: string, collector: MetricCollector): void {
+    try {
+      if (this.collectors.has(name)) {
+        throw new Error(`Collector ${name} is already registered`);
+      }
+
+      this.collectors.set(name, collector);
+    } catch (error) {
+      ErrorReportingService.captureError({
+        name: 'CollectorRegistrationError',
+        message: 'Failed to register collector',
+        severity: ErrorSeverity.ERROR,
+        category: ErrorCategory.MONITORING,
+        metadata: { name, collector }
+      });
+    }
+  }
+
+  public removeCollector(name: string): void {
+    try {
+      this.collectors.delete(name);
+    } catch (error) {
+      ErrorReportingService.captureError({
+        name: 'CollectorRemovalError',
+        message: 'Failed to remove collector',
+        severity: ErrorSeverity.ERROR,
+        category: ErrorCategory.MONITORING,
+        metadata: { name }
+      });
+    }
   }
 }
-
-export default MonitoringService.getInstance();

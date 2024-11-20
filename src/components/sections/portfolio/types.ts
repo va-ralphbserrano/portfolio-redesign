@@ -60,12 +60,13 @@ export interface ProjectDetails {
 }
 
 export interface Certificate {
-  id: number;
+  id: string;
   title: string;
   issuer: string;
   date: string;
   description: string;
   category: string;
+  image?: string;
 }
 
 export interface CertificateCategory {

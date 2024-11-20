@@ -86,6 +86,31 @@ const technicalProjects: Project[] = [
     description: 'Custom rack designs for various industrial and commercial applications',
     technologies: ['AutoCAD', 'Custom Design', 'Industrial Storage'],
     type: ProjectType.TECHNICAL_DESIGN
+  },
+  {
+    id: 'solar-inverter',
+    title: 'Solar Inverter Installation',
+    description: 'Design and installation of a solar inverter system...',
+    category: ProjectCategory.TECHNICAL,
+    type: ProjectType.TECHNICAL_DESIGN,
+    image: '/images/projects/solar-inverter/main.jpg',
+    gallery: [
+      '/images/projects/solar-inverter/1.jpg',
+      '/images/projects/solar-inverter/2.jpg',
+      '/images/projects/solar-inverter/3.jpg'
+    ],
+    technologies: ['AutoCAD', 'Solar Power', 'Electrical Systems'],
+    demoLink: 'https://example.com/demo',
+    featured: true,
+    date: '2023',
+    role: 'Lead Designer',
+    company: 'Solar Solutions Inc.',
+    location: 'California',
+    responsibilities: [
+      'System design',
+      'Installation oversight',
+      'Testing and commissioning'
+    ]
   }
 ];
 
@@ -204,3 +229,16 @@ export const projects: Project[] = [
     type: ProjectType.WEB_APP
   }
 ];
+
+export const featuredProjects = projects.filter(project => project.featured);
+
+export const getProjectById = (id: string): Project | undefined => {
+  return projects.find(project => project.id === id);
+};
+
+export const getProjectsByCategory = (category: ProjectCategory): Project[] => {
+  if (category === ProjectCategory.ALL) {
+    return projects;
+  }
+  return projects.filter(project => project.category === category);
+};

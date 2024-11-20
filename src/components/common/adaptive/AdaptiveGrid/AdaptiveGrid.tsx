@@ -86,12 +86,13 @@ export const AdaptiveGrid: React.FC<AdaptiveGridProps> = ({
         className
       )}
       style={{
-        gap,
+        display: 'grid',
         gridTemplateColumns: gridTemplateColumns.mobile,
-        '@media (min-width: 768px)': {
+        gap,
+        ['@media (min-width: 768px)' as string]: {
           gridTemplateColumns: gridTemplateColumns.tablet,
         },
-        '@media (min-width: 1024px)': {
+        ['@media (min-width: 1024px)' as string]: {
           gridTemplateColumns: gridTemplateColumns.desktop,
         },
       }}

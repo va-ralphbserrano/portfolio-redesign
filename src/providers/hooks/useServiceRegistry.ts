@@ -9,7 +9,7 @@ export function useServiceRegistry() {
     provider: BaseProvider<T>
   ): void => {
     ServiceRegistry.getInstance().registerProvider(key, provider);
-    MonitoringService.trackMetric('service_registration', 1, ['registry']);
+    MonitoringService.getInstance().trackMetric('service_registration', 1, ['registry']);
   }, []);
 
   const getProvider = useCallback(<T>(key: string): BaseProvider<T> | null => {
@@ -18,7 +18,7 @@ export function useServiceRegistry() {
 
   const disposeProvider = useCallback((key: string): void => {
     ServiceRegistry.getInstance().disposeProvider(key);
-    MonitoringService.trackMetric('service_disposal', 1, ['registry']);
+    MonitoringService.getInstance().trackMetric('service_disposal', 1, ['registry']);
   }, []);
 
   const checkProviderHealth = useCallback(async (key: string): Promise<boolean> => {
@@ -26,7 +26,7 @@ export function useServiceRegistry() {
     if (!provider) return false;
     
     const isHealthy = await provider.checkHealth();
-    MonitoringService.trackMetric('service_health_check', 1, ['registry']);
+    MonitoringService.getInstance().trackMetric('service_health_check', 1, ['registry']);
     return isHealthy;
   }, []);
 

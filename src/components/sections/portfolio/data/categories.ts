@@ -3,52 +3,27 @@ import { ProjectCategory } from './types';
 export const categories = [
   {
     id: ProjectCategory.ALL,
-    name: 'All',
-    description: 'All projects'
+    label: 'All Projects',
+    description: 'View all my projects across different domains'
   },
   {
     id: ProjectCategory.WEB,
-    name: 'Web Development',
+    label: 'Web Development',
     description: 'Web applications and websites'
   },
   {
     id: ProjectCategory.TECHNICAL,
-    name: 'Technical',
-    description: 'Technical designs and solutions'
+    label: 'Technical',
+    description: 'Technical designs and engineering projects'
   },
   {
     id: ProjectCategory.DESIGN,
-    name: 'Design',
-    description: 'Design projects'
+    label: 'Design',
+    description: 'Design projects including CAD and 3D modeling'
   },
   {
-    id: ProjectCategory.MANAGEMENT,
-    name: 'Management',
-    description: 'Project management and leadership'
-  },
-  {
-    id: ProjectCategory.EDUCATION,
-    name: 'Education',
-    description: 'Educational projects and materials'
-  },
-  {
-    id: ProjectCategory.DEMO,
-    name: 'Demo',
-    description: 'Demo projects and prototypes'
-  },
-  {
-    id: ProjectCategory.AUTOCAD,
-    name: 'AutoCAD',
-    description: 'AutoCAD designs and drawings'
-  },
-  {
-    id: ProjectCategory.VIDEO,
-    name: 'Video',
-    description: 'Video projects and animations'
-  },
-  {
-    id: ProjectCategory.INVENTOR,
-    name: 'Inventor',
-    description: 'Inventor 3D designs'
+    id: ProjectCategory.INDUSTRIAL_EQUIPMENT,
+    label: 'Industrial Equipment',
+    description: 'Industrial equipment and machinery designs'
   }
 ];

@@ -2,15 +2,17 @@ import { useState } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 import 'react-pdf/dist/esm/Page/TextLayer.css';
+import classNames from 'classnames';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
 interface PDFViewerProps {
   url: string;
+  onClose?: () => void;
   className?: string;
 }
 
-export const PDFViewer: React.FC<PDFViewerProps> = ({ url, className = '' }) => {
+export const PDFViewer: React.FC<PDFViewerProps> = ({ url, onClose, className = '' }) => {
   const [numPages, setNumPages] = useState<number | null>(null);
   const [pageNumber, setPageNumber] = useState(1);
 
@@ -18,20 +20,11 @@ export const PDFViewer: React.FC<PDFViewerProps> = ({ url, className = '' }) => 
     setNumPages(numPages);
   };
 
-  const goToPrevPage = () => {
-    if (pageNumber > 1) {
-      setPageNumber(pageNumber - 1);
-    }
-  };
-
-  const goToNextPage = () => {
-    if (numPages && pageNumber < numPages) {
-      setPageNumber(pageNumber + 1);
-    }
-  };
-
   return (
-    <div className={`flex flex-col items-center ${className}`}>
+    <div className={classNames("pdf-viewer", className)}>
+      {onClose && (
+        <button onClick={onClose} className="close-button">Close</button>
+      )}
       <Document
         file={url}
         onLoadSuccess={onDocumentLoadSuccess}
@@ -47,7 +40,7 @@ export const PDFViewer: React.FC<PDFViewerProps> = ({ url, className = '' }) => 
       {numPages && numPages > 1 && (
         <div className="mt-4 flex items-center gap-4">
           <button
-            onClick={goToPrevPage}
+            onClick={() => setPageNumber(Math.max(1, pageNumber - 1))}
             disabled={pageNumber <= 1}
             className="rounded px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 disabled:opacity-50 dark:text-gray-300 dark:hover:bg-gray-800"
           >
@@ -57,7 +50,7 @@ export const PDFViewer: React.FC<PDFViewerProps> = ({ url, className = '' }) => 
             Page {pageNumber} of {numPages}
           </p>
           <button
-            onClick={goToNextPage}
+            onClick={() => setPageNumber(Math.min(numPages, pageNumber + 1))}
             disabled={pageNumber >= (numPages || 0)}
             className="rounded px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 disabled:opacity-50 dark:text-gray-300 dark:hover:bg-gray-800"
           >

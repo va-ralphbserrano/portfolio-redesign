@@ -1,21 +1,21 @@
 import sharp from 'sharp';
 
 interface OptimizeImageOptions {
-  quality?: number;
-  width?: number;
+  width: number;
+  quality: number;
+  format: 'webp' | 'avif' | 'jpeg' | 'png';
   height?: number;
-  format?: 'webp' | 'avif' | 'jpeg' | 'png';
 }
 
 export async function optimizeImage(
   input: Buffer,
-  options: OptimizeImageOptions = {}
+  options: Required<Pick<OptimizeImageOptions, 'width' | 'quality' | 'format'>> & Partial<Pick<OptimizeImageOptions, 'height'>>
 ): Promise<Buffer> {
   const {
-    quality = 80,
+    quality,
     width,
     height,
-    format = 'webp'
+    format
   } = options;
 
   let pipeline = sharp(input);
@@ -47,7 +47,7 @@ export async function optimizeImage(
   // General optimizations
   pipeline = pipeline
     .rotate() // Auto-rotate based on EXIF
-    .withMetadata(false); // Strip metadata
+    .withMetadata({ exif: {} }); // Preserve minimal metadata
 
   return pipeline.toBuffer();
 }
@@ -72,14 +72,14 @@ export async function generateResponsiveImages(
 
 export async function generateImageFormats(
   input: Buffer,
-  width?: number
+  width: number | undefined = undefined
 ): Promise<Map<string, Buffer>> {
   const formats = ['webp', 'avif', 'jpeg'] as const;
   const results = new Map<string, Buffer>();
 
   for (const format of formats) {
     const optimized = await optimizeImage(input, {
-      width,
+      width: width || undefined,
       format,
       quality: format === 'avif' ? 70 : 80
     });
@@ -87,4 +87,32 @@ export async function generateImageFormats(
   }
 
   return results;
+}
+
+export class ImageOptimizer {
+  async optimize(
+    input: string | Buffer,
+    options: OptimizeImageOptions
+  ): Promise<string> {
+    try {
+      // If input is a URL or path, fetch it first
+      let buffer: Buffer;
+      if (typeof input === 'string') {
+        const response = await fetch(input);
+        buffer = Buffer.from(await response.arrayBuffer());
+      } else {
+        buffer = input;
+      }
+
+      // Optimize the image
+      const optimizedBuffer = await optimizeImage(buffer, options);
+
+      // Convert to base64 data URL
+      const format = options.format;
+      const base64 = optimizedBuffer.toString('base64');
+      return `data:image/${format};base64,${base64}`;
+    } catch (error) {
+      throw new Error(`Failed to optimize image: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  }
 }

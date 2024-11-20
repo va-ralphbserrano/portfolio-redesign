@@ -1,0 +1,26 @@
+I need you to help me fix **TypeScript type errors** in my project. Follow these instructions **strictly**: 
+
+1. **Run Type Checking**: Start by running `typecheck` to identify all type errors in the project.
+   
+2. **Fix Only Type Errors**: 
+   - Resolve only the **type-related issues** (e.g., type mismatches, missing return types, incorrect parameter types, or improper `any` usage).
+   - Do not modify any logic, design, layout, functionality, or other parts of the code. Only address type annotations or type-related issues.
+
+3. **Preserve Everything Else**: 
+   - Keep the original file structure, formatting, and organization intact.
+   - Avoid introducing any changes unrelated to fixing type errors.
+
+4. **No Backups**: Assume I have backups. There is no need to create or suggest backups.
+
+5. **Verification**: After making the fixes:
+   - Rerun `typecheck` to verify that there are no remaining type errors.
+   - If any type errors persist, address them and reverify until all type errors are resolved.
+
+6. **Strict Compliance**: Ensure the following:
+   - Do not change any non-type-related code.
+   - Do not introduce new functionality or refactor existing code unnecessarily.
+
+7. **Output**: Provide a summary of the fixes, including:
+   - The file(s) modified.
+   - The original type error.
+   - The exact change made to resolve the error.

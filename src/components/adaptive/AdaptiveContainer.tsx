@@ -74,23 +74,23 @@ const Container = styled.div<{
   `}
   
   @media (min-width: ${defaultBreakpoints.sm}px) {
-    padding: ${props => getResponsiveValue(props.$padding as ResponsiveValue, 'sm', props.$padding)};
-    margin: ${props => getResponsiveValue(props.$margin as ResponsiveValue, 'sm', props.$margin)};
+    padding: ${props => getResponsiveValue(props.$padding, 'sm', String(props.$padding))};
+    margin: ${props => getResponsiveValue(props.$margin, 'sm', String(props.$margin))};
   }
 
   @media (min-width: ${defaultBreakpoints.md}px) {
-    padding: ${props => getResponsiveValue(props.$padding as ResponsiveValue, 'md', props.$padding)};
-    margin: ${props => getResponsiveValue(props.$margin as ResponsiveValue, 'md', props.$margin)};
+    padding: ${props => getResponsiveValue(props.$padding, 'md', String(props.$padding))};
+    margin: ${props => getResponsiveValue(props.$margin, 'md', String(props.$margin))};
   }
 
   @media (min-width: ${defaultBreakpoints.lg}px) {
-    padding: ${props => getResponsiveValue(props.$padding as ResponsiveValue, 'lg', props.$padding)};
-    margin: ${props => getResponsiveValue(props.$margin as ResponsiveValue, 'lg', props.$margin)};
+    padding: ${props => getResponsiveValue(props.$padding, 'lg', String(props.$padding))};
+    margin: ${props => getResponsiveValue(props.$margin, 'lg', String(props.$margin))};
   }
 
   @media (min-width: ${defaultBreakpoints.xl}px) {
-    padding: ${props => getResponsiveValue(props.$padding as ResponsiveValue, 'xl', props.$padding)};
-    margin: ${props => getResponsiveValue(props.$margin as ResponsiveValue, 'xl', props.$margin)};
+    padding: ${props => getResponsiveValue(props.$padding, 'xl', String(props.$padding))};
+    margin: ${props => getResponsiveValue(props.$margin, 'xl', String(props.$margin))};
   }
 `;
 

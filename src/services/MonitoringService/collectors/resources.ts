@@ -1,69 +1,86 @@
-import type { ResourceMetrics } from '../types';
+import { MetricCollector, CollectorConfig } from './MetricCollector';
+import { MetricData } from '../index';
 import { ErrorReportingService } from '../../ErrorReportingService';
 
-export class ResourceCollector {
-  private metrics: ResourceMetrics = {
-    memoryUsage: 0,
-    cpuUsage: 0,
-    networkRequests: 0
-  };
+export interface ResourceMetrics {
+  cpuUsage: number;
+  memoryUsage: number;
+  heapUsage: number;
+  networkRequests: number;
+}
 
-  private requestCount = 0;
-
-  constructor() {
-    this.initializeMetrics();
+export class ResourceCollector extends MetricCollector {
+  constructor(config: Partial<CollectorConfig> = {}) {
+    super('resource-collector', config);
   }
 
-  private initializeMetrics(): void {
+  public async collect(metrics: MetricData[]): Promise<void> {
     try {
-      // Track memory usage
-      if ('memory' in performance) {
-        setInterval(() => {
-          this.metrics.memoryUsage = (performance as any).memory.usedJSHeapSize;
-        }, 1000);
-      }
-
-      // Track network requests
-      if ('PerformanceObserver' in window) {
-        const observer = new PerformanceObserver((list) => {
-          for (const entry of list.getEntries()) {
-            if (entry.entryType === 'resource') {
-              this.requestCount++;
-              this.metrics.networkRequests = this.requestCount;
-            }
-          }
-        });
-
-        observer.observe({ entryTypes: ['resource'] });
-      }
-
-      // Estimate CPU usage through task timing
-      let lastTime = performance.now();
-      const measureCPU = () => {
-        const currentTime = performance.now();
-        const timeDiff = currentTime - lastTime;
-        const usage = Math.min(timeDiff / 16.67, 1); // 16.67ms is one frame at 60fps
-        this.metrics.cpuUsage = usage;
-        lastTime = currentTime;
-        requestAnimationFrame(measureCPU);
-      };
-
-      requestAnimationFrame(measureCPU);
+      await this.processMetrics(metrics);
     } catch (error) {
-      ErrorReportingService.captureError(error);
+      await this.handleError(error, 'Failed to collect resource metrics');
     }
   }
 
-  public getMetrics(): ResourceMetrics {
-    return { ...this.metrics };
+  public async collectMetrics(): Promise<MetricData[]> {
+    try {
+      const metrics = await this.gatherResourceMetrics();
+      return this.formatMetrics(metrics);
+    } catch (error) {
+      await this.handleError(error, 'Failed to gather resource metrics');
+      return [];
+    }
   }
 
-  public reset(): void {
-    this.metrics = {
-      memoryUsage: 0,
-      cpuUsage: 0,
-      networkRequests: 0
+  private async gatherResourceMetrics(): Promise<ResourceMetrics> {
+    // Mock implementation for browser environment
+    return {
+      cpuUsage: Math.random() * 100,
+      memoryUsage: Math.random() * 1024,
+      heapUsage: Math.random() * 512,
+      networkRequests: Math.floor(Math.random() * 100)
     };
-    this.requestCount = 0;
+  }
+
+  private formatMetrics(resourceMetrics: ResourceMetrics): MetricData[] {
+    const timestamp = Date.now();
+    const commonTags = { collector: this.name };
+
+    return [
+      {
+        name: 'cpu_usage',
+        value: resourceMetrics.cpuUsage,
+        tags: commonTags,
+        timestamp
+      },
+      {
+        name: 'memory_usage',
+        value: resourceMetrics.memoryUsage,
+        tags: commonTags,
+        timestamp
+      },
+      {
+        name: 'heap_usage',
+        value: resourceMetrics.heapUsage,
+        tags: commonTags,
+        timestamp
+      },
+      {
+        name: 'network_requests',
+        value: resourceMetrics.networkRequests,
+        tags: commonTags,
+        timestamp
+      }
+    ];
+  }
+
+  private async processMetrics(metrics: MetricData[]): Promise<void> {
+    try {
+      // Process and store metrics
+      // This is a mock implementation
+      console.log('Processing resource metrics:', metrics.length);
+    } catch (error) {
+      await this.handleError(error, 'Failed to process resource metrics');
+    }
   }
 }

@@ -31,3 +31,20 @@ export interface MetricEvent {
   timestamp: number;
   tags: string[];
 }
+
+export interface MetricData {
+  id: string;
+  name: string;
+  value: number;
+  timestamp: number;
+  tags: Record<string, string | number>;
+}
+
+export interface MetricCollector {
+  collect(): Promise<MetricData[]>;
+}
+
+export interface MetricOptions {
+  maxSize?: number;
+  ttl?: number;
+}

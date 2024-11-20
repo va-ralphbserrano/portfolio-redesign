@@ -1,155 +1,106 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { useInView } from 'react-intersection-observer';
-import styled from '@emotion/styled';
+import React, { useEffect, useRef, useState } from 'react';
+import { ErrorReportingService, ErrorSeverity, ErrorCategory } from '../../services/ErrorReportingService';
+import { ImageOptimizer } from '../common/AdaptiveImage/ImageOptimizer';
 
-interface AdaptiveImageProps {
+export interface AdaptiveImageProps {
   src: string;
   alt: string;
-  sizes?: string;
+  width?: number;
+  height?: number;
   loading?: 'lazy' | 'eager';
   quality?: number;
-  placeholder?: string;
-  formats?: ('webp' | 'avif' | 'jpeg' | 'png')[];
+  formats?: ('webp' | 'avif' | 'jpeg')[];
   onLoad?: () => void;
   onError?: (error: Error) => void;
-  className?: string;
 }
 
-const StyledImage = styled.img<{ isLoading: boolean }>`
-  width: 100%;
-  height: auto;
-  transition: filter 0.3s ease-in-out;
-  filter: ${({ isLoading }) => isLoading ? 'blur(20px)' : 'none'};
-  will-change: filter;
-  contain: content;
-`;
-
-const formatSupport = async (format: string): Promise<boolean> => {
-  try {
-    // Check for valid environment and format
-    if (typeof window === 'undefined' || !format || format.trim() === '') {
-      return false;
-    }
-
-    // Create canvas safely
-    const canvas = document.createElement('canvas');
-    if (!canvas || typeof canvas.toDataURL !== 'function') {
-      return false;
-    }
-
-    // Format the image type correctly
-    const imageType = format.startsWith('image/') ? format : `image/${format}`;
-    
-    // Try to get data URL with proper error handling
-    try {
-      const dataUrl = canvas.toDataURL(imageType);
-      return dataUrl.indexOf(imageType) > -1;
-    } catch (err) {
-      console.warn(`Format support check failed for ${format}:`, err);
-      return false;
-    }
-  } catch (error) {
-    console.warn(`Format support check failed for ${format}:`, error);
-    return false;
-  }
-};
-
-export const AdaptiveImage: React.FC<AdaptiveImageProps> = ({
+const AdaptiveImage: React.FC<AdaptiveImageProps> = ({
   src,
   alt,
-  sizes = '100vw',
+  width,
+  height,
   loading = 'lazy',
-  quality = 85,
-  placeholder,
-  formats = ['webp', 'avif', 'jpeg'],
+  quality = 80,
+  formats = ['webp', 'jpeg'],
   onLoad,
-  onError,
-  className,
+  onError
 }) => {
+  const [imageSrc, setImageSrc] = useState<string>(src);
   const [isLoading, setIsLoading] = useState(true);
-  const [currentSrc, setCurrentSrc] = useState(placeholder || src);
-  const [supportedFormats, setSupportedFormats] = useState<string[]>([]);
+  const [error, setError] = useState<Error | null>(null);
   const imageRef = useRef<HTMLImageElement>(null);
-  const { ref, inView } = useInView({
-    threshold: 0,
-    triggerOnce: true,
-  });
 
   useEffect(() => {
-    const checkFormatSupport = async () => {
-      const supported = await Promise.all(
-        formats.map(async format => ({
-          format,
-          supported: await formatSupport(format)
-        }))
-      );
-      setSupportedFormats(
-        supported
-          .filter(({ supported }) => supported)
-          .map(({ format }) => format)
-      );
-    };
-
-    checkFormatSupport();
-  }, [formats]);
-
-  useEffect(() => {
-    if (!inView) return;
-
-    const img = new Image();
-    img.src = src;
-    img.onload = () => {
-      setCurrentSrc(src);
-      setIsLoading(false);
-      onLoad?.();
-    };
-    img.onerror = (error) => {
-      setIsLoading(false);
-      onError?.(error as Error);
-      if (placeholder) {
-        setCurrentSrc(placeholder);
+    const optimizeImage = async () => {
+      try {
+        setIsLoading(true);
+        const optimizer = new ImageOptimizer();
+        const optimizedSrc = await optimizer.optimize(src, {
+          width: width || 800, // Provide a default width if none specified
+          quality: quality,
+          format: formats[0] || 'webp'
+        });
+        setImageSrc(optimizedSrc);
+        setIsLoading(false);
+        onLoad?.();
+      } catch (err) {
+        const error = err instanceof Error ? err : new Error('Failed to optimize image');
+        setError(error);
+        setIsLoading(false);
+        onError?.(error);
+        ErrorReportingService.captureError({
+          name: 'ImageOptimizationError',
+          message: error.message,
+          severity: ErrorSeverity.ERROR,
+          category: ErrorCategory.SYSTEM,
+          metadata: {
+            src,
+            width,
+            quality,
+            formats
+          }
+        });
       }
     };
-  }, [inView, src, placeholder, onLoad, onError]);
 
-  const generateSrcSet = () => {
-    if (!supportedFormats.length) return undefined;
+    optimizeImage();
+  }, [src, width, quality, formats]);
 
-    const widths = [640, 750, 828, 1080, 1200, 1920, 2048, 3840];
-    const format = supportedFormats[0];
-
-    return widths
-      .map(width => {
-        const imageUrl = new URL(src, window.location.origin);
-        imageUrl.searchParams.set('w', width.toString());
-        imageUrl.searchParams.set('q', quality.toString());
-        imageUrl.searchParams.set('fm', format);
-        return `${imageUrl.toString()} ${width}w`;
-      })
-      .join(', ');
+  const handleError = () => {
+    const error = new Error('Failed to load image');
+    setError(error);
+    onError?.(error);
+    ErrorReportingService.captureError({
+      name: 'ImageLoadError',
+      message: error.message,
+      severity: ErrorSeverity.ERROR,
+      category: ErrorCategory.SYSTEM,
+      metadata: {
+        src: imageSrc
+      }
+    });
   };
 
+  if (error) {
+    return (
+      <div role="alert" className="adaptive-image-error">
+        <p>Failed to load image: {error.message}</p>
+      </div>
+    );
+  }
+
   return (
-    <StyledImage
-      ref={(el) => {
-        // Combine refs
-        imageRef.current = el;
-        if (typeof ref === 'function') ref(el);
-      }}
-      src={currentSrc}
+    <img
+      ref={imageRef}
+      src={imageSrc}
       alt={alt}
-      sizes={sizes}
+      width={width}
+      height={height}
       loading={loading}
-      srcSet={generateSrcSet()}
-      onLoad={() => setIsLoading(false)}
-      onError={(e) => {
-        setIsLoading(false);
-        onError?.(e as unknown as Error);
-      }}
-      className={className}
-      isLoading={isLoading}
-      role="img"
-      data-testid="adaptive-image"
+      onError={handleError}
+      className={isLoading ? 'adaptive-image-loading' : 'adaptive-image-loaded'}
     />
   );
 };
+
+export default AdaptiveImage;

@@ -1,4 +1,4 @@
-import { vi } from 'vitest';
+import { vi, act } from 'vitest';
 import { matchers } from '@emotion/jest';
 
 // Add emotion matchers
@@ -46,25 +46,58 @@ class MockURL {
 
 global.URL = MockURL as any;
 
-// Mock IntersectionObserver
-class MockIntersectionObserver {
-  callback: IntersectionObserverCallback;
+interface IntersectionObserverEntry {
+  target: Element;
+  isIntersecting: boolean;
+  boundingClientRect: DOMRectReadOnly;
+  intersectionRatio: number;
+  intersectionRect: DOMRectReadOnly;
+  rootBounds: DOMRectReadOnly | null;
+  time: number;
+}
+
+class MockIntersectionObserver implements IntersectionObserver {
+  readonly root: Element | null = null;
+  readonly rootMargin: string = '';
+  readonly thresholds: readonly number[] = [0];
+  private callback: IntersectionObserverCallback;
+  private elements: Set<Element>;
+
   constructor(callback: IntersectionObserverCallback) {
     this.callback = callback;
+    this.elements = new Set();
   }
-  observe() {
-    // Simulate element coming into view
-    setTimeout(() => {
-      this.callback([
-        {
-          isIntersecting: true,
-          intersectionRatio: 1,
-        } as IntersectionObserverEntry,
-      ] as IntersectionObserverEntry[], this);
-    }, 0);
+
+  observe(target: Element): void {
+    this.elements.add(target);
+
+    // Simulate intersection
+    act(() => {
+      const entry: IntersectionObserverEntry = {
+        target,
+        isIntersecting: true,
+        boundingClientRect: target.getBoundingClientRect(),
+        intersectionRatio: 1,
+        intersectionRect: target.getBoundingClientRect(),
+        rootBounds: null,
+        time: Date.now()
+      };
+
+      this.callback([entry], this);
+    });
   }
-  unobserve() {}
-  disconnect() {}
+
+  unobserve(target: Element): void {
+    this.elements.delete(target);
+  }
+
+  disconnect(): void {
+    this.elements.clear();
+  }
+
+  takeRecords(): IntersectionObserverEntry[] {
+    return [];
+  }
 }
 
 global.IntersectionObserver = MockIntersectionObserver;
@@ -89,3 +122,18 @@ Object.defineProperty(window, 'location', {
 export const cleanup = () => {
   vi.clearAllMocks();
 };
+
+export function setupAdaptiveImage(): void {
+  // Mock Image loading
+  Object.defineProperty(window.Image.prototype, 'src', {
+    set(src: string) {
+      if (src) {
+        setTimeout(() => {
+          if (this.onload) {
+            this.onload();
+          }
+        }, 10);
+      }
+    }
+  });
+}

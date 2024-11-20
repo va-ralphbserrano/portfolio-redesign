@@ -1,4 +1,4 @@
-import { SecurityConfig } from '@types/security';
+import { SecurityConfig } from '@/types/security';
 
 class AuthService {
   private static instance: AuthService;

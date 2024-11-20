@@ -2,8 +2,14 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { vi } from 'vitest';
 import { BrowserRouter } from 'react-router-dom';
-import MobileNav from '../MobileNav';
-import { navLinks } from '@/data/navigation';
+import { MobileNav } from '@/components/layout/MobileNav';
+import { NavLink } from '@/types';
+
+const mockNavLinks: NavLink[] = [
+  { name: 'Home', path: '/' },
+  { name: 'About', path: '/about' },
+  { name: 'Contact', path: '/contact' }
+];
 
 const renderWithRouter = (component: React.ReactNode) => {
   return render(<BrowserRouter>{component}</BrowserRouter>);
@@ -15,22 +21,22 @@ describe('MobileNav', () => {
   });
 
   it('renders correctly when open', () => {
-    renderWithRouter(<MobileNav isOpen={true} onClose={() => {}} navLinks={navLinks} />);
+    renderWithRouter(<MobileNav isOpen={true} onClose={() => {}} navLinks={mockNavLinks} />);
     
-    navLinks.forEach(link => {
-      const linkElement = screen.getByText(link.label);
+    mockNavLinks.forEach(link => {
+      const linkElement = screen.getByText(link.name);
       expect(linkElement).toBeInTheDocument();
     });
   });
 
   it('does not render when closed', () => {
-    const { container } = renderWithRouter(<MobileNav isOpen={false} onClose={() => {}} navLinks={navLinks} />);
+    const { container } = renderWithRouter(<MobileNav isOpen={false} onClose={() => {}} navLinks={mockNavLinks} />);
     expect(container.firstChild).toBeNull();
   });
 
   it('calls onClose when clicking close button', () => {
     const onClose = vi.fn();
-    renderWithRouter(<MobileNav isOpen={true} onClose={onClose} navLinks={navLinks} />);
+    renderWithRouter(<MobileNav isOpen={true} onClose={onClose} navLinks={mockNavLinks} />);
     
     const closeButton = screen.getByLabelText('Close menu');
     if (closeButton) {
@@ -41,9 +47,9 @@ describe('MobileNav', () => {
 
   it('calls onClose when clicking a link', () => {
     const onClose = vi.fn();
-    renderWithRouter(<MobileNav isOpen={true} onClose={onClose} navLinks={navLinks} />);
+    renderWithRouter(<MobileNav isOpen={true} onClose={onClose} navLinks={mockNavLinks} />);
     
-    const firstLink = screen.getByText(navLinks[0]?.label || '');
+    const firstLink = screen.getByText(mockNavLinks[0]?.name || '');
     if (firstLink) {
       fireEvent.click(firstLink);
       expect(onClose).toHaveBeenCalledTimes(1);
@@ -51,10 +57,10 @@ describe('MobileNav', () => {
   });
 
   it('traps focus when open', () => {
-    renderWithRouter(<MobileNav isOpen={true} onClose={() => {}} navLinks={navLinks} />);
+    renderWithRouter(<MobileNav isOpen={true} onClose={() => {}} navLinks={mockNavLinks} />);
     
     const closeButton = screen.getByLabelText('Close menu');
-    const lastLink = screen.getByText(navLinks[navLinks.length - 1]?.label || '');
+    const lastLink = screen.getByText(mockNavLinks[mockNavLinks.length - 1]?.name || '');
     
     if (closeButton && lastLink) {
       // Focus should move to close button when tabbing from last link

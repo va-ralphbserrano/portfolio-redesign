@@ -3,140 +3,194 @@ import { cleanup } from '@testing-library/react';
 import * as matchers from '@testing-library/jest-dom/matchers';
 import React from 'react';
 import { JSDOM } from 'jsdom';
+import { TextDecoder, TextEncoder } from 'util';
+import { vi } from 'vitest';
 
 console.log('Setup: Starting test environment configuration');
 
-// Extend Window interface
+// Define base window interface
+interface BaseWindow {
+  TextDecoder: typeof TextDecoder;
+  TextEncoder: typeof TextEncoder;
+  addEventListener: Window['addEventListener'];
+  removeEventListener: Window['removeEventListener'];
+  dispatchEvent: Window['dispatchEvent'];
+  setTimeout: Window['setTimeout'];
+  clearTimeout: Window['clearTimeout'];
+  requestAnimationFrame: Window['requestAnimationFrame'];
+  cancelAnimationFrame: Window['cancelAnimationFrame'];
+}
+
+// Define custom event handling interface
+interface EventHandling {
+  on: (event: string, handler: EventListener) => void;
+  off: (event: string, handler: EventListener) => void;
+  emit: (event: string, detail?: Record<string, unknown>) => void;
+  _eventListeners: Array<{ eventName: string; handler: EventListener }>;
+}
+
+// Combine interfaces
+interface CustomWindow extends BaseWindow, EventHandling {}
+
+// Extend global Window interface
 declare global {
-    interface Window {
-        on: (event: string, handler: Function) => void;
-        off: (event: string, handler: Function) => void;
-        emit: (event: string, ...args: any[]) => void;
-        _eventListeners: { eventName: string; handler: Function }[];
-    }
+  interface Window extends CustomWindow {}
 }
 
 // Initialize JSDOM environment
 const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>', {
-    url: 'http://localhost',
-    pretendToBeVisual: true,
-    runScripts: 'dangerously',
-    resources: 'usable'
+  url: 'http://localhost',
+  pretendToBeVisual: true,
+  runScripts: 'dangerously',
+  resources: 'usable',
 });
 
 // Get window instance and set up prototype chain
-const window = dom.window;
-const eventTargetProto = window.EventTarget.prototype;
-const windowProto = Object.getPrototypeOf(window);
+const customWindow = dom.window as unknown as Window & typeof globalThis;
 
-// Create a new prototype that inherits from EventTarget
-const combinedProto = Object.create(eventTargetProto);
-
-// Copy all Window prototype properties
-Object.getOwnPropertyNames(windowProto).forEach(prop => {
-    const descriptor = Object.getOwnPropertyDescriptor(windowProto, prop);
-    if (descriptor && prop !== 'constructor') {
-        Object.defineProperty(combinedProto, prop, descriptor);
-    }
+// Add missing properties to window
+Object.defineProperty(customWindow, 'TextDecoder', {
+  writable: true,
+  value: TextDecoder,
 });
 
-// Set the prototype chain
-Object.setPrototypeOf(window, combinedProto);
+Object.defineProperty(customWindow, 'TextEncoder', {
+  writable: true,
+  value: TextEncoder,
+});
 
-// Set up globals
-global.window = window;
-global.document = window.document;
-global.navigator = window.navigator;
+// Mock IntersectionObserver
+class MockIntersectionObserver implements IntersectionObserver {
+  readonly root: Element | null = null;
+  readonly rootMargin: string = '';
+  readonly thresholds: readonly number[] = [0];
+  private callback: IntersectionObserverCallback;
 
-console.log('Setup: Adding event methods to window');
+  constructor(callback: IntersectionObserverCallback, _options?: IntersectionObserverInit) {
+    this.callback = callback;
+  }
 
-// Add event method aliases with proper event data handling
-window.on = function(eventName, handler) {
-    if (!handler || typeof handler !== 'function') {
-        console.warn('Invalid event handler provided');
-        return;
-    }
+  observe(target: Element): void {
+    // Simulate an intersection after a short delay
+    const timeoutId = setTimeout(() => {
+      this.callback([
+        {
+          target,
+          isIntersecting: true,
+          boundingClientRect: target.getBoundingClientRect(),
+          intersectionRatio: 1,
+          intersectionRect: target.getBoundingClientRect(),
+          rootBounds: null,
+          time: Date.now(),
+        } as IntersectionObserverEntry
+      ], this);
+    }, 100);
+  }
 
-    const wrappedHandler = function(event) {
-        try {
-            handler.call(this, event);
-        } catch (error) {
-            console.error('Error in event handler:', error);
-        }
-    };
+  unobserve(_target: Element): void {}
+  disconnect(): void {}
+  takeRecords(): IntersectionObserverEntry[] { return []; }
+}
 
-    this.addEventListener(eventName, wrappedHandler);
-    window._eventListeners.push({ eventName, handler: wrappedHandler });
+// Add IntersectionObserver to window
+Object.defineProperty(customWindow, 'IntersectionObserver', {
+  writable: true,
+  value: MockIntersectionObserver,
+});
+
+// Mock requestAnimationFrame
+const requestAnimationFrame = (callback: FrameRequestCallback): number => {
+  return window.setTimeout(() => callback(Date.now()), 0);
 };
 
-window.off = function(eventName, handler) {
-    if (!handler || typeof handler !== 'function') {
-        console.warn('Invalid event handler provided');
-        return;
-    }
-
-    const listenerIndex = window._eventListeners.findIndex(
-        listener => listener.eventName === eventName && listener.handler === handler
-    );
-
-    if (listenerIndex > -1) {
-        this.removeEventListener(eventName, window._eventListeners[listenerIndex].handler);
-        window._eventListeners.splice(listenerIndex, 1);
-    }
+const cancelAnimationFrame = (handle: number): void => {
+  window.clearTimeout(handle);
 };
 
-window.emit = function(eventName, detail = {}) {
-    let event;
-    try {
-        if (typeof detail === 'object') {
-            event = new CustomEvent(eventName, { detail });
-        } else {
-            event = new Event(eventName);
-        }
-        this.dispatchEvent(event);
-    } catch (error) {
-        console.error('Error dispatching event:', error);
-        throw error;
-    }
+// Add RAF methods to window
+Object.defineProperty(customWindow, 'requestAnimationFrame', {
+  writable: true,
+  value: requestAnimationFrame,
+});
+
+Object.defineProperty(customWindow, 'cancelAnimationFrame', {
+  writable: true,
+  value: cancelAnimationFrame,
+});
+
+// Add event handling methods
+customWindow.on = function(this: Window, eventName: string, handler: EventListener): void {
+  this.addEventListener(eventName, handler);
+  this._eventListeners = this._eventListeners || [];
+  this._eventListeners.push({ eventName, handler });
 };
 
-// Keep track of event listeners for cleanup
-window._eventListeners = [];
+customWindow.off = function(this: Window, eventName: string, handler: EventListener): void {
+  this.removeEventListener(eventName, handler);
+  this._eventListeners = this._eventListeners || [];
+  const index = this._eventListeners.findIndex(
+    listener => listener.eventName === eventName && listener.handler === handler
+  );
+  if (index !== -1) {
+    this._eventListeners.splice(index, 1);
+  }
+};
 
-// Set up React
-global.React = React;
+customWindow.emit = function(this: Window, eventName: string, detail: Record<string, unknown> = {}): void {
+  const event = new CustomEvent(eventName, { detail });
+  this.dispatchEvent(event);
+};
+
+// Initialize event listeners array
+customWindow._eventListeners = [];
 
 // Clean up after each test
 afterEach(() => {
-    cleanup();
-    window._eventListeners = [];
+  cleanup();
+  customWindow._eventListeners.forEach(({ eventName, handler }) => {
+    customWindow.removeEventListener(eventName, handler);
+  });
+  customWindow._eventListeners = [];
 });
 
-// Set up ResizeObserver
-class MockResizeObserver {
-    observe() {}
-    unobserve() {}
-    disconnect() {}
+// Mock ResizeObserver
+class MockResizeObserver implements ResizeObserver {
+  constructor(_callback: ResizeObserverCallback) {}
+  observe(_target: Element): void {}
+  unobserve(_target: Element): void {}
+  disconnect(): void {}
 }
 
+// Add ResizeObserver to window
 Object.defineProperty(global, 'ResizeObserver', {
-    value: MockResizeObserver,
-    writable: true,
-    configurable: true,
+  value: MockResizeObserver,
+  writable: true,
+  configurable: true,
 });
 
-// Set up requestAnimationFrame
-if (!window.requestAnimationFrame) {
-    window.requestAnimationFrame = function(callback) {
-        return setTimeout(callback, 0);
-    };
-}
+// Set up globals
+global.document = customWindow.document;
+global.navigator = customWindow.navigator;
+global.Element = customWindow.Element;
+global.HTMLElement = customWindow.HTMLElement;
+global.React = React;
 
-if (!window.cancelAnimationFrame) {
-    window.cancelAnimationFrame = function(id) {
-        clearTimeout(id);
-    };
-}
+console.log('Setup: Adding event methods to window');
+
+const mockWindow: CustomWindow = {
+  addEventListener: vi.fn(),
+  removeEventListener: vi.fn(),
+  dispatchEvent: vi.fn(),
+  setTimeout: vi.fn().mockReturnValue(1),
+  clearTimeout: vi.fn(),
+  requestAnimationFrame: vi.fn().mockReturnValue(1),
+  cancelAnimationFrame: vi.fn(),
+};
+
+Object.defineProperty(global, 'window', {
+  value: mockWindow,
+  writable: true
+});
 
 // Set up test matchers
 expect.extend(matchers);

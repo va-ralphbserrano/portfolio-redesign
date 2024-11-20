@@ -1,10 +1,11 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ProjectGallery } from './ProjectGallery';
-import { projects } from '@/data/projects';
+import { projects as defaultProjects } from '@/data/projects';
 import { SectionHeading } from '@/components/common/SectionHeading';
+import { PortfolioProps } from './types';
 
-export const Portfolio = () => {
+export const Portfolio: React.FC<PortfolioProps> = ({ projects = defaultProjects }) => {
   return (
     <section id="portfolio" className="relative py-24 bg-gradient-to-b from-gray-50 to-white dark:from-gray-800/50 dark:to-gray-900/50 overflow-hidden">
       {/* Background Pattern */}

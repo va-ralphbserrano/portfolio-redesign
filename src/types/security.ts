@@ -1,9 +1,27 @@
 export interface SecurityConfig {
-  EMAIL_SERVICE_ID: string;
-  EMAIL_TEMPLATE_ID: string;
-  EMAIL_USER_ID: string;
-  GA_TRACKING_ID: string;
-  API_KEY: string;
+  jwtSecret: string;
+  tokenExpiration: number;
+  maxLoginAttempts: number;
+  lockoutDuration: number;
+  requireMFA: boolean;
+  allowedOrigins: string[];
+  rateLimits: {
+    [key: string]: {
+      windowMs: number;
+      maxRequests: number;
+    };
+  };
+}
+
+export interface AuthToken {
+  token: string;
+  expiresAt: number;
+}
+
+export interface UserCredentials {
+  username: string;
+  password: string;
+  mfaCode?: string;
 }
 
 export interface SecurityHeaders {

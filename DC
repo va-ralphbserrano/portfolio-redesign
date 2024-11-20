@@ -1,0 +1,17 @@
+I need help decluttering my project by identifying and removing **duplicate, redundant, and unused files** without affecting the website's structure, design, or functionality. The project structure is provided below. The task is to:
+
+1. **Identify Duplicates**: 
+   - Scan for files with identical or near-identical content (e.g., duplicate images, scripts, components).
+   - Keep the most relevant file based on usage, updates, and dependencies.
+
+2. **Find Unused Files**: 
+   - Detect files that are not referenced anywhere in the codebase (unused components, assets, hooks, etc.).
+   - Safely delete files with no dependencies or usage.
+
+3. **Ensure Integrity**:
+   - Only remove files that do not affect the design, logic, or build of the website.
+   - Automate the deletion of unused or redundant files but validate their relevance first.
+
+4. **Report**:
+   - Provide a summary of duplicates, unused files, and deletions.
+   - Automatically delete validated files.

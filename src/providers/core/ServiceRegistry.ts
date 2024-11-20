@@ -1,14 +1,13 @@
-import { ErrorReportingService } from '../../services/ErrorReportingService';
 import { MonitoringService } from '../../services/MonitoringService';
+import { ErrorReportingService } from '../../services/ErrorReportingService';
+import { BaseProvider } from './BaseProvider';
 
 export class ServiceRegistry {
-  private static instance: ServiceRegistry;
-  private services: Map<string, () => any>;
-  private instances: Map<string, any>;
+  private static instance: ServiceRegistry | null = null;
+  private providers: Map<string, BaseProvider<unknown>>;
 
   private constructor() {
-    this.services = new Map();
-    this.instances = new Map();
+    this.providers = new Map();
   }
 
   public static getInstance(): ServiceRegistry {
@@ -18,86 +17,136 @@ export class ServiceRegistry {
     return ServiceRegistry.instance;
   }
 
-  public register<T>(key: string, factory: () => T): void {
+  public registerProvider<T>(provider: BaseProvider<T>): void {
     try {
-      if (this.services.has(key)) {
-        throw new Error(`Service already registered: ${key}`);
+      const providerName = provider.getConfig().name;
+      if (this.providers.has(providerName)) {
+        throw new Error(`Provider ${providerName} is already registered`);
       }
-      this.services.set(key, factory);
-      MonitoringService.trackMetric('service_registered', 1, ['registry', key]);
+
+      this.providers.set(providerName, provider as BaseProvider<unknown>);
+      MonitoringService.getInstance().trackMetric('provider_registered', 1, {
+        provider: providerName,
+        version: provider.getConfig().version
+      });
     } catch (error) {
-      ErrorReportingService.captureError(error);
+      MonitoringService.getInstance().trackMetric('provider_registration_failed', 1);
+      ErrorReportingService.captureError(error instanceof Error ? error : new Error('Failed to register provider'));
       throw error;
     }
   }
 
-  public get<T>(key: string): T {
+  public getProvider<T>(name: string): BaseProvider<T> | null {
     try {
-      // Return existing instance if available
-      if (this.instances.has(key)) {
-        MonitoringService.trackMetric('service_cache_hit', 1, ['registry', key]);
-        return this.instances.get(key);
+      const provider = this.providers.get(name) as BaseProvider<T> | undefined;
+      if (!provider) {
+        MonitoringService.getInstance().trackMetric('provider_not_found', 1, {
+          provider: name
+        });
+        return null;
       }
 
-      // Get factory function
-      const factory = this.services.get(key);
-      if (!factory) {
-        throw new Error(`Service not registered: ${key}`);
-      }
+      MonitoringService.getInstance().trackMetric('provider_retrieved', 1, {
+        provider: name,
+        version: provider.getConfig().version
+      });
 
-      // Create new instance
-      MonitoringService.trackMetric('service_instantiated', 1, ['registry', key]);
-      const instance = factory();
-      this.instances.set(key, instance);
-      return instance;
+      return provider;
     } catch (error) {
-      ErrorReportingService.captureError(error);
+      MonitoringService.getInstance().trackMetric('provider_retrieval_failed', 1);
+      ErrorReportingService.captureError(error instanceof Error ? error : new Error('Failed to retrieve provider'));
+      return null;
+    }
+  }
+
+  public hasProvider(name: string): boolean {
+    try {
+      const exists = this.providers.has(name);
+      MonitoringService.getInstance().trackMetric('provider_check', 1, {
+        provider: name,
+        exists: exists.toString()
+      });
+      return exists;
+    } catch (error) {
+      MonitoringService.getInstance().trackMetric('provider_check_failed', 1);
+      ErrorReportingService.captureError(error instanceof Error ? error : new Error('Failed to check provider existence'));
+      return false;
+    }
+  }
+
+  public async disposeProvider(name: string): Promise<void> {
+    try {
+      const provider = this.providers.get(name);
+      if (!provider) {
+        MonitoringService.getInstance().trackMetric('provider_dispose_not_found', 1, {
+          provider: name
+        });
+        return;
+      }
+
+      await provider.dispose();
+      this.providers.delete(name);
+      MonitoringService.getInstance().trackMetric('provider_disposed', 1, {
+        provider: name,
+        version: provider.getConfig().version
+      });
+    } catch (error) {
+      MonitoringService.getInstance().trackMetric('provider_dispose_failed', 1);
+      ErrorReportingService.captureError(error instanceof Error ? error : new Error('Failed to dispose provider'));
       throw error;
     }
   }
 
-  public async dispose(key: string): Promise<void> {
+  public async disposeAll(): Promise<void> {
     try {
-      const instance = this.instances.get(key);
-      if (instance && typeof instance.dispose === 'function') {
-        await instance.dispose();
+      const providers = Array.from(this.providers.entries());
+      for (const [name, provider] of providers) {
+        try {
+          await provider.dispose();
+          this.providers.delete(name);
+          MonitoringService.getInstance().trackMetric('provider_disposed', 1, {
+            provider: name,
+            version: provider.getConfig().version
+          });
+        } catch (error) {
+          MonitoringService.getInstance().trackMetric('provider_dispose_failed', 1, {
+            provider: name
+          });
+          ErrorReportingService.captureError(error instanceof Error ? error : new Error(`Failed to dispose provider ${name}`));
+        }
       }
-      this.instances.delete(key);
-      MonitoringService.trackMetric('service_disposed', 1, ['registry', key]);
     } catch (error) {
-      ErrorReportingService.captureError(error);
+      MonitoringService.getInstance().trackMetric('providers_dispose_all_failed', 1);
+      ErrorReportingService.captureError(error instanceof Error ? error : new Error('Failed to dispose all providers'));
       throw error;
     }
   }
 
-  public has(key: string): boolean {
-    return this.services.has(key);
-  }
-
-  public async clear(): Promise<void> {
+  public async healthCheck(): Promise<Map<string, boolean>> {
+    const results = new Map<string, boolean>();
     try {
-      // Dispose all instances
-      const disposals = Array.from(this.instances.keys()).map(key => 
-        this.dispose(key)
-      );
-      await Promise.all(disposals);
-
-      // Clear maps
-      this.services.clear();
-      this.instances.clear();
-      MonitoringService.trackMetric('registry_cleared', 1, ['registry']);
+      const providers = Array.from(this.providers.entries());
+      for (const [name, provider] of providers) {
+        try {
+          const isHealthy = await provider.checkHealth();
+          results.set(name, isHealthy);
+          MonitoringService.getInstance().trackMetric('provider_health_check', 1, {
+            provider: name,
+            version: provider.getConfig().version,
+            healthy: isHealthy.toString()
+          });
+        } catch (error) {
+          results.set(name, false);
+          MonitoringService.getInstance().trackMetric('provider_health_check_failed', 1, {
+            provider: name
+          });
+          ErrorReportingService.captureError(error instanceof Error ? error : new Error(`Health check failed for provider ${name}`));
+        }
+      }
     } catch (error) {
-      ErrorReportingService.captureError(error);
-      throw error;
+      MonitoringService.getInstance().trackMetric('providers_health_check_failed', 1);
+      ErrorReportingService.captureError(error instanceof Error ? error : new Error('Failed to perform health check on providers'));
     }
-  }
-
-  public getStats(): { registered: number; instantiated: number } {
-    return {
-      registered: this.services.size,
-      instantiated: this.instances.size
-    };
+    return results;
   }
 }
-
-export default ServiceRegistry.getInstance();

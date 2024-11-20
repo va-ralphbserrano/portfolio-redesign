@@ -1,14 +1,7 @@
-import { AIService } from '../base/AIService';
-import {
-  SearchQuery,
-  SearchResponse,
-  SearchIndex,
-  IndexStats,
-  IndexUpdateOptions,
-  IndexUpdateResult,
-  Embedding,
-} from './types';
+import { AIService, AIResponse, ErrorResponse } from '../base/AIService';
 import * as tf from '@tensorflow/tfjs';
+import { ErrorReportingService } from '../../ErrorReportingService';
+import { MonitoringService } from '../../MonitoringService';
 
 /**
  * Service for semantic search functionality
@@ -29,12 +22,13 @@ export class SemanticSearchService extends AIService {
   /**
    * Perform semantic search based on query
    */
-  async search(query: SearchQuery): Promise<SearchResponse> {
-    const startTime = performance.now();
-
+  protected async search(query: SearchQuery, options: SearchOptions = {}): Promise<SearchResponse> {
+    const limit = options.limit || 10;
+    const offset = options.offset || 0;
+    
     try {
       // Generate query embedding
-      const queryEmbedding = await this.generateEmbedding(query.text);
+      const queryEmbedding = await this.generateEmbedding(query.query);
       
       // Search across all index types
       const results = await Promise.all([
@@ -44,29 +38,20 @@ export class SemanticSearchService extends AIService {
       ]);
 
       // Merge and rank results
-      const mergedResults = this.mergeResults(results, query.limit);
+      const mergedResults = this.mergeResults(results, limit);
 
-      const processingTime = performance.now() - startTime;
+      const processingTime = performance.now() - performance.now();
 
       return {
-        data: {
-          items: mergedResults,
-          metadata: {
-            totalResults: mergedResults.length,
-            processingTime,
-            relevanceScores: mergedResults.map(r => r.relevanceScore),
-            queryVector: queryEmbedding,
-          },
-        },
-        usage: {
-          promptTokens: this.calculateTokens(query.text),
-          completionTokens: 0,
-          totalTokens: this.calculateTokens(query.text),
-        },
-        latency: processingTime,
+        items: mergedResults,
+        totalResults: mergedResults.length,
+        processingTime,
+        relevanceScores: mergedResults.map(r => r.score),
+        queryVector: queryEmbedding,
       };
     } catch (error) {
-      throw this.handleError(error);
+      this.handleError(error as Error | ErrorResponse);
+      throw error;
     }
   }
 
@@ -92,13 +77,15 @@ export class SemanticSearchService extends AIService {
     const tensor1 = tf.tensor1d(vec1);
     const tensor2 = tf.tensor1d(vec2);
 
-    const similarity = tf.cosineDistance(tensor1, tensor2);
+    const similarity = tf.losses.cosineDistance(tensor1, tensor2);
     const value = similarity.dataSync()[0];
 
     // Clean up tensors
-    tf.dispose([tensor1, tensor2, similarity]);
+    tensor1.dispose();
+    tensor2.dispose();
+    similarity.dispose();
 
-    return 1 - value; // Convert distance to similarity
+    return value; // Return distance instead of similarity
   }
 
   /**
@@ -111,12 +98,11 @@ export class SemanticSearchService extends AIService {
         type: 'project' as const,
         title: project.title,
         description: project.description,
-        relevanceScore: this.calculateSimilarity(queryVector, project.vector),
-        highlights: this.generateHighlights(project.description, query.text),
+        score: this.calculateSimilarity(queryVector, project.vector),
         metadata: project.metadata,
       }))
       .filter(result => 
-        result.relevanceScore > this.similarityThreshold &&
+        result.score < this.similarityThreshold &&
         this.applyFilters(result, query.filters)
       );
   }
@@ -131,12 +117,11 @@ export class SemanticSearchService extends AIService {
         type: 'skill' as const,
         title: skill.name,
         description: `${skill.category} - Proficiency: ${skill.proficiency}`,
-        relevanceScore: this.calculateSimilarity(queryVector, skill.vector),
-        highlights: [],
+        score: this.calculateSimilarity(queryVector, skill.vector),
         metadata: skill.metadata,
       }))
       .filter(result => 
-        result.relevanceScore > this.similarityThreshold &&
+        result.score < this.similarityThreshold &&
         this.applyFilters(result, query.filters)
       );
   }
@@ -151,12 +136,11 @@ export class SemanticSearchService extends AIService {
         type: 'content' as const,
         title: content.title,
         description: content.summary,
-        relevanceScore: this.calculateSimilarity(queryVector, content.vector),
-        highlights: this.generateHighlights(content.summary, query.text),
+        score: this.calculateSimilarity(queryVector, content.vector),
         metadata: content.metadata,
       }))
       .filter(result => 
-        result.relevanceScore > this.similarityThreshold &&
+        result.score < this.similarityThreshold &&
         this.applyFilters(result, query.filters)
       );
   }
@@ -209,7 +193,7 @@ export class SemanticSearchService extends AIService {
   private mergeResults(results: any[], limit = 10) {
     return results
       .flat()
-      .sort((a, b) => b.relevanceScore - a.relevanceScore)
+      .sort((a, b) => a.score - b.score)
       .slice(0, limit);
   }
 
@@ -272,4 +256,77 @@ export class SemanticSearchService extends AIService {
   getIndexStats(): IndexStats {
     return this.indexStats;
   }
+}
+
+export interface SearchQuery {
+  query: string;
+  filters?: Record<string, unknown>;
+  limit?: number;
+  offset?: number;
+}
+
+export interface SearchResultItem {
+  id: string;
+  type: string;
+  title: string;
+  description: string;
+  score: number;
+  metadata?: Record<string, unknown>;
+}
+
+export interface SearchResponse {
+  items: SearchResultItem[];
+  totalResults: number;
+  processingTime: number;
+  relevanceScores: number[];
+  queryVector?: number[];
+}
+
+export interface Embedding {
+  vector: number[];
+  metadata: Record<string, unknown>;
+}
+
+export interface SearchIndex {
+  projects: {
+    id: string;
+    title: string;
+    description: string;
+    vector: number[];
+    metadata: Record<string, unknown>;
+  }[];
+  skills: {
+    id: string;
+    name: string;
+    category: string;
+    proficiency: string;
+    vector: number[];
+    metadata: Record<string, unknown>;
+  }[];
+  content: {
+    id: string;
+    title: string;
+    summary: string;
+    vector: number[];
+    metadata: Record<string, unknown>;
+  }[];
+}
+
+export interface IndexStats {
+  totalDocuments: number;
+  lastUpdated: Date;
+  categories: Record<string, number>;
+  averageVectorSize: number;
+  memoryUsage: number;
+}
+
+export interface IndexUpdateOptions {
+  // Add options for index update
+}
+
+export interface IndexUpdateResult {
+  updatedDocuments: number;
+  failedDocuments: number;
+  processingTime: number;
+  errors: ErrorResponse[];
 }

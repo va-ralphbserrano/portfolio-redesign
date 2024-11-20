@@ -1,139 +1,181 @@
-import { AIServiceConfig, AIRequestOptions, AIResponse, ErrorResponse } from '../types';
+import { ErrorReportingService } from '../../ErrorReportingService';
+import { MonitoringService } from '../../MonitoringService';
 
-/**
- * Base class for AI services with common functionality
- */
+export interface AIResponse<T> {
+  data: T;
+  metadata: {
+    requestId: string;
+    model?: string;
+    version?: string;
+  };
+  usage: {
+    promptTokens: number;
+    completionTokens: number;
+    totalTokens: number;
+  };
+  latency: number;
+}
+
+export interface ErrorResponse {
+  name: string;
+  message: string;
+  code: string;
+  retryable: boolean;
+  stack: string;
+  details: Record<string, unknown>;
+}
+
+export interface AIRequestOptions {
+  model?: string;
+  version?: string;
+  timeout?: number;
+  retries?: number;
+  headers?: Record<string, string>;
+}
+
+export interface AIServiceConfig {
+  apiKey: string;
+  baseUrl: string;
+  defaultModel?: string;
+  defaultVersion?: string;
+  timeout?: number;
+  maxRetries?: number;
+}
+
 export abstract class AIService {
   protected config: AIServiceConfig;
-  private rateLimiter: Map<string, number>;
-  private cache: Map<string, { data: any; timestamp: number }>;
+  protected baseUrl: string;
+  protected defaultHeaders: Record<string, string>;
 
-  constructor(config: AIServiceConfig) {
-    this.config = config;
-    this.rateLimiter = new Map();
-    this.cache = new Map();
+  constructor(config?: Partial<AIServiceConfig>) {
+    this.config = {
+      apiKey: process.env.AI_API_KEY || '',
+      baseUrl: process.env.AI_API_BASE_URL || 'https://api.openai.com/v1',
+      ...config
+    };
+    this.baseUrl = this.config.baseUrl;
+    this.defaultHeaders = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${this.config.apiKey}`
+    };
   }
 
-  /**
-   * Make an API request with retry logic and error handling
-   */
   protected async makeRequest<T>(
     endpoint: string,
     payload: unknown,
     options?: AIRequestOptions
   ): Promise<AIResponse<T>> {
-    const startTime = performance.now();
-    
+    const startTime = Date.now();
+
     try {
-      await this.checkRateLimit(endpoint);
-      
-      const cachedResponse = this.getFromCache<T>(endpoint, payload);
-      if (cachedResponse) {
-        return {
-          ...cachedResponse,
-          latency: 0, // Cached response
-        };
-      }
-
-      const response = await this.executeWithRetry<T>(endpoint, payload, options);
-      const latency = performance.now() - startTime;
-
-      const aiResponse: AIResponse<T> = {
-        ...response,
-        latency,
-      };
-
-      this.addToCache(endpoint, payload, aiResponse);
-      return aiResponse;
-    } catch (error) {
-      throw this.handleError(error);
-    }
-  }
-
-  /**
-   * Implement retry logic with exponential backoff
-   */
-  private async executeWithRetry<T>(
-    endpoint: string,
-    payload: unknown,
-    options?: AIRequestOptions,
-    attempt = 1
-  ): Promise<any> {
-    try {
-      const response = await fetch(`${this.config.endpoint}${endpoint}`, {
+      const response = await fetch(`${this.baseUrl}${endpoint}`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.config.apiKey}`,
+          ...this.defaultHeaders,
+          ...(options?.headers || {})
         },
-        body: JSON.stringify({ ...payload, ...options }),
+        body: JSON.stringify(payload)
       });
 
       if (!response.ok) {
-        const error = await response.json() as ErrorResponse;
-        throw error;
+        throw await this.handleErrorResponse(response);
       }
 
-      return await response.json();
+      const data = await response.json();
+      const endTime = Date.now();
+
+      return {
+        data: data as T,
+        metadata: {
+          requestId: response.headers.get('x-request-id') || crypto.randomUUID(),
+          model: options?.model || this.config.defaultModel,
+          version: options?.version || this.config.defaultVersion
+        },
+        usage: {
+          promptTokens: data.usage?.prompt_tokens || 0,
+          completionTokens: data.usage?.completion_tokens || 0,
+          totalTokens: data.usage?.total_tokens || 0
+        },
+        latency: endTime - startTime
+      };
     } catch (error) {
-      if (attempt < this.config.maxRetries) {
-        const delay = Math.min(1000 * Math.pow(2, attempt), 10000);
-        await new Promise(resolve => setTimeout(resolve, delay));
-        return this.executeWithRetry(endpoint, payload, options, attempt + 1);
+      throw this.handleError(error as Error | ErrorResponse);
+    }
+  }
+
+  protected async handleErrorResponse(response: Response): Promise<never> {
+    const errorData = await response.json();
+    
+    const error: ErrorResponse = {
+      name: 'AIServiceError',
+      message: errorData.error?.message || 'Unknown error occurred',
+      code: errorData.error?.code || `HTTP_${response.status}`,
+      retryable: response.status >= 500 || response.status === 429,
+      stack: new Error().stack || '',
+      details: {
+        status: response.status,
+        statusText: response.statusText,
+        ...errorData.error
       }
+    };
+
+    MonitoringService.getInstance().track({
+      name: 'ai_request_error',
+      value: 1,
+      tags: {
+        endpoint: response.url,
+        status: response.status.toString(),
+        code: error.code
+      }
+    });
+
+    throw error;
+  }
+
+  protected handleError(error: Error | ErrorResponse): never {
+    if (this.isErrorResponse(error)) {
       throw error;
     }
-  }
 
-  /**
-   * Implement rate limiting
-   */
-  private async checkRateLimit(endpoint: string): Promise<void> {
-    const now = Date.now();
-    const lastRequest = this.rateLimiter.get(endpoint) || 0;
-    const minInterval = 1000; // 1 request per second per endpoint
-
-    if (now - lastRequest < minInterval) {
-      await new Promise(resolve => setTimeout(resolve, minInterval - (now - lastRequest)));
-    }
-
-    this.rateLimiter.set(endpoint, now);
-  }
-
-  /**
-   * Implement caching
-   */
-  private getFromCache<T>(endpoint: string, payload: unknown): AIResponse<T> | null {
-    const cacheKey = this.getCacheKey(endpoint, payload);
-    const cached = this.cache.get(cacheKey);
-    
-    if (cached && Date.now() - cached.timestamp < 5 * 60 * 1000) { // 5 minute cache
-      return cached.data;
-    }
-    
-    return null;
-  }
-
-  private addToCache(endpoint: string, payload: unknown, response: AIResponse<any>): void {
-    const cacheKey = this.getCacheKey(endpoint, payload);
-    this.cache.set(cacheKey, {
-      data: response,
-      timestamp: Date.now(),
+    MonitoringService.getInstance().track({
+      name: 'ai_request_error',
+      value: 1,
+      tags: {
+        type: error.name,
+        message: error.message
+      }
     });
+
+    const errorResponse: ErrorResponse = {
+      name: error.name || 'AIServiceError',
+      message: error.message || 'An unknown error occurred',
+      code: 'UNKNOWN_ERROR',
+      retryable: false,
+      stack: error.stack || '',
+      details: {}
+    };
+
+    throw errorResponse;
   }
 
-  private getCacheKey(endpoint: string, payload: unknown): string {
-    return `${endpoint}:${JSON.stringify(payload)}`;
+  private isErrorResponse(error: unknown): error is ErrorResponse {
+    return (
+      typeof error === 'object' &&
+      error !== null &&
+      'code' in error &&
+      'retryable' in error
+    );
   }
 
-  /**
-   * Error handling
-   */
-  private handleError(error: any): Error {
-    if ((error as ErrorResponse).error) {
-      const { message, code, type } = (error as ErrorResponse).error;
-      return new Error(`AI Service Error (${type}:${code}): ${message}`);
-    }
-    return new Error(`AI Service Error: ${error.message || 'Unknown error'}`);
+  protected logRequest(metadata: Partial<RequestMetadata>): void {
+    const { requestId, model = '', version = '' } = metadata;
+    MonitoringService.getInstance().trackMetric('ai_request', 1);
+    MonitoringService.getInstance().trackMetric('ai_request_model_' + model, 1);
   }
+}
+
+interface RequestMetadata {
+  requestId: string;
+  model: string;
+  version: string;
 }

@@ -423,22 +423,12 @@ export const projects: Project[] = [
   }
 ];
 
-export const getProjectsByCategory = (category: ProjectCategory) => {
-  if (category === ProjectCategory.ALL) return projects;
-  return projects.filter(project => project.category === category);
-};
+export function getPortfolioProjects() {
+  return projects.filter(project => project.category === ProjectCategory.WEB || project.category === ProjectCategory.DESIGN);
+}
 
-export const getUniqueTags = () => {
-  const tags = projects.flatMap(project => project.technologies || []);
-  return [...new Set(tags)];
-};
-
-export const getPortfolioProjects = () => {
-  return getProjectsByCategory('web').concat(getProjectsByCategory('design'));
-};
-
-export const getTechnicalProjects = () => {
-  return getProjectsByCategory('technical');
-};
+export function getTechnicalProjects() {
+  return projects.filter(project => project.category === ProjectCategory.TECHNICAL);
+}
 
 export default projects;

@@ -1,18 +1,63 @@
 import { v4 as uuidv4 } from 'uuid';
-import { ErrorCategory, ErrorReport, ErrorReportOptions, ErrorSeverity } from '@types/error';
+import { MonitoringService } from './MonitoringService';
 import { RateLimitService } from './RateLimitService';
 
-class ErrorReportingService {
-  private static instance: ErrorReportingService;
-  private errorQueue: ErrorReport[] = [];
-  private readonly rateLimiter: RateLimitService;
-  private readonly maxQueueSize = 100;
-  private readonly batchSize = 10;
-  private readonly flushInterval = 5000; // 5 seconds
+export enum ErrorSeverity {
+  INFO = 'info',
+  WARNING = 'warning',
+  ERROR = 'error',
+  CRITICAL = 'critical'
+}
+
+export enum ErrorCategory {
+  NETWORK = 'network',
+  DATABASE = 'database',
+  VALIDATION = 'validation',
+  AUTHENTICATION = 'authentication',
+  AUTHORIZATION = 'authorization',
+  INTERNAL = 'internal',
+  EXTERNAL = 'external',
+  SYSTEM = 'system',
+  USER = 'user'
+}
+
+export interface ErrorData {
+  id?: string;
+  name: string;
+  message: string;
+  stack?: string;
+  severity: ErrorSeverity;
+  category: ErrorCategory;
+  timestamp: number;
+  url?: string;
+  userAgent?: string;
+  metadata?: Record<string, unknown>;
+}
+
+export interface ErrorQueueItem extends ErrorData {
+  retryCount: number;
+  lastRetry: number | null;
+}
+
+export interface ErrorResponse {
+  error: ErrorData;
+  timestamp: number;
+  handled: boolean;
+}
+
+export class ErrorReportingService {
+  private static instance: ErrorReportingService | null = null;
+  private static errorQueue: ErrorQueueItem[] = [];
+  private static readonly MAX_QUEUE_SIZE = 100;
+  private static readonly FLUSH_INTERVAL = 5000;
+  private static flushTimer: NodeJS.Timeout | null = null;
+  private static readonly MAX_RETRIES = 3;
+  private static readonly RETRY_INTERVAL = 5000;
+  private static rateLimitService: RateLimitService;
 
   private constructor() {
-    this.rateLimiter = RateLimitService.getInstance();
-    this.startErrorProcessor();
+    ErrorReportingService.rateLimitService = RateLimitService.getInstance();
+    ErrorReportingService.startAutoFlush();
   }
 
   public static getInstance(): ErrorReportingService {
@@ -22,135 +67,134 @@ class ErrorReportingService {
     return ErrorReportingService.instance;
   }
 
-  public report(options: ErrorReportOptions): void {
-    const errorReport = this.createErrorReport(options);
+  public static reportError(errorData: Partial<ErrorData>): void {
+    const instance = ErrorReportingService.getInstance();
+    instance.queueError(errorData);
+  }
 
-    if (options.severity === ErrorSeverity.CRITICAL) {
-      this.processImmediately(errorReport);
-    } else {
-      this.queueError(errorReport);
+  public static captureError(error: Error | ErrorData): void {
+    try {
+      const normalizedError = ErrorReportingService.normalizeError(error);
+      ErrorReportingService.queueError(normalizedError);
+      
+      MonitoringService.getInstance().trackMetric('error_captured', 1, {
+        error_type: normalizedError.name,
+        severity: normalizedError.severity,
+        category: normalizedError.category
+      });
+    } catch (err) {
+      console.error('Failed to capture error:', err);
     }
   }
 
-  private createErrorReport(options: ErrorReportOptions): ErrorReport {
-    const error = new Error();
+  private static normalizeError(error: Error | ErrorData): ErrorData {
+    const timestamp = Date.now();
+    
+    if ('severity' in error && 'category' in error) {
+      const errorData = error as ErrorData;
+      return {
+        id: errorData.id || uuidv4(),
+        name: errorData.name,
+        message: errorData.message,
+        stack: errorData.stack,
+        severity: errorData.severity,
+        category: errorData.category,
+        timestamp: errorData.timestamp || timestamp,
+        url: errorData.url,
+        userAgent: errorData.userAgent,
+        metadata: errorData.metadata
+      };
+    }
+
+    const baseError = error as Error;
     return {
       id: uuidv4(),
-      timestamp: Date.now(),
-      category: options.category,
-      severity: options.severity,
-      message: options.message,
-      stack: error.stack,
-      context: this.sanitizeContext(options.context),
-      userId: this.getCurrentUserId(),
-      sessionId: this.getCurrentSessionId(),
-      url: typeof window !== 'undefined' ? window.location.href : undefined,
-      userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : undefined,
+      name: baseError.name || 'Error',
+      message: baseError.message || 'An unknown error occurred',
+      stack: baseError.stack || '',
+      severity: ErrorSeverity.ERROR,
+      category: ErrorCategory.INTERNAL,
+      timestamp,
+      metadata: { original: baseError }
     };
   }
 
-  private sanitizeContext(context?: Record<string, unknown>): Record<string, unknown> | undefined {
-    if (!context) return undefined;
+  private static queueError(error: Partial<ErrorData>): void {
+    if (!error) return;
 
-    const sensitiveKeys = ['password', 'token', 'secret', 'key', 'auth'];
-    const sanitized: Record<string, unknown> = {};
+    const normalizedError = ErrorReportingService.normalizeError(error as Error | ErrorData);
+    const queueItem: ErrorQueueItem = {
+      ...normalizedError,
+      retryCount: 0,
+      lastRetry: null
+    };
 
-    Object.entries(context).forEach(([key, value]) => {
-      if (sensitiveKeys.some(sk => key.toLowerCase().includes(sk))) {
-        sanitized[key] = '[REDACTED]';
-      } else {
-        sanitized[key] = value;
-      }
-    });
+    ErrorReportingService.errorQueue.push(queueItem);
 
-    return sanitized;
+    if (ErrorReportingService.errorQueue.length >= ErrorReportingService.MAX_QUEUE_SIZE) {
+      ErrorReportingService.flushErrors();
+    }
   }
 
-  private async processImmediately(errorReport: ErrorReport): Promise<void> {
+  private static startAutoFlush(): void {
+    if (ErrorReportingService.flushTimer) {
+      clearInterval(ErrorReportingService.flushTimer);
+    }
+
+    ErrorReportingService.flushTimer = setInterval(() => {
+      ErrorReportingService.flushErrors();
+    }, ErrorReportingService.FLUSH_INTERVAL);
+  }
+
+  private static async flushErrors(): Promise<void> {
+    if (ErrorReportingService.errorQueue.length === 0) return;
+
+    const errors = [...ErrorReportingService.errorQueue];
+    ErrorReportingService.errorQueue = [];
+
     try {
-      if (this.rateLimiter.isRateLimited(`error_${errorReport.category}`)) {
-        console.warn('Error reporting rate limit exceeded for category:', errorReport.category);
-        return;
-      }
-
-      await this.sendToServer(errorReport);
-      this.logToConsole(errorReport);
-      
-      if (errorReport.severity === ErrorSeverity.CRITICAL) {
-        this.triggerAlert(errorReport);
-      }
+      await Promise.all(errors.map(error => ErrorReportingService.sendError(error)));
     } catch (error) {
-      console.error('Failed to process error report:', error);
-      this.queueError(errorReport);
+      console.error('Failed to flush errors:', error);
+      ErrorReportingService.errorQueue.push(...errors);
     }
   }
 
-  private queueError(errorReport: ErrorReport): void {
-    if (this.errorQueue.length >= this.maxQueueSize) {
-      this.errorQueue.shift(); // Remove oldest error
-    }
-    this.errorQueue.push(errorReport);
-  }
-
-  private async processErrorQueue(): Promise<void> {
-    if (this.errorQueue.length === 0) return;
-
-    const batch = this.errorQueue.splice(0, this.batchSize);
+  private static async sendError(error: ErrorQueueItem): Promise<void> {
     try {
-      await this.sendBatchToServer(batch);
-    } catch (error) {
-      console.error('Failed to process error batch:', error);
-      // Re-queue failed errors
-      this.errorQueue.unshift(...batch);
+      // Implementation of error sending logic
+      MonitoringService.getInstance().trackMetric('error_sent', 1, {
+        error_type: error.name,
+        severity: error.severity,
+        category: error.category
+      });
+    } catch (err) {
+      console.error('Failed to send error:', err);
+      if (error.retryCount < ErrorReportingService.MAX_RETRIES) {
+        error.retryCount++;
+        error.lastRetry = Date.now();
+        ErrorReportingService.errorQueue.push(error);
+      }
     }
   }
 
-  private startErrorProcessor(): void {
-    setInterval(() => {
-      this.processErrorQueue();
-    }, this.flushInterval);
+  public static stopAutoFlush(): void {
+    if (ErrorReportingService.flushTimer) {
+      clearInterval(ErrorReportingService.flushTimer);
+      ErrorReportingService.flushTimer = null;
+      MonitoringService.getInstance().trackMetric('error_reporting_stopped', 1);
+    }
   }
 
-  private async sendToServer(errorReport: ErrorReport): Promise<void> {
-    // Implementation for sending to error reporting server
-    // This is a placeholder - implement actual server communication
-    console.log('Sending error to server:', errorReport);
-  }
-
-  private async sendBatchToServer(batch: ErrorReport[]): Promise<void> {
-    // Implementation for sending batch of errors to server
-    // This is a placeholder - implement actual batch processing
-    console.log('Sending error batch to server:', batch);
-  }
-
-  private logToConsole(errorReport: ErrorReport): void {
-    const { severity, category, message, context } = errorReport;
-    console.group(`[${severity}] ${category}`);
-    console.error(message);
-    if (context) console.log('Context:', context);
-    if (errorReport.stack) console.log('Stack:', errorReport.stack);
-    console.groupEnd();
-  }
-
-  private triggerAlert(errorReport: ErrorReport): void {
-    // Implementation for alerting system
-    // This is a placeholder - implement actual alerting mechanism
-    console.warn('CRITICAL ERROR ALERT:', errorReport);
-  }
-
-  private getCurrentUserId(): string | undefined {
-    // Implementation to get current user ID
-    // This is a placeholder - implement actual user ID retrieval
-    return undefined;
-  }
-
-  private getCurrentSessionId(): string | undefined {
-    // Implementation to get current session ID
-    // This is a placeholder - implement actual session ID retrieval
-    return undefined;
+  public static async dispose(): Promise<void> {
+    try {
+      await ErrorReportingService.flushErrors();
+      ErrorReportingService.stopAutoFlush();
+      MonitoringService.getInstance().trackMetric('error_reporting_disposed', 1);
+    } catch (err) {
+      console.error('Failed to dispose error reporting service:', err);
+    }
   }
 }
 
 export const errorReportingService = ErrorReportingService.getInstance();
-
-export default ErrorReportingService;

@@ -1,5 +1,6 @@
+import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { AdaptiveImage } from '@/components/adaptive/AdaptiveImage';
+import AdaptiveImage from '@/components/adaptive/AdaptiveImage';
 import { vi } from 'vitest';
 
 describe('AdaptiveImage', () => {

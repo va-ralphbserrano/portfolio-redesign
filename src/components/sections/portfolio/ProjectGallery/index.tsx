@@ -157,7 +157,7 @@ export const ProjectGallery: React.FC<ProjectGalleryProps> = ({
                     {project.description}
                   </p>
                   <div className="flex flex-wrap gap-2">
-                    {(project.tags || project.technologies || []).map((tag, index) => (
+                    {project.technologies.map((tag: string, index: number) => (
                       <span
                         key={`${project.id}-tag-${index}`}
                         className="px-3 py-1 text-xs font-medium rounded-full bg-gray-100/80 backdrop-blur-sm dark:bg-gray-700/80 text-gray-600 dark:text-gray-300"

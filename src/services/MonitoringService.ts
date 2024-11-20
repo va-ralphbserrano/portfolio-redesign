@@ -5,6 +5,17 @@ export interface MonitoringMetrics {
   bestPractices: number;
 }
 
+export interface ErrorData {
+  id: string;
+  name: string;
+  message: string;
+  stack?: string;
+  timestamp: string;
+  category: string;
+  severity?: string;
+  tags?: string[];
+}
+
 export class MonitoringService {
   async getMetrics(): Promise<MonitoringMetrics> {
     // In a real application, this would fetch data from an API
@@ -14,6 +25,11 @@ export class MonitoringService {
       seo: 98,
       bestPractices: 96
     };
+  }
+
+  static async trackError(error: ErrorData): Promise<void> {
+    // In a real application, this would send error data to a monitoring service
+    console.error('Error tracked:', error);
   }
 }
 
