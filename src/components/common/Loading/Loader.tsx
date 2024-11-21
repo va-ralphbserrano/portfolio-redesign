@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { classNames } from '../../../utils/helpers';
+import { classNames } from '@/utils/helpers';
 import { LoadingProps } from './types';
 
 const Loader: React.FC<LoadingProps> = ({
@@ -113,3 +113,4 @@ const Loader: React.FC<LoadingProps> = ({
 Loader.displayName = 'Loader';
 
 export default Loader;
+

@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { classNames } from '../../../../utils/helpers';
+import { classNames } from '@/utils/helpers';
 import { HeroContentProps, heroContentVariants } from './types';
 import { HeroTitle } from './HeroTitle';
 import { HeroDescription } from './HeroDescription';

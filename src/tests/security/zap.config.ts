@@ -1,8 +1,4 @@
 import { ZapClient, ZapConfigType } from '@zaproxy/core';
-import core from "@zaproxy/core";
-import core from "@zaproxy/core";
-import core from "@zaproxy/core";
-import core from "@zaproxy/core";
 
 const config: ZapConfigType = {
     // ZAP API Configuration

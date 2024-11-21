@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';
-import { classNames } from '../../utils/helpers';
+import { classNames } from '@/utils/helpers';
 import { NavbarProps, navbarVariants } from './types';
 import { MobileNav } from './MobileNav';
 

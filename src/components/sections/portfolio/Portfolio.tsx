@@ -35,7 +35,13 @@ export const Portfolio: React.FC<PortfolioProps> = ({ projects = defaultProjects
           transition={{ duration: 0.6, ease: "easeOut" }}
           className="max-w-7xl mx-auto"
         >
-          <ProjectGallery projects={projects} itemsPerPage={6} />
+          {projects.length > 0 ? (
+            <ProjectGallery projects={projects} itemsPerPage={6} />
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-gray-600 dark:text-gray-400">No projects found</p>
+            </div>
+          )}
         </motion.div>
 
         {/* Bottom Pattern */}

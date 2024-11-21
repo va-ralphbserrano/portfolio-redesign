@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { classNames } from '../../../utils/helpers';
+import { classNames } from '@/utils/helpers';
 import { TooltipContentProps, positions } from './types';
 import { tooltipVariants } from './animations';
 
@@ -39,3 +39,4 @@ export const TooltipContent: React.FC<TooltipContentProps> = ({
     )}
   </motion.div>
 );
+

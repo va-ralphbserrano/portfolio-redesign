@@ -1,11 +1,4 @@
-import {
-  CodeIcon,
-  DesktopIcon,
-  VideoIcon,
-  CubeIcon,
-  SupportIcon,
-  PresentationIcon
-} from '@/components/common/Icons';
+import { serviceIcons } from '../utils/icons/index.tsx';
 
 export const servicesData = {
   title: 'My Services',
@@ -14,7 +7,7 @@ export const servicesData = {
     {
       id: 'web-development',
       title: "Web Development",
-      icon: CodeIcon,
+      icon: serviceIcons.code(),
       description: "Creating modern, responsive websites with cutting-edge technologies and best practices for optimal user experience.",
       features: [
         "Custom Website Development",
@@ -26,7 +19,7 @@ export const servicesData = {
     {
       id: 'web-design',
       title: "Web Design",
-      icon: DesktopIcon,
+      icon: serviceIcons.desktop(),
       description: "Crafting visually appealing and user-friendly interfaces that engage visitors and drive conversions.",
       features: [
         "UI/UX Design",
@@ -38,7 +31,7 @@ export const servicesData = {
     {
       id: 'video-editing',
       title: "Video Editing",
-      icon: VideoIcon,
+      icon: serviceIcons.video(),
       description: "Professional video editing services using industry-standard tools to create compelling visual content.",
       features: [
         "Content Editing",
@@ -50,7 +43,7 @@ export const servicesData = {
     {
       id: 'autocad-design',
       title: "AutoCAD Design",
-      icon: CubeIcon,
+      icon: serviceIcons.cube(),
       description: "Expert AutoCAD services for precise technical drawings and 3D modeling solutions.",
       features: [
         "Technical Drawings",
@@ -62,7 +55,7 @@ export const servicesData = {
     {
       id: 'virtual-assistance',
       title: "Virtual Assistance",
-      icon: SupportIcon,
+      icon: serviceIcons.support(),
       description: "Comprehensive virtual support services to help businesses operate efficiently and grow.",
       features: [
         "Email Management",
@@ -74,7 +67,7 @@ export const servicesData = {
     {
       id: 'project-management',
       title: "Project Management",
-      icon: PresentationIcon,
+      icon: serviceIcons.presentation(),
       description: "Efficient project management services to ensure successful delivery of business initiatives.",
       features: [
         "Project Planning",

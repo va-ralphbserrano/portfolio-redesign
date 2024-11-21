@@ -2,7 +2,8 @@ import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { Project, ProjectCategory } from '../types';
-import { ResponsiveImage } from '@/components/common/adaptive/ResponsiveImage';
+import { ResponsiveImage } from '@/components/common/ResponsiveImage';
+import { ProjectDisplay } from '@/components/common/ProjectDisplay';
 
 interface ProjectGalleryProps {
   projects: Project[];
@@ -131,49 +132,12 @@ export const ProjectGallery: React.FC<ProjectGalleryProps> = ({
       >
         <AnimatePresence mode="sync">
           {currentProjects.map((project) => (
-            <motion.div
+            <ProjectDisplay
               key={project.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.4, ease: "easeOut" }}
-              className="group cursor-pointer"
+              project={project}
+              variant="card"
               onClick={() => handleProjectClick(project)}
-            >
-              <div className="relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800 shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-                <div className="relative h-64 overflow-hidden">
-                  <ResponsiveImage
-                    src={project.thumbnail || project.image || project.gallery?.[0] || ''}
-                    alt={project.title}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white group-hover:text-primary transition-colors">
-                    {project.title}
-                  </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-4 line-clamp-2">
-                    {project.description}
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {project.technologies.map((tag: string, index: number) => (
-                      <span
-                        key={`${project.id}-tag-${index}`}
-                        className="px-3 py-1 text-xs font-medium rounded-full bg-gray-100/80 backdrop-blur-sm dark:bg-gray-700/80 text-gray-600 dark:text-gray-300"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                  {(project.gallery?.length ?? 0) > 0 && (
-                    <div className="absolute top-4 right-4 bg-black/50 backdrop-blur-sm px-3 py-1.5 rounded-full text-xs text-white font-medium">
-                      {(project.gallery?.length ?? 0) + (project.thumbnail || project.image ? 1 : 0)} images
-                    </div>
-                  )}
-                </div>
-              </div>
-            </motion.div>
+            />
           ))}
         </AnimatePresence>
       </div>

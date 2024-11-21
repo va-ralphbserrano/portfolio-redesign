@@ -1,4 +1,5 @@
 import { WithClassName } from '@/types/component';
+import { ProjectCategory, ProjectType } from '@/types/project';
 
 export enum ProjectCategory {
   ALL = 'all',
@@ -76,13 +77,15 @@ export interface CertificateCategory {
 }
 
 export interface ProjectCardProps extends WithClassName {
-  project: Project;
-  index: number;
-  variants?: any;
-  onClick?: () => void;
+  title: string;
+  description: string;
+  type: ProjectType;
+  technologies: string[];
+  imageUrl: string;
 }
 
 export interface PortfolioProps extends WithClassName {
+  category?: ProjectCategory;
   projects?: Project[];
   initialCategory?: ProjectCategory;
   showFilters?: boolean;

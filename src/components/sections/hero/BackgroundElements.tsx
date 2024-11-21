@@ -1,5 +1,5 @@
 import React from 'react';
-import { classNames } from '../../../utils/helpers';
+import { classNames } from '@/utils/helpers';
 import { BackgroundElementsProps } from './types';
 
 export const BackgroundElements: React.FC<BackgroundElementsProps> = ({

@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, HTMLMotionProps } from 'framer-motion';
-import { classNames } from '../../../utils/helpers';
+import { classNames } from '@/utils/helpers';
 import { BadgeProps, variants, sizes } from './types';
 import { badgeAnimationVariants } from './animations';
 import { DismissButton } from './DismissButton';
@@ -77,3 +77,4 @@ const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(({
 Badge.displayName = 'Badge';
 
 export default Badge;
+

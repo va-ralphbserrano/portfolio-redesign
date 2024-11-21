@@ -1,5 +1,5 @@
 import React from 'react';
-import { classNames } from '../../../utils/helpers';
+import { classNames } from '@/utils/helpers';
 import { BaseCardProps } from './types';
 
 export const CardFooter: React.FC<BaseCardProps> = ({ children, className, ...props }) => (
@@ -15,3 +15,6 @@ export const CardFooter: React.FC<BaseCardProps> = ({ children, className, ...pr
 );
 
 CardFooter.displayName = 'Card.Footer';
+
+export default CardFooter;
+

@@ -1,13 +1,13 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { classNames } from '../../../utils/helpers';
+import { classNames } from '@/utils/helpers';
 import { AboutProps } from './types';
 import { AboutHeader, AboutSection, AboutGrid } from './components';
 import { PersonalInfo } from './PersonalInfo';
 import { Skills } from './Skills';
 import { Education } from './Education';
-import { Experience } from './Experience';
-import { Tools } from './Tools';
+import Experience from './experience/Experience';
+import Tools from './tools/Tools';
 
 const About: React.FC<AboutProps> = ({
   className
@@ -58,3 +58,6 @@ const About: React.FC<AboutProps> = ({
 About.displayName = 'About';
 
 export default About;
+
+
+

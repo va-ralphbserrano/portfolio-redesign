@@ -1,5 +1,5 @@
 import React from 'react';
-import { classNames } from '../../../utils/helpers';
+import { classNames } from '@/utils/helpers';
 import { BaseCardProps } from './types';
 
 export const CardHeader: React.FC<BaseCardProps> = ({ children, className, ...props }) => (
@@ -15,3 +15,6 @@ export const CardHeader: React.FC<BaseCardProps> = ({ children, className, ...pr
 );
 
 CardHeader.displayName = 'Card.Header';
+
+export default CardHeader;
+

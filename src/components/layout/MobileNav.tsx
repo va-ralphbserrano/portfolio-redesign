@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';
-import { classNames } from '../../utils/helpers';
+import { classNames } from '@/utils/helpers';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 
 interface MobileNavProps {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { classNames } from '../../../utils/helpers';
+import { classNames } from '@/utils/helpers';
 import { ImageProps } from './types';
 
 export const CardImage: React.FC<ImageProps> = ({ src, alt, className, ...props }) => (
@@ -17,3 +17,6 @@ export const CardImage: React.FC<ImageProps> = ({ src, alt, className, ...props 
 );
 
 CardImage.displayName = 'Card.Image';
+
+export default CardImage;
+

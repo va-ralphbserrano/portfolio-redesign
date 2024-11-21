@@ -1,105 +1,65 @@
-import { Fragment } from 'react';
+import React from 'react';
 import { Dialog, Transition } from '@headlessui/react';
-import { HiX } from 'react-icons/hi';
-import { WithClassName } from '@/types/component';
+import { Fragment } from 'react';
+import { motion } from 'framer-motion';
 import { classNames } from '@/utils/helpers';
 
-interface ModalProps extends WithClassName {
+export interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
-  title?: string;
-  showClose?: boolean;
+  children: React.ReactNode;
+  className?: string;
   size?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
-  children: React.ReactNode;
-  description?: string;
+  closeOnClickOutside?: boolean;
+  showCloseButton?: boolean;
 }
 
-interface ModalOverlayProps {
-  onClick: () => void;
-}
-
-interface ModalContentProps {
-  size: 'sm' | 'md' | 'lg' | 'xl' | 'full';
-  children: React.ReactNode;
-  className?: string | undefined;
-}
-
-interface ModalHeaderProps {
-  title: string;
-  showClose: boolean;
-  onClose: () => void;
-}
-
-const ModalOverlay: React.FC<ModalOverlayProps> = ({ onClick }) => (
-  <Dialog.Overlay
-    className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity"
-    onClick={onClick}
-    aria-hidden="true"
-  />
-);
-
-const ModalContent: React.FC<ModalContentProps> = ({ size, children, className }) => {
-  const sizeClasses = {
-    sm: 'max-w-sm',
-    md: 'max-w-md',
-    lg: 'max-w-lg',
-    xl: 'max-w-xl',
-    full: 'max-w-full mx-4'
-  };
-
-  return (
-    <div
-      className={classNames(
-        'relative transform overflow-hidden rounded-lg bg-white dark:bg-gray-800 p-6 text-left shadow-xl transition-all w-full',
-        sizeClasses[size],
-        className
-      )}
-      role="dialog"
-      aria-modal="true"
-    >
-      {children}
-    </div>
-  );
+const modalSizes = {
+  sm: 'max-w-sm',
+  md: 'max-w-md',
+  lg: 'max-w-lg',
+  xl: 'max-w-xl',
+  full: 'max-w-full'
 };
 
-const ModalHeader: React.FC<ModalHeaderProps> = ({ title, showClose, onClose }) => (
-  <div className="mb-4 flex items-center justify-between">
-    <Dialog.Title className="text-lg font-medium text-gray-900 dark:text-white" id="modal-title">
-      {title}
-    </Dialog.Title>
-    {showClose && (
-      <button
-        type="button"
-        className="rounded-lg p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500"
-        onClick={onClose}
-        aria-label="Close modal"
-      >
-        <HiX className="h-5 w-5" aria-hidden="true" />
-      </button>
-    )}
-  </div>
-);
+const modalVariants = {
+  hidden: {
+    opacity: 0,
+    scale: 0.95
+  },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    transition: {
+      duration: 0.2
+    }
+  },
+  exit: {
+    opacity: 0,
+    scale: 0.95,
+    transition: {
+      duration: 0.1
+    }
+  }
+};
 
-const Modal: React.FC<ModalProps> = ({
+export const Modal: React.FC<ModalProps> = ({
   isOpen,
   onClose,
-  title,
-  showClose = true,
-  size = 'md',
   children,
   className,
-  description
+  size = 'md',
+  closeOnClickOutside = true,
+  showCloseButton = true
 }) => {
   return (
     <Transition show={isOpen} as={Fragment}>
       <Dialog
-        open={isOpen}
-        onClose={onClose}
+        as="div"
         className="fixed inset-0 z-50 overflow-y-auto"
-        aria-labelledby={title ? 'modal-title' : undefined}
-        aria-describedby={description ? 'modal-description' : undefined}
+        onClose={() => closeOnClickOutside && onClose()}
       >
-        <div className="flex min-h-screen items-center justify-center p-4 text-center">
+        <div className="min-h-screen px-4 text-center">
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -109,8 +69,12 @@ const Modal: React.FC<ModalProps> = ({
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <ModalOverlay onClick={onClose} />
+            <Dialog.Overlay className="fixed inset-0 bg-black bg-opacity-50" />
           </Transition.Child>
+
+          <span className="inline-block h-screen align-middle" aria-hidden="true">
+            &#8203;
+          </span>
 
           <Transition.Child
             as={Fragment}
@@ -121,15 +85,40 @@ const Modal: React.FC<ModalProps> = ({
             leaveFrom="opacity-100 scale-100"
             leaveTo="opacity-0 scale-95"
           >
-            <ModalContent size={size} className={className}>
-              {title && <ModalHeader title={title} showClose={showClose} onClose={onClose} />}
-              {description && (
-                <div id="modal-description" className="sr-only">
-                  {description}
-                </div>
+            <motion.div
+              variants={modalVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              className={classNames(
+                'inline-block w-full p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-gray-800 shadow-xl rounded-2xl',
+                modalSizes[size],
+                className
+              )}
+            >
+              {showCloseButton && (
+                <button
+                  onClick={onClose}
+                  className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                >
+                  <span className="sr-only">Close</span>
+                  <svg
+                    className="h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
               )}
               {children}
-            </ModalContent>
+            </motion.div>
           </Transition.Child>
         </div>
       </Dialog>

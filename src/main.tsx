@@ -4,12 +4,10 @@ import { BrowserRouter } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext';
 import ErrorBoundary from './components/common/ErrorBoundary';
 import App from './App';
-import { PDFProvider } from './contexts/PDFContext';
+import { PDFProvider } from './context/PDFContext';
 
 // Import styles
-import './styles/tailwind.css';
-import './styles/animations.css';
-import './styles/swiper.css';
+import './styles/index.css';
 
 // Get base URL from Vite
 const base = import.meta.env.BASE_URL;

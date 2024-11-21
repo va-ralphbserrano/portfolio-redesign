@@ -9,13 +9,13 @@ import React from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import Navbar from '@/components/layout/Navbar';
-import { Footer } from '@/components/layout/Footer';
-import { RouteWrapper } from '@/components/common/RouteWrapper';
-import { Hero } from '@/components/sections/Hero';
-import { About } from '@/components/sections/About';
+import Footer from '@/components/layout/footer';
+import { PageTransition } from '@/components/common/PageTransition';
+import Hero from '@/components/sections/hero';
+import About from '@/components/sections/about';
 import Portfolio from '@/components/sections/portfolio';
-import { Services } from '@/components/sections/Services';
-import Contact from '@/components/sections/Contact';
+import Services from '@/components/sections/services/Services';
+import Contact from '@/components/sections/contact';
 import Certificates from '@/components/sections/Certificates';
 import { projects } from '@/data/projects';
 
@@ -42,12 +42,12 @@ const App: React.FC = () => {
       <main className="flex-grow pt-16 sm:pt-20">
         <AnimatePresence mode="wait">
           <Routes location={location} key={location.pathname}>
-            <Route path="/" element={<RouteWrapper><Hero /></RouteWrapper>} />
-            <Route path="/about" element={<RouteWrapper><About /></RouteWrapper>} />
-            <Route path="/portfolio" element={<RouteWrapper><Portfolio projects={projects} /></RouteWrapper>} />
-            <Route path="/services" element={<RouteWrapper><Services /></RouteWrapper>} />
-            <Route path="/contact" element={<RouteWrapper><Contact /></RouteWrapper>} />
-            <Route path="/certificates" element={<RouteWrapper><Certificates /></RouteWrapper>} />
+            <Route path="/" element={<PageTransition><Hero /></PageTransition>} />
+            <Route path="/about" element={<PageTransition><About /></PageTransition>} />
+            <Route path="/portfolio" element={<PageTransition><Portfolio projects={projects} /></PageTransition>} />
+            <Route path="/services" element={<PageTransition><Services /></PageTransition>} />
+            <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
+            <Route path="/certificates" element={<PageTransition><Certificates /></PageTransition>} />
             {/* Catch all route - redirect to home */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

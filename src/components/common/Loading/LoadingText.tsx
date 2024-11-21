@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { classNames } from '../../../utils/helpers';
+import { classNames } from '@/utils/helpers';
 import { LoadingTextProps } from './types';
 
 const LoadingText: React.FC<LoadingTextProps> = ({
@@ -56,3 +56,4 @@ const LoadingText: React.FC<LoadingTextProps> = ({
 LoadingText.displayName = 'LoadingText';
 
 export default LoadingText;
+

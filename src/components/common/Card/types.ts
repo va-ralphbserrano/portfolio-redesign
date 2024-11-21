@@ -1,5 +1,6 @@
 import { HTMLMotionProps } from 'framer-motion';
 import React from 'react';
+import { WithChildren, WithClassName } from '@/types/component';
 
 export const variants = {
   normal: 'bg-white dark:bg-gray-800',
@@ -14,28 +15,33 @@ export const elevations = {
   lg: 'shadow-lg hover:shadow-xl'
 } as const;
 
+export const cardVariants = {
+  initial: { scale: 1 },
+  hover: { scale: 1.02 },
+  tap: { scale: 0.98 }
+} as const;
+
 export type CardVariant = keyof typeof variants;
 export type CardElevation = keyof typeof elevations;
 
-export interface BaseCardProps extends React.HTMLAttributes<HTMLDivElement> {
-  className?: string;
+export interface BaseCardProps extends WithChildren, WithClassName {
   children: React.ReactNode;
 }
 
-export type MotionDivProps = Omit<HTMLMotionProps<'div'>, 'style' | 'className' | 'children' | 'animate'>;
-
-export interface CardProps extends Pick<MotionDivProps, Exclude<keyof MotionDivProps, keyof HTMLMotionProps<'div'>>> {
+export interface CardProps extends WithChildren, WithClassName {
   variant?: CardVariant;
   elevation?: CardElevation;
-  hover?: boolean;
-  animate?: boolean;
+  touchable?: boolean;
+  href?: string;
+  onClick?: React.MouseEventHandler<HTMLElement>;
+  motionProps?: HTMLMotionProps<'div'>;
   className?: string;
-  children: React.ReactNode;
   style?: React.CSSProperties;
 }
 
-export interface ImageProps extends Omit<React.ImgHTMLAttributes<HTMLImageElement>, 'className'> {
-  className?: string;
+export interface ImageProps extends WithClassName {
+  src: string;
+  alt: string;
 }
 
 export interface CardComposition {

@@ -31,24 +31,43 @@ export const FormField: React.FC<FormFieldProps> = ({
         )}
       </label>
 
-      <Field
-        id={name}
-        name={name}
-        type={type}
-        value={value}
-        onChange={onChange}
-        placeholder={placeholder}
-        required={required}
-        rows={rows}
-        aria-invalid={!!error}
-        aria-describedby={error ? `${name}-error` : undefined}
-        className={classNames(
-          'block w-full px-4 py-2 rounded-lg border bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm focus:ring-2 transition-colors',
-          error
-            ? 'border-red-300 text-red-900 placeholder-red-300 focus:border-red-500 focus:ring-red-500'
-            : 'border-gray-200 dark:border-gray-700 focus:border-primary-500 focus:ring-primary-500'
-        )}
-      />
+      {Field === 'textarea' ? (
+        <textarea
+          id={name}
+          name={name}
+          value={value}
+          onChange={onChange}
+          placeholder={placeholder}
+          required={required}
+          rows={rows}
+          aria-invalid={!!error}
+          aria-describedby={error ? `${name}-error` : undefined}
+          className={classNames(
+            'block w-full px-4 py-2 rounded-lg border bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm focus:ring-2 transition-colors',
+            error
+              ? 'border-red-300 text-red-900 placeholder-red-300 focus:border-red-500 focus:ring-red-500'
+              : 'border-gray-200 dark:border-gray-700 focus:border-primary-500 focus:ring-primary-500'
+          )}
+        />
+      ) : (
+        <input
+          id={name}
+          name={name}
+          type={type}
+          value={value}
+          onChange={onChange}
+          placeholder={placeholder}
+          required={required}
+          aria-invalid={!!error}
+          aria-describedby={error ? `${name}-error` : undefined}
+          className={classNames(
+            'block w-full px-4 py-2 rounded-lg border bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm focus:ring-2 transition-colors',
+            error
+              ? 'border-red-300 text-red-900 placeholder-red-300 focus:border-red-500 focus:ring-red-500'
+              : 'border-gray-200 dark:border-gray-700 focus:border-primary-500 focus:ring-primary-500'
+          )}
+        />
+      )}
 
       {error && (
         <motion.p

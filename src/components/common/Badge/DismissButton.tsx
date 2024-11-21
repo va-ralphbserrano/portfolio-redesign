@@ -1,5 +1,5 @@
 import React from 'react';
-import { classNames } from '../../../utils/helpers';
+import { classNames } from '@/utils/helpers';
 import { DismissButtonProps } from './types';
 
 export const DismissButton: React.FC<DismissButtonProps> = ({ size, onDismiss }) => (
@@ -29,3 +29,4 @@ export const DismissButton: React.FC<DismissButtonProps> = ({ size, onDismiss })
     </svg>
   </button>
 );
+

@@ -1,24 +1,65 @@
-// import sharp from 'sharp';
+import { ImageLoaderProps } from 'next/image';
 
-interface ImageOptimizationOptions {
-  width: number;
-  height: number;
-  quality: number;
+// Types
+export interface ImageOptimizationOptions {
+  quality?: number;
+  format?: 'webp' | 'jpeg' | 'png';
+  width?: number;
+  height?: number;
 }
 
-export function optimizeImage(src: string, options: ImageOptimizationOptions): string {
-  if (!src) return '';
+// Core image optimization functions
+export const optimizeImage = (src: string, options: ImageOptimizationOptions = {}) => {
+  const {
+    quality = 75,
+    format = 'webp',
+    width,
+    height
+  } = options;
 
   const params = new URLSearchParams();
   
-  params.append('width', options.width.toString());
-  params.append('height', options.height.toString());
-  params.append('quality', options.quality.toString());
+  if (quality) params.append('q', quality.toString());
+  if (format) params.append('fm', format);
+  if (width) params.append('w', width.toString());
+  if (height) params.append('h', height.toString());
 
-  const separator = src.includes('?') ? '&' : '?';
-  return `${src}${separator}${params.toString()}`;
-}
+  return `${src}?${params.toString()}`;
+};
 
+// Next.js image loader
+export const nextImageLoader = ({ src, width, quality }: ImageLoaderProps): string => {
+  return optimizeImage(src, { width, quality });
+};
+
+// Responsive image helpers
+export const getResponsiveImageSizes = (baseWidth: number): string => {
+  return `(max-width: 768px) 100vw, ${baseWidth}px`;
+};
+
+// Image preloading
+export const preloadImage = (src: string): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve();
+    img.onerror = reject;
+    img.src = src;
+  });
+};
+
+// Batch image optimization
+export const optimizeImages = (srcs: string[], options: ImageOptimizationOptions = {}): string[] => {
+  return srcs.map(src => optimizeImage(src, options));
+};
+
+// Responsive srcset generator
+export const generateSrcSet = (src: string, widths: number[]): string => {
+  return widths
+    .map(width => `${optimizeImage(src, { width })} ${width}w`)
+    .join(', ');
+};
+
+// Blur data URL generator
 export async function generateBlurDataURL(src: string): Promise<string> {
   if (!src) return '';
 

@@ -1,4 +1,4 @@
-import { classNames } from '../../utils/helpers';
+import { classNames } from '@/utils/helpers';
 import { ContainerProps } from './types';
 
 type ElementType = keyof JSX.IntrinsicElements;

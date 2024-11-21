@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { classNames } from '@/utils/helpers';
 import { PersonalInfoProps } from './types';
 import { aboutData } from '@/data/about';
-import { getTechIcon } from '@/utils/icons';
+import { getTechIcon } from '@/utils/icons/index';
 
 export const PersonalInfo: React.FC<PersonalInfoProps> = ({
   className
@@ -27,6 +27,7 @@ export const PersonalInfo: React.FC<PersonalInfoProps> = ({
             </div>
           </>
         );
+
 
         return (
           <motion.div

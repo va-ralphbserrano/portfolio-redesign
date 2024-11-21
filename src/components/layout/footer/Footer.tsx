@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { classNames } from '../../../utils/helpers';
+import { classNames } from '@/utils/helpers';
 import { FooterProps, footerVariants } from './types';
 import { FooterBrand } from './FooterBrand';
 import { FooterLinks } from './FooterLinks';
@@ -40,3 +40,4 @@ export const Footer: React.FC<FooterProps> = ({
 Footer.displayName = 'Footer';
 
 export default Footer;
+

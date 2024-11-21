@@ -4,7 +4,7 @@ import { HiArrowRight, HiDownload } from 'react-icons/hi';
 import { useNavigate } from 'react-router-dom';
 import { heroData } from '@/data';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
-import { getTechIcon } from '@/utils/icons';
+import { getTechIcon } from '@/utils/icons/index';
 import { classNames } from '@/utils/helpers';
 import { HeroContentProps, heroContainerVariants, heroItemVariants } from './types';
 
@@ -19,9 +19,9 @@ export const HeroContent: React.FC<HeroContentProps> = ({ className, id }) => {
   return (
     <motion.div
       id={id}
-      initial="hidden"
-      animate="visible"
-      variants={prefersReducedMotion ? {} : heroContainerVariants}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
       className={classNames('relative z-10', className)}
     >
       <motion.span
@@ -101,29 +101,30 @@ export const HeroContent: React.FC<HeroContentProps> = ({ className, id }) => {
         })}
       </motion.div>
 
-      <motion.div
-        variants={prefersReducedMotion ? {} : heroItemVariants}
-        className="flex flex-wrap gap-4"
-      >
-        <a
+      <div className="hero-actions">
+        <motion.a
           href={heroData.cta.primary.link}
           download="RalphBernardSerrano-CV.pdf"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
           className="inline-flex items-center px-8 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
           aria-label="Download CV"
         >
           {heroData.cta.primary.text}
           <HiDownload className="ml-2" aria-hidden="true" />
-        </a>
+        </motion.a>
 
-        <button
+        <motion.button
           onClick={handleContact}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
           className="inline-flex items-center px-8 py-3 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-900 dark:text-white rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
           aria-label="Contact Me"
         >
           {heroData.cta.secondary.text}
           <HiArrowRight className="ml-2" aria-hidden="true" />
-        </button>
-      </motion.div>
+        </motion.button>
+      </div>
     </motion.div>
   );
 };

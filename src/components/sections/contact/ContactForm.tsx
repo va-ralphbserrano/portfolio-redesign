@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FormInput } from './form/FormInput';
-import { FormTextarea } from './form/FormTextarea';
+import { FormField, FormStatus } from './form';
 import { FormState, ContactFormProps } from './types';
 import { classNames } from '@/utils/helpers';
+import { Button } from '@/components/common/Button/Button';
 
 export const ContactForm: React.FC<ContactFormProps> = ({ onSubmit, className, isSubmitting, error }) => {
   const [formState, setFormState] = useState<FormState>({
@@ -89,7 +89,13 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmit, className, i
   };
 
   return (
-    <form onSubmit={handleSubmit} className={classNames('space-y-6', className)}>
+    <motion.form
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className={classNames('space-y-6', className)}
+      onSubmit={handleSubmit}
+    >
       {submitStatus && (
         <motion.div
           initial={{ opacity: 0, y: -10 }}
@@ -105,9 +111,10 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmit, className, i
         </motion.div>
       )}
 
-      <FormInput
-        label="Name"
+      <FormField
+        type="text"
         name="name"
+        label="Name"
         value={formState.name}
         onChange={handleChange}
         error={formErrors.name}
@@ -115,10 +122,10 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmit, className, i
         required
       />
 
-      <FormInput
-        label="Email"
-        name="email"
+      <FormField
         type="email"
+        name="email"
+        label="Email"
         value={formState.email}
         onChange={handleChange}
         error={formErrors.email}
@@ -126,9 +133,10 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmit, className, i
         required
       />
 
-      <FormInput
-        label="Subject"
+      <FormField
+        type="text"
         name="subject"
+        label="Subject"
         value={formState.subject}
         onChange={handleChange}
         error={formErrors.subject}
@@ -136,9 +144,10 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmit, className, i
         required
       />
 
-      <FormTextarea
-        label="Message"
+      <FormField
+        type="textarea"
         name="message"
+        label="Message"
         value={formState.message}
         onChange={handleChange}
         error={formErrors.message}
@@ -148,46 +157,16 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmit, className, i
       />
 
       <motion.button
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
         type="submit"
+        className="submit-button"
         disabled={isSubmitting}
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
-        className={classNames(
-          'w-full px-6 py-3 text-white font-medium rounded-lg transition-colors',
-          isSubmitting
-            ? 'bg-primary-400 cursor-not-allowed'
-            : 'bg-primary-500 hover:bg-primary-600 dark:hover:bg-primary-400'
-        )}
       >
-        {isSubmitting ? (
-          <span className="flex items-center justify-center">
-            <svg
-              className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              <circle
-                className="opacity-25"
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                strokeWidth="4"
-              />
-              <path
-                className="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-              />
-            </svg>
-            Sending...
-          </span>
-        ) : (
-          'Send Message'
-        )}
+        {isSubmitting ? 'Sending...' : 'Send Message'}
       </motion.button>
-    </form>
+      <FormStatus />
+    </motion.form>
   );
 };
 

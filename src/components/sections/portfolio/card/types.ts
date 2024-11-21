@@ -28,11 +28,6 @@ export interface ProjectCardProps extends WithClassName {
   githubUrl?: string;
 }
 
-export interface ProjectImageProps extends WithClassName {
-  src: string;
-  alt: string;
-}
-
 export interface ProjectDetailsProps extends WithClassName {
   title: string;
   description: string;
@@ -65,20 +60,6 @@ export const projectCardVariants: Variants = {
     y: -5,
     transition: {
       duration: 0.2
-    }
-  }
-};
-
-export const projectImageVariants: Variants = {
-  hidden: {
-    opacity: 0,
-    scale: 0.95
-  },
-  visible: {
-    opacity: 1,
-    scale: 1,
-    transition: {
-      duration: 0.3
     }
   }
 };

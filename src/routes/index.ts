@@ -7,7 +7,7 @@ import { technicalData } from '@/data/technical';
 const Home = lazy(() => import('@/components/sections/Hero'));
 const About = lazy(() => import('@/components/sections/About'));
 const Services = lazy(() => import('@/components/sections/Services'));
-const Contact = lazy(() => import('@/components/sections/Contact'));
+const Contact = lazy(() => import('@/components/sections/contact/ContactForm'));
 const Certificates = lazy(() => import('@/components/sections/Certificates'));
 
 // Wrap Portfolio component with props

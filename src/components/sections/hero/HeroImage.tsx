@@ -4,6 +4,7 @@ import { HeroImageProps, heroImageVariants } from './types';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 import { classNames } from '@/utils/helpers';
 import heroImage from '@/assets/images/hero.png';
+import { ResponsiveImage } from '@/components/common/ResponsiveImage';
 
 const HeroImage: React.FC<HeroImageProps> = ({ 
   className, 
@@ -22,14 +23,14 @@ const HeroImage: React.FC<HeroImageProps> = ({
     >
       <div className="relative w-full h-full max-w-md mx-auto">
         <div className="relative aspect-square overflow-hidden rounded-3xl shadow-xl">
-          <img
+          <ResponsiveImage
             src={heroImage}
-            alt="Ralph Bernard Serrano - Virtual Assistant & Web Developer"
-            width={width}
-            height={height}
-            loading={loading}
-            decoding="async"
-            className="w-full h-full object-cover transition-opacity duration-500"
+            alt="Hero"
+            className={classNames(
+              'w-full h-full object-cover',
+              className
+            )}
+            priority={true}
           />
         </div>
       </div>

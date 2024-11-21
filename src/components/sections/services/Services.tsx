@@ -1,9 +1,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { classNames } from '../../../utils/helpers';
+import { classNames } from '@/utils/helpers';
 import { ServicesProps, serviceItemVariants } from './types';
 import { ServiceCard } from './ServiceCard';
-import { services } from './serviceData';
+import { servicesData } from './serviceData';
 
 const Services: React.FC<ServicesProps> = ({
   className
@@ -19,19 +19,22 @@ const Services: React.FC<ServicesProps> = ({
         <motion.div
           variants={serviceItemVariants}
           initial="hidden"
-          animate="visible"
-          className="text-center mb-16"
+          whileInView="visible"
+          viewport={{ once: true }}
+          className="text-center mb-12"
         >
-          <h2 className="text-4xl font-bold mb-6 text-gray-900 dark:text-white">My Services</h2>
-          <p className="text-lg text-gray-700 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
-            Delivering comprehensive digital solutions to help businesses thrive in the modern landscape
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+            {servicesData.title}
+          </h2>
+          <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+            {servicesData.description}
           </p>
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {services.map((service, index) => (
+          {servicesData.services.map((service, index) => (
             <ServiceCard
-              key={service.title}
+              key={service.id}
               service={service}
               index={index}
             />

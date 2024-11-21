@@ -1,5 +1,5 @@
 import { motion, Variants } from 'framer-motion';
-import { classNames } from '../../../../utils/helpers';
+import { classNames } from '@/utils/helpers';
 import { WithClassName } from '@/types/component';
 import { ExperienceIcon } from './ExperienceIcon';
 import { ExperienceTimelineNode } from './ExperienceTimelineNode';
