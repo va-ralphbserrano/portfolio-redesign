@@ -118,9 +118,14 @@ export const Certificates = () => {
               transition={{ delay: index * 0.1 }}
             >
               <CertificateCard
-                certificate={certificate}
+                key={certificate.id}
+                title={certificate.title}
+                image={certificate.image}
+                description={certificate.description}
+                issuer={certificate.issuer}
+                date={certificate.date || ''}
                 onClick={() => handleOpenModal(certificate)}
-                className="h-full cursor-pointer"
+                className="h-full"
               />
             </motion.div>
           ))}
@@ -129,59 +134,17 @@ export const Certificates = () => {
         <Modal
           isOpen={isModalOpen}
           onClose={handleCloseModal}
-          title={selectedCertificate?.title || ''}
+          size="xl"
+          showClose
+          className="p-0"
         >
           {selectedCertificate && (
-            <div className="space-y-6">
-              <div className="relative aspect-[4/3] overflow-hidden rounded-lg bg-gradient-to-br from-gray-100 to-white dark:from-gray-800 dark:to-gray-700">
-                <img
-                  src={selectedCertificate.image}
-                  alt={selectedCertificate.title}
-                  className="w-full h-full object-contain transform hover:scale-105 transition-transform duration-300"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent dark:from-white/5" />
-              </div>
-              <div className="space-y-4">
-                <div className="flex items-center space-x-2 text-sm">
-                  <span className="font-medium text-primary-600 dark:text-primary-400">
-                    {selectedCertificate.issuer}
-                  </span>
-                  {selectedCertificate.date && (
-                    <>
-                      <span className="text-gray-400">•</span>
-                      <span className="text-gray-600 dark:text-gray-400">
-                        {selectedCertificate.date}
-                      </span>
-                    </>
-                  )}
-                </div>
-                <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
-                  {selectedCertificate.description}
-                </p>
-                {selectedCertificate.url && (
-                  <a
-                    href={selectedCertificate.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-200"
-                  >
-                    Verify Certificate
-                    <svg
-                      className="ml-2 w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                      />
-                    </svg>
-                  </a>
-                )}
-              </div>
+            <div className="relative w-full h-full">
+              <img
+                src={selectedCertificate.image}
+                alt={selectedCertificate.title}
+                className="w-full h-full object-contain"
+              />
             </div>
           )}
         </Modal>

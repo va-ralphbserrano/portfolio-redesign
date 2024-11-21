@@ -40,7 +40,9 @@ const technicalProjects: Project[] = [
       conveyorFrameB2,
       conveyorFrameB3,
       conveyorFrameC2
-    ]
+    ],
+    date: '2023',
+    featured: false
   },
   {
     id: 'tech-1',
@@ -49,7 +51,9 @@ const technicalProjects: Project[] = [
     image: kitchenHoodFinal,
     description: 'Professional kitchen equipment designs including hoods, racks, and dishwashing systems',
     technologies: ['AutoCAD', 'Mechanical Design', 'Kitchen Equipment'],
-    type: ProjectType.TECHNICAL_DESIGN
+    type: ProjectType.TECHNICAL_DESIGN,
+    date: '2023',
+    featured: false
   },
   {
     id: 'tech-2',
@@ -58,7 +62,9 @@ const technicalProjects: Project[] = [
     image: pressureTank500L,
     description: 'Industrial equipment designs including pressure tanks and pipe assemblies',
     technologies: ['AutoCAD', 'Industrial Design', 'Equipment Engineering'],
-    type: ProjectType.TECHNICAL_DESIGN
+    type: ProjectType.TECHNICAL_DESIGN,
+    date: '2023',
+    featured: false
   },
   {
     id: 'tech-3',
@@ -67,7 +73,9 @@ const technicalProjects: Project[] = [
     image: steelGrates650mm,
     description: 'Steel fabrication designs including grilles, grates, and custom metal work',
     technologies: ['AutoCAD', 'Steel Fabrication', 'Metal Work'],
-    type: ProjectType.TECHNICAL_DESIGN
+    type: ProjectType.TECHNICAL_DESIGN,
+    date: '2023',
+    featured: false
   },
   {
     id: 'tech-4',
@@ -76,7 +84,9 @@ const technicalProjects: Project[] = [
     image: mobileStoreLayout1,
     description: 'Complete mobile store layout and design project',
     technologies: ['AutoCAD', 'Store Design', 'Layout Planning'],
-    type: ProjectType.TECHNICAL_DESIGN
+    type: ProjectType.TECHNICAL_DESIGN,
+    date: '2023',
+    featured: false
   },
   {
     id: 'tech-5',
@@ -85,7 +95,9 @@ const technicalProjects: Project[] = [
     image: thawingRackClark,
     description: 'Custom rack designs for various industrial and commercial applications',
     technologies: ['AutoCAD', 'Custom Design', 'Industrial Storage'],
-    type: ProjectType.TECHNICAL_DESIGN
+    type: ProjectType.TECHNICAL_DESIGN,
+    date: '2023',
+    featured: false
   },
   {
     id: 'solar-inverter',
@@ -101,8 +113,8 @@ const technicalProjects: Project[] = [
     ],
     technologies: ['AutoCAD', 'Solar Power', 'Electrical Systems'],
     demoLink: 'https://example.com/demo',
-    featured: true,
     date: '2023',
+    featured: true,
     role: 'Lead Designer',
     company: 'Solar Solutions Inc.',
     location: 'California',
@@ -124,7 +136,7 @@ export const projects: Project[] = [
     description: "AutoCAD design project showcasing technical drawing skills.",
     technologies: ["AutoCAD", "Technical Drawing"],
     type: ProjectType.AUTOCAD,
-    date: "2023-01-01",
+    date: "2023",
     featured: true
   },
   {
@@ -135,7 +147,9 @@ export const projects: Project[] = [
     description: 'Professional Video Editing',
     technologies: ['Adobe Premiere Pro', 'DaVinci Resolve', 'Video Editing'],
     demoLink: 'https://drive.google.com/drive/folders/1Ue6rSxuLFgVVZ4uBq1Z_FgF8zB9VQBG1?usp=sharing',
-    type: ProjectType.VIDEO
+    type: ProjectType.VIDEO,
+    date: '2023',
+    featured: false
   },
   {
     id: "3",
@@ -145,7 +159,9 @@ export const projects: Project[] = [
     description: 'Professional Email Management',
     technologies: ['Email', 'Communication', 'Organization'],
     demoLink: 'https://drive.google.com/drive/folders/1JoEhK9qMKWN6E0hZcGBQf9hy_4BLc0Aq?usp=sharing',
-    type: ProjectType.MANAGEMENT
+    type: ProjectType.MANAGEMENT,
+    date: '2023',
+    featured: false
   },
   {
     id: "4",
@@ -155,7 +171,9 @@ export const projects: Project[] = [
     description: 'Professional Data Entry',
     technologies: ['Excel', 'Google Sheets', 'Data Management'],
     demoLink: 'https://drive.google.com/drive/folders/1RFxUz5H-Tk4RHxm-BgylU-I3H4FRBy_B?usp=sharing',
-    type: ProjectType.MANAGEMENT
+    type: ProjectType.MANAGEMENT,
+    date: '2023',
+    featured: false
   },
   {
     id: "5",
@@ -165,7 +183,9 @@ export const projects: Project[] = [
     description: 'Project Management with Trello',
     technologies: ['Trello', 'Project Management', 'Organization'],
     demoLink: 'https://drive.google.com/drive/folders/1Fh69DgwzEqQnxiKRVe1tcVdGDdqC3Ue0?usp=sharing',
-    type: ProjectType.MANAGEMENT
+    type: ProjectType.MANAGEMENT,
+    date: '2023',
+    featured: false
   },
   {
     id: "6",
@@ -175,7 +195,9 @@ export const projects: Project[] = [
     description: 'Travel/Calendar Management and Appointment Setting',
     technologies: ['Calendar', 'Scheduling', 'Organization'],
     demoLink: 'https://drive.google.com/drive/folders/1XEGWaVMGvh1O-NnxmJydV0KIOsChHlLm?usp=sharing',
-    type: ProjectType.MANAGEMENT
+    type: ProjectType.MANAGEMENT,
+    date: '2023',
+    featured: false
   },
   {
     id: "7",
@@ -185,7 +207,9 @@ export const projects: Project[] = [
     description: 'Professional Content Creation',
     technologies: ['Content Writing', 'Design', 'Social Media'],
     demoLink: 'https://drive.google.com/drive/folders/19x3cIw20fqqhX73ZV83eEMueysmgswBK?usp=sharing',
-    type: ProjectType.DESIGN
+    type: ProjectType.DESIGN,
+    date: '2023',
+    featured: false
   },
   {
     id: "8",
@@ -195,7 +219,9 @@ export const projects: Project[] = [
     description: 'Executive Assistant Apprenticeship Program',
     technologies: ['Virtual Assistance', 'Management', 'Organization'],
     demoLink: 'https://drive.google.com/drive/folders/1vr3zsSHroynxjWyIkpqRSlt1raSJSFg-?usp=sharing',
-    type: ProjectType.EDUCATION
+    type: ProjectType.EDUCATION,
+    date: '2023',
+    featured: false
   },
   {
     id: "9",
@@ -205,7 +231,9 @@ export const projects: Project[] = [
     description: 'MVA Class Course Completion',
     technologies: ['Virtual Assistance', 'Management', 'Skills'],
     demoLink: 'https://drive.google.com/drive/folders/10vyiRW-F4qs1tsydPxiHhHpWJbEHxfDH?usp=sharing',
-    type: ProjectType.EDUCATION
+    type: ProjectType.EDUCATION,
+    date: '2023',
+    featured: false
   },
   {
     id: "10",
@@ -216,7 +244,9 @@ export const projects: Project[] = [
     technologies: ['JavaScript', 'HTML', 'CSS'],
     demoLink: 'https://va-ralphbserrano.github.io/randomDice/',
     github: 'https://github.com/va-ralphbserrano/randomDice',
-    type: ProjectType.WEB_APP
+    type: ProjectType.WEB_APP,
+    date: '2023',
+    featured: false
   },
   {
     id: "11",
@@ -227,7 +257,9 @@ export const projects: Project[] = [
     technologies: ['HTML', 'CSS', 'JavaScript', 'Bootstrap'],
     demoLink: 'https://va-ralphbserrano.github.io/portfolio/',
     github: 'https://github.com/va-ralphbserrano/portfolio',
-    type: ProjectType.WEB_APP
+    type: ProjectType.WEB_APP,
+    date: '2023',
+    featured: false
   }
 ];
 

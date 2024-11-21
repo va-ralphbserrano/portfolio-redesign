@@ -1,4 +1,4 @@
-import { Metric } from 'web-vitals';
+import type { Metric } from 'web-vitals';
 
 // Error severity levels
 export enum ErrorSeverity {

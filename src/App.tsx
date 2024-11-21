@@ -8,7 +8,7 @@
 import React from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
-import Navbar from '@/components/layout/Navbar';
+import { Navbar } from '@/components/layout/Navbar';
 import Footer from '@/components/layout/footer';
 import { PageTransition } from '@/components/common/PageTransition';
 import Hero from '@/components/sections/hero';
@@ -16,7 +16,7 @@ import About from '@/components/sections/about';
 import Portfolio from '@/components/sections/portfolio';
 import Services from '@/components/sections/services/Services';
 import Contact from '@/components/sections/contact';
-import Certificates from '@/components/sections/Certificates';
+import Certificates from '@/components/sections/certificates';
 import { projects } from '@/data/projects';
 
 /**
@@ -51,7 +51,7 @@ const App: React.FC = () => {
                 <Contact onSubmit={async (data) => {
                   // Handle form submission
                   console.log('Form submitted:', data);
-                  return true;
+                  return { success: true, message: 'Form submitted successfully' };
                 }} />
               </PageTransition>
             } />

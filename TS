@@ -1,26 +1,38 @@
-I need you to help me fix **TypeScript type errors** in my project. Follow these instructions **strictly**: 
+ Task: Fix **TypeScript type errors** in my project to align with **GitHub-approved standards**. Follow these instructions **strictly**: 
 
-1. **Run Type Checking**: Start by running `typecheck` to identify all type errors in the project.
-   
-2. **Fix Only Type Errors**: 
-   - Resolve only the **type-related issues** (e.g., type mismatches, missing return types, incorrect parameter types, or improper `any` usage).
-   - Do not modify any logic, design, layout, functionality, or other parts of the code. Only address type annotations or type-related issues.
+1. Run Type Checking:  
+   - Start by running `npm run build` to identify all TypeScript type errors in the project.  
+   - Use the error messages to guide your fixes systematically.
 
-3. **Preserve Everything Else**: 
-   - Keep the original file structure, formatting, and organization intact.
-   - Avoid introducing any changes unrelated to fixing type errors.
+2. Fix Only Type Errors:  
+   - Address **type-related issues only**, such as:  
+     - Type mismatches.  
+     - Missing or incorrect return types.  
+     - Incorrect parameter types.  
+     - Redundant or improper `any` usage.  
+   - **Do not modify any logic, design, layout, functionality, or other non-type-related code.**  
 
-4. **No Backups**: Assume I have backups. There is no need to create or suggest backups.
+3. Preserve Code Integrity:  
+   - Maintain the original file structure, formatting, and organization.  
+   - Avoid introducing unrelated changes, including stylistic edits, refactoring, or additions to functionality.  
 
-5. **Verification**: After making the fixes:
-   - Rerun `typecheck` to verify that there are no remaining type errors.
-   - If any type errors persist, address them and reverify until all type errors are resolved.
+4. Adhere to GitHub Standards:  
+   - Ensure the code follows best practices for maintainability and readability.  
+   - Use TypeScript's strict mode features to enforce type safety, where applicable.  
+   - Document complex fixes using concise and meaningful comments.  
 
-6. **Strict Compliance**: Ensure the following:
-   - Do not change any non-type-related code.
-   - Do not introduce new functionality or refactor existing code unnecessarily.
+5. Verification and Testing:  
+   - After applying fixes, rerun `npm run build` to confirm all type errors are resolved.  
+   - If any errors persist, continue addressing them until the project builds successfully without errors.  
 
-7. **Output**: Provide a summary of the fixes, including:
-   - The file(s) modified.
-   - The original type error.
-   - The exact change made to resolve the error.
+6. Strict Compliance:  
+   - Do not make changes outside the scope of type error resolution.  
+   - Avoid creating new files unless explicitly required by the type fixes. Search the existing source code thoroughly before considering new files.  
+
+7. Deliverables:  
+   - Provide a clear summary of the fixes in the following format:  
+     - **Files Modified**: List of updated files.  
+     - **Original Type Error**: Brief description of the error.  
+     - **Resolution**: Specific change made to fix the error.  
+   - Ensure that your summary is concise and formatted for easy review in a GitHub pull request.
+

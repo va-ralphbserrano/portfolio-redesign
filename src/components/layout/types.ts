@@ -45,10 +45,7 @@ export interface SectionProps<T extends ElementType = 'section'> extends HTMLAtt
   animate?: boolean;
 }
 
-export interface MobileNavProps {
-  navLinks: Array<{ name: string; path: string }>;
-}
-
+// Animation Variants
 export const layoutVariants: Variants = {
   initial: {
     opacity: 0,
