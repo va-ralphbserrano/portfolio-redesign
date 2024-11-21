@@ -3,7 +3,11 @@ import { motion } from 'framer-motion';
 import { ProjectGallery } from './ProjectGallery';
 import { projects as defaultProjects } from '@/data/projects';
 import { SectionHeading } from '@/components/common/SectionHeading';
-import { PortfolioProps } from './types';
+import { Project } from '@/types/project';
+
+interface PortfolioProps {
+  projects?: Project[];
+}
 
 export const Portfolio: React.FC<PortfolioProps> = ({ projects = defaultProjects }) => {
   return (

@@ -88,6 +88,13 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmit, className, i
     }
   };
 
+  const getFormStatus = () => {
+    if (isSubmitting) return 'loading';
+    if (submitStatus?.success) return 'success';
+    if (submitStatus?.message && !submitStatus.success) return 'error';
+    return 'idle';
+  };
+
   return (
     <motion.form
       initial={{ opacity: 0, y: 20 }}
@@ -96,20 +103,10 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmit, className, i
       className={classNames('space-y-6', className)}
       onSubmit={handleSubmit}
     >
-      {submitStatus && (
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className={classNames(
-            'p-4 rounded-lg',
-            submitStatus.success
-              ? 'bg-green-50 text-green-800 dark:bg-green-900/20 dark:text-green-400'
-              : 'bg-red-50 text-red-800 dark:bg-red-900/20 dark:text-red-400'
-          )}
-        >
-          {submitStatus.message}
-        </motion.div>
-      )}
+      <FormStatus 
+        status={getFormStatus()} 
+        message={submitStatus?.message}
+      />
 
       <FormField
         type="text"
@@ -165,7 +162,6 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmit, className, i
       >
         {isSubmitting ? 'Sending...' : 'Send Message'}
       </motion.button>
-      <FormStatus />
     </motion.form>
   );
 };

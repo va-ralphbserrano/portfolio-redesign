@@ -47,6 +47,10 @@ export interface Project {
   date: string;
   featured: boolean;
   highlights?: string[];
+  gallery?: string[];
+  thumbnail?: string;
+  demoLink?: string;
+  subcategory?: string;
 }
 
 export interface Certificate {

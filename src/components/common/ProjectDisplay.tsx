@@ -5,19 +5,7 @@ import { ResponsiveImage } from './ResponsiveImage';
 import { TechnologyDisplay } from './TechnologyDisplay';
 import type { Technology } from './TechnologyDisplay';
 import { classNames } from '@/utils/helpers';
-
-export interface Project {
-  id: string;
-  title: string;
-  description: string;
-  image: string;
-  thumbnail?: string;
-  technologies: Technology[];
-  github?: string;
-  demo?: string;
-  gallery?: string[];
-  category: string;
-}
+import { Project } from '@/types/project';
 
 interface ProjectDisplayProps {
   project: Project;
@@ -38,7 +26,7 @@ export const ProjectDisplay: React.FC<ProjectDisplayProps> = ({
   className,
   onClick
 }) => {
-  const { title, description, image, technologies, github, demo } = project;
+  const { title, description, image, technologies, githubUrl: github, demoUrl: demo, gallery } = project;
 
   const renderContent = () => {
     switch (variant) {
@@ -61,6 +49,21 @@ export const ProjectDisplay: React.FC<ProjectDisplayProps> = ({
                 className="h-full w-full object-cover"
               />
             </div>
+
+            {/* Gallery Images */}
+            {gallery && gallery.length > 0 && (
+              <div className="grid grid-cols-2 gap-4">
+                {gallery.map((galleryImage, index) => (
+                  <div key={index} className="relative aspect-video overflow-hidden rounded-lg">
+                    <ResponsiveImage
+                      src={galleryImage}
+                      alt={`${title} gallery image ${index + 1}`}
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
 
             {/* Technologies */}
             <div className="space-y-2">

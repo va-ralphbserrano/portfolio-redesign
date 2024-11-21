@@ -1,4 +1,4 @@
-import { Project, ProjectCategory, ProjectType } from './types';
+import { Project, ProjectCategory, ProjectType } from '@/types/project';
 import {
   portfolio1,
   portfolio2,
@@ -121,10 +121,11 @@ export const projects: Project[] = [
     title: "AutoCAD Design",
     category: ProjectCategory.AUTOCAD,
     image: portfolio1,
-    description: 'Mechanical Design and Drawing',
-    technologies: ['AutoCAD', 'Mechanical Drawing', 'Design'],
-    demoLink: 'https://drive.google.com/drive/folders/1YFXO-XOFCdXZHZ5SXBkQqwQDaZ_RPtYH?usp=sharing',
-    type: ProjectType.DESIGN
+    description: "AutoCAD design project showcasing technical drawing skills.",
+    technologies: ["AutoCAD", "Technical Drawing"],
+    type: ProjectType.AUTOCAD,
+    date: "2023-01-01",
+    featured: true
   },
   {
     id: "2",

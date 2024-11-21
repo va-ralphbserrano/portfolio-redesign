@@ -1,7 +1,6 @@
 /* Import custom styles */
 @import './animations.css';
 @import './background-utilities.css';
-@import './swiper.css';
 
 @tailwind base;
 @tailwind components;

@@ -1,5 +1,5 @@
 // This file is auto-generated. Do not edit manually.
-import { Project, ProjectCategory, ProjectType } from '@/components/sections/portfolio/types';
+import { Project, ProjectCategory, ProjectType } from '@/types/project';
 
 // Import portfolio images
 import oldPortfolioWix from '@/assets/images/portfolio/old-portfolio-using-wix.png';
@@ -121,13 +121,13 @@ export const categories = [
 ] as const;
 
 // Normalize project paths
-function normalizeProjectPaths(project: Project): Project {
+const normalizeProjectPaths = (project: Project): Project => {
   return {
     ...project,
-    thumbnail: project.thumbnail ? getImageUrl(project.thumbnail) : undefined,
-    pdfUrl: project.pdfUrl ? getImageUrl(project.pdfUrl) : undefined
+    image: project.image.startsWith('/') ? project.image : `/${project.image}`,
+    gallery: project.gallery?.map(img => img.startsWith('/') ? img : `/${img}`)
   };
-}
+};
 
 export const projects: Project[] = [
   // Professional Development Projects
@@ -421,14 +421,12 @@ export const projects: Project[] = [
       conveyorFrameC2
     ]
   }
-];
+].map(normalizeProjectPaths);
 
-export function getPortfolioProjects() {
-  return projects.filter(project => project.category === ProjectCategory.WEB || project.category === ProjectCategory.DESIGN);
-}
+export const getPortfolioProjects = () => {
+  return projects.filter(p => p.category !== ProjectCategory.TECHNICAL);
+};
 
-export function getTechnicalProjects() {
-  return projects.filter(project => project.category === ProjectCategory.TECHNICAL);
-}
-
-export default projects;
+export const getTechnicalProjects = () => {
+  return projects.filter(p => p.category === ProjectCategory.TECHNICAL);
+};

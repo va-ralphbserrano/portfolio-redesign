@@ -1,29 +1,40 @@
 import React from 'react';
-import { Modal } from '@/components/common/Modal/Modal';
+import Modal from '../Modal';
 import { PDFViewer } from './PDFViewer';
 
 interface PDFModalProps {
   isOpen: boolean;
   onClose: () => void;
   file: string;
-  className?: string;
+  title?: string;
+  renderTextLayer?: boolean;
+  renderAnnotationLayer?: boolean;
 }
 
-const PDFModal: React.FC<PDFModalProps> = ({ isOpen, onClose, file, className }) => {
+export const PDFModal: React.FC<PDFModalProps> = ({
+  isOpen,
+  onClose,
+  file,
+  title,
+  renderTextLayer = true,
+  renderAnnotationLayer = true
+}) => {
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
+      title={title || 'View PDF'}
       size="xl"
-      className={className}
     >
-      <div className="h-[80vh]">
-        <PDFViewer file={file} />
+      <div className="w-full h-[80vh]">
+        <PDFViewer 
+          url={file} 
+          modal={true}
+          renderTextLayer={renderTextLayer}
+          renderAnnotationLayer={renderAnnotationLayer}
+          onClose={onClose}
+        />
       </div>
     </Modal>
   );
 };
-
-PDFModal.displayName = 'PDFModal';
-
-export default PDFModal;

@@ -1,53 +1,7 @@
 import { WithClassName } from '@/types/component';
-import { ProjectCategory, ProjectType } from '@/types/project';
+import { ProjectCategory, ProjectType, type Project } from '@/types/project';
 
-export enum ProjectCategory {
-  ALL = 'all',
-  TECHNICAL = 'technical',
-  WEB = 'web',
-  DESIGN = 'design',
-  MANAGEMENT = 'management',
-  EDUCATION = 'education',
-  DEMO = 'demo',
-  VIRTUAL_ASSISTANT = 'virtual_assistant',
-  KITCHEN_EQUIPMENT = 'kitchen_equipment',
-  INDUSTRIAL_EQUIPMENT = 'industrial_equipment',
-  COMMERCIAL = 'commercial',
-  CONSTRUCTION = 'construction',
-  UTILITIES = 'utilities',
-  COMPONENTS = 'components',
-  FOOD_SERVICE = 'food_service',
-  STORAGE = 'storage',
-  MANUFACTURING = 'manufacturing'
-}
-
-export enum ProjectType {
-  WEB_DESIGN = 'Web Design',
-  WEB_APP = 'Web Application',
-  TECHNICAL_DESIGN = 'Technical Design',
-  VIRTUAL_ASSISTANT = 'Virtual Assistant',
-  MANAGEMENT = 'Management',
-  DESIGN = 'Design',
-  VIDEO = 'Video',
-  EDUCATION = 'Education'
-}
-
-export interface Project {
-  id: string;
-  title: string;
-  category: ProjectCategory;
-  subcategory?: string;
-  image: string;
-  thumbnail?: string;
-  description: string;
-  technologies: string[];
-  demoLink?: string;
-  codeLink?: string;
-  type: ProjectType;
-  gallery?: string[];
-  github?: string;
-  pdfUrl?: string;
-}
+export type { Project, ProjectCategory, ProjectType };
 
 export interface ProjectImages {
   main: string;
@@ -100,7 +54,7 @@ export interface PortfolioProps extends WithClassName {
 export interface ProjectFilterProps extends WithClassName {
   categories: readonly { id: ProjectCategory; label: string }[];
   selectedCategory: ProjectCategory;
-  setSelectedCategory: (category: ProjectCategory) => void;
+  onCategoryChange: (category: ProjectCategory) => void;
 }
 
 export const portfolioItemVariants = {

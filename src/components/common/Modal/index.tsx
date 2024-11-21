@@ -51,7 +51,7 @@ export const Modal: React.FC<ModalProps> = ({
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <Dialog.Overlay className="fixed inset-0 bg-black bg-opacity-50" />
+            <Dialog.Overlay className="fixed inset-0" />
           </Transition.Child>
 
           <span className="inline-block h-screen align-middle" aria-hidden="true">
@@ -73,7 +73,7 @@ export const Modal: React.FC<ModalProps> = ({
               animate="visible"
               exit="exit"
               className={classNames(
-                'inline-block w-full p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-gray-800 shadow-xl rounded-2xl',
+                'inline-block w-full p-6 my-8 overflow-hidden text-left align-middle transition-all transform',
                 modalSizes[size],
                 className
               )}

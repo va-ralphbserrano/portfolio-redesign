@@ -1,73 +1,37 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { classNames } from '@/utils/helpers';
-import { projectCardVariants } from '@/utils/animations/index';
 
-export interface Technology {
-  name: string;
-  icon?: React.ComponentType<{ className?: string }>;
-  color?: string;
-}
+export type Technology = string;
 
-export interface TechnologyDisplayProps {
+interface TechnologyDisplayProps {
   technologies: Technology[];
+  variant?: 'default' | 'pill';
   className?: string;
-  variant?: 'default' | 'compact' | 'pill';
-  animate?: boolean;
 }
 
 export const TechnologyDisplay: React.FC<TechnologyDisplayProps> = ({
   technologies,
-  className,
   variant = 'default',
-  animate = false
+  className
 }) => {
-  const getVariantClasses = () => {
-    switch (variant) {
-      case 'compact':
-        return 'flex flex-wrap gap-2';
-      case 'pill':
-        return 'flex flex-wrap gap-2';
-      default:
-        return 'flex flex-wrap gap-2';
-    }
+  const baseClasses = 'inline-flex items-center';
+  const variantClasses = {
+    default: 'text-sm text-gray-600 dark:text-gray-400',
+    pill: 'px-3 py-1 text-xs font-medium rounded-full bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200'
   };
-
-  const getTechnologyClasses = () => {
-    switch (variant) {
-      case 'compact':
-        return 'flex items-center space-x-1 text-sm text-gray-600 dark:text-gray-400';
-      case 'pill':
-        return 'rounded-full bg-gray-100 px-3 py-1 text-sm text-gray-800 dark:bg-gray-700 dark:text-gray-200';
-      default:
-        return 'flex items-center space-x-1 text-sm text-gray-600 dark:text-gray-400';
-    }
-  };
-
-  const Wrapper = animate ? motion.div : 'div';
-  const wrapperProps = animate ? {
-    variants: projectCardVariants,
-    initial: "hidden",
-    animate: "visible"
-  } : {};
 
   return (
-    <Wrapper 
-      className={classNames(getVariantClasses(), className)}
-      {...wrapperProps}
-    >
+    <div className={classNames('flex flex-wrap gap-2', className)}>
       {technologies.map((tech, index) => (
-        <div key={index} className={getTechnologyClasses()}>
-          {tech.icon && (
-            <tech.icon className={classNames('w-4 h-4', tech.color)} />
-          )}
-          <span>{tech.name}</span>
-        </div>
+        <span
+          key={index}
+          className={classNames(baseClasses, variantClasses[variant])}
+        >
+          {tech}
+        </span>
       ))}
-    </Wrapper>
+    </div>
   );
 };
 
 TechnologyDisplay.displayName = 'TechnologyDisplay';
-
-export default TechnologyDisplay;

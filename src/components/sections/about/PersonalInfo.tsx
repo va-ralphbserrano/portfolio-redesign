@@ -15,7 +15,7 @@ export const PersonalInfo: React.FC<PersonalInfoProps> = ({
         const Content = () => (
           <>
             <div className="flex-shrink-0 w-12 h-12 flex items-center justify-center rounded-lg bg-primary-100 dark:bg-primary-900/20">
-              <Icon className="w-6 h-6 text-primary-500 dark:text-primary-400" />
+              {Icon && <Icon className="w-6 h-6 text-primary-500 dark:text-primary-400" />}
             </div>
             <div>
               <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400">
@@ -55,7 +55,5 @@ export const PersonalInfo: React.FC<PersonalInfoProps> = ({
     </div>
   );
 };
-
-PersonalInfo.displayName = 'PersonalInfo';
 
 export default PersonalInfo;

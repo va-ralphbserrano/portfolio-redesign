@@ -1,27 +1,20 @@
 import React from 'react';
-import AnimatedLayout from './AnimatedLayout';
+import { Outlet } from 'react-router-dom';
 import Navbar from './Navbar';
 import Footer from './Footer';
-import { WithClassName } from '@/types/component';
 
-interface LayoutProps extends WithClassName {
-  children: React.ReactNode;
+interface LayoutProps {
+  className?: string;
 }
 
-const Layout: React.FC<LayoutProps> = ({ children, className }) => {
+export const Layout: React.FC<LayoutProps> = ({ className }) => {
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900">
+    <div className={className}>
       <Navbar />
-      <main className="relative pt-16">
-        <AnimatedLayout className={className || ''}>
-          {children}
-        </AnimatedLayout>
+      <main>
+        <Outlet />
       </main>
       <Footer />
     </div>
   );
 };
-
-Layout.displayName = 'Layout';
-
-export default Layout;

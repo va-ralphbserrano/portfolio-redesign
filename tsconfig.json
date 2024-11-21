@@ -36,10 +36,7 @@
     "include":  [
                     "src",
                     "scripts",
-                    "test",
-                    "vite.config.ts",
-                    "vitest.config.ts",
-                    "playwright.config.ts"
+                    "test"
                 ],
     "references":  [
                        {

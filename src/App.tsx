@@ -46,7 +46,15 @@ const App: React.FC = () => {
             <Route path="/about" element={<PageTransition><About /></PageTransition>} />
             <Route path="/portfolio" element={<PageTransition><Portfolio projects={projects} /></PageTransition>} />
             <Route path="/services" element={<PageTransition><Services /></PageTransition>} />
-            <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
+            <Route path="/contact" element={
+              <PageTransition>
+                <Contact onSubmit={async (data) => {
+                  // Handle form submission
+                  console.log('Form submitted:', data);
+                  return true;
+                }} />
+              </PageTransition>
+            } />
             <Route path="/certificates" element={<PageTransition><Certificates /></PageTransition>} />
             {/* Catch all route - redirect to home */}
             <Route path="*" element={<Navigate to="/" replace />} />

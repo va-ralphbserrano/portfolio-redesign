@@ -5,62 +5,55 @@ import freelancingBrand from '@/assets/images/certificate/freelancing-brand.png'
 import masterclass from '@/assets/images/certificate/masterclass-certificate.png';
 import websiteManagement from '@/assets/images/certificate/website-management.png';
 
-export interface Certificate {
+interface Certificate {
   id: string;
   title: string;
-  issuer: string;
-  date: string;
   image: string;
-  link?: string;
+  description: string;
+  issuer: string;
 }
 
 export const certificates: Certificate[] = [
   {
     id: 'cert-1',
-    title: 'Full Stack Development',
-    issuer: 'Masterclass Academy',
-    date: 'December 2023',
+    title: 'Virtual Assistant Masterclass',
+    description: 'Comprehensive training in virtual assistance, covering project management, client communication, and productivity tools. Achieved Gold Certificate of Completion.',
     image: masterclass,
-    link: 'https://masterclass.com/verify/cert-1'
+    issuer: 'Surge Freelancing Marketplace'
   },
   {
     id: 'cert-2',
-    title: 'Amazon Virtual Assistant',
-    issuer: 'Amazon',
-    date: 'November 2023',
+    title: 'Amazon Virtual Assistant Certification',
+    description: 'Specialized certification in Amazon marketplace management, product listing optimization, and customer service excellence.',
     image: amazonVa,
-    link: 'https://amazon.com/verify/cert-2'
+    issuer: 'Surge Freelancing Marketplace'
   },
   {
     id: 'cert-3',
-    title: 'Content Marketing',
-    issuer: 'Digital Marketing Institute',
-    date: 'October 2023',
+    title: 'Content Marketing Specialist',
+    description: 'Advanced training in content strategy, SEO optimization, and digital marketing best practices for business growth.',
     image: contentMarketing,
-    link: 'https://dmi.com/verify/cert-3'
+    issuer: 'Surge Freelancing Marketplace'
   },
   {
     id: 'cert-4',
-    title: 'Website Management',
-    issuer: 'Web Development Institute',
-    date: 'September 2023',
+    title: 'Website Management Professional',
+    description: 'Certification in website maintenance, content management systems, and technical optimization for optimal website performance.',
     image: websiteManagement,
-    link: 'https://wdi.com/verify/cert-4'
+    issuer: 'Surge Freelancing Marketplace'
   },
   {
     id: 'cert-5',
-    title: 'Freelancing & Branding',
-    issuer: 'Freelance Academy',
-    date: 'August 2023',
+    title: 'Freelancing & Personal Branding',
+    description: 'Comprehensive course on building a successful freelancing career and developing a strong personal brand in the digital marketplace.',
     image: freelancingBrand,
-    link: 'https://freelance.com/verify/cert-5'
+    issuer: 'Surge Freelancing Marketplace'
   },
   {
     id: 'cert-6',
-    title: 'Web Development Apprenticeship',
-    issuer: 'Tech Academy',
-    date: 'July 2023',
+    title: 'Digital Marketing Apprenticeship',
+    description: 'Intensive apprenticeship program focusing on practical digital marketing skills, including SEO, content strategy, and social media management.',
     image: apprenticeship,
-    link: 'https://techacademy.com/verify/cert-6'
+    issuer: 'Surge Freelancing Marketplace'
   }
 ];

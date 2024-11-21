@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
-import { Project, ProjectCategory } from '../types';
+import { Project, ProjectCategory } from '@/types/project';
 import { ResponsiveImage } from '@/components/common/ResponsiveImage';
 import { ProjectDisplay } from '@/components/common/ProjectDisplay';
 
@@ -66,12 +66,11 @@ export const ProjectGallery: React.FC<ProjectGalleryProps> = ({
 
   const handleProjectClick = (project: Project) => {
     // Create a combined gallery array that includes the main image
-    const mainImage = project.thumbnail || project.image;
-    const combinedGallery = mainImage 
-      ? [mainImage, ...(project.gallery || [])]
-      : project.gallery;
+    const mainImage = project.image;
+    const gallery = project.gallery || [];
+    const combinedGallery = mainImage ? [mainImage, ...gallery] : gallery;
 
-    if (combinedGallery && combinedGallery.length > 0) {
+    if (combinedGallery.length > 0) {
       setSelectedProject({
         ...project,
         gallery: combinedGallery
@@ -198,48 +197,38 @@ export const ProjectGallery: React.FC<ProjectGalleryProps> = ({
                 alt={`${selectedProject.title} - Image ${currentImageIndex + 1}`}
                 className="w-full h-full object-contain"
               />
-              
-              {/* Navigation arrows - Only show if there's more than one image */}
+
+              {/* Navigation buttons */}
               {selectedProject.gallery.length > 1 && (
                 <>
-                  {/* Left arrow - Hide if it's the first image */}
-                  {currentImageIndex > 0 && (
-                    <button
-                      onClick={() => handlePrevImage()}
-                      className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 p-2 rounded-full transition-colors"
-                    >
-                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                      </svg>
-                    </button>
-                  )}
-                  
-                  {/* Right arrow - Hide if it's the last image */}
-                  {currentImageIndex < selectedProject.gallery.length - 1 && (
-                    <button
-                      onClick={() => handleNextImage()}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 p-2 rounded-full transition-colors"
-                    >
-                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
-                    </button>
-                  )}
+                  <button
+                    onClick={handlePrevImage}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/50 text-white/80 hover:text-white hover:bg-black/70 transition-colors"
+                  >
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    </svg>
+                  </button>
+                  <button
+                    onClick={handleNextImage}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/50 text-white/80 hover:text-white hover:bg-black/70 transition-colors"
+                  >
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </button>
                 </>
               )}
             </div>
 
-            {/* Image counter - Only show if there's more than one image */}
-            {selectedProject.gallery.length > 1 && (
-              <div className="absolute -bottom-12 left-1/2 -translate-x-1/2 text-white/80">
-                {currentImageIndex + 1} / {selectedProject.gallery.length}
-              </div>
-            )}
+            {/* Project details */}
+            <div className="mt-6 text-white">
+              <h3 className="text-2xl font-bold mb-2">{selectedProject.title}</h3>
+              <p className="text-gray-300">{selectedProject.description}</p>
+            </div>
           </div>
         </div>
       )}
     </div>
   );
 };
-
-export default ProjectGallery;
