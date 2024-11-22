@@ -1,153 +1,140 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
-import Modal from '@/components/common/Modal';
-import { SectionHeading } from '@/components/common/SectionHeading';
-import { CertificateCard } from './CertificateCard';
+import { classNames } from '@/utils/helpers';
+import { containerVariants, itemVariants } from '@/utils/animations';
+import CertificateCard from './CertificateCard';
 
-// Import certificate images
-import amazonVA from '@/assets/images/certificate/amazon-va.png';
-import apprenticeship from '@/assets/images/certificate/apprenticeship-certificate.png';
-import contentMarketing from '@/assets/images/certificate/content-marketing.png';
-import freelancingBrand from '@/assets/images/certificate/freelancing-brand.png';
-import masterclass from '@/assets/images/certificate/masterclass-certificate.png';
-import websiteManagement from '@/assets/images/certificate/website-management.png';
+// Import all certificate images
+const certificateImages = import.meta.glob('@/assets/images/certificate/*.png', { eager: true });
 
-interface Certificate {
+// Helper function to get image URL safely
+const getImageUrl = (filename: string): string => {
+  const key = Object.keys(certificateImages).find(path => path.includes(filename));
+  return key ? (certificateImages[key] as { default: string }).default : '';
+};
+
+export interface Certificate {
   id: string;
   title: string;
   image: string;
   description: string;
   issuer: string;
-  date?: string;
-  url?: string;
+  date: string;
+  labels?: string[];
 }
 
-const certificates: Certificate[] = [
+export const certificates: Certificate[] = [
   {
-    id: '1',
-    title: 'Amazon Virtual Assistant',
-    image: amazonVA,
-    description: 'Specialized certification in Amazon Virtual Assistant services, covering product management, customer service, and marketplace operations.',
+    id: 'amazon-va',
+    title: 'Amazon Virtual Assistant Certification',
+    image: getImageUrl('amazon-va.png'),
+    description: 'Advanced certification in Amazon marketplace management, product optimization, and seller account operations. Expertise in inventory management, listing optimization, and performance analytics.',
     issuer: 'Surge Freelancing Marketplace',
     date: '2024',
+    labels: ['Amazon Marketplace', 'E-commerce', 'Business Operations']
   },
   {
-    id: '2',
-    title: 'Executive Assistant Apprenticeship',
-    image: apprenticeship,
-    description: 'Comprehensive training in executive assistance, project management, and professional communication.',
+    id: 'apprenticeship',
+    title: 'Executive Virtual Assistant Program',
+    image: getImageUrl('apprenticeship-certificate.png'),
+    description: 'Comprehensive training in high-level executive support, including project management, business communications, and strategic planning. Specialized in remote team collaboration and digital workflow optimization.',
     issuer: 'Surge Freelancing Marketplace',
     date: '2024',
+    labels: ['Executive Support', 'Project Management', 'Business Strategy']
   },
   {
-    id: '3',
-    title: 'Content Marketing',
-    image: contentMarketing,
-    description: 'Advanced certification in content marketing strategies, SEO, and digital content creation.',
+    id: 'content-marketing',
+    title: 'Digital Content Marketing Specialist',
+    image: getImageUrl('content-marketing.png'),
+    description: 'Advanced certification in digital content strategy, SEO optimization, and multi-platform content creation. Proficient in analytics-driven content planning and audience engagement strategies.',
     issuer: 'Surge Freelancing Marketplace',
     date: '2024',
+    labels: ['Content Strategy', 'Digital Marketing', 'SEO']
   },
   {
-    id: '4',
-    title: 'Best in Setting a Freelancing Brand',
-    image: freelancingBrand,
-    description: 'Recognition for excellence in personal branding and freelance business development.',
+    id: 'freelancing-brand',
+    title: 'Professional Brand Development',
+    image: getImageUrl('freelancing-brand.png'),
+    description: 'Recognition for excellence in personal brand development and digital presence optimization. Expertise in professional networking, client relationship management, and service positioning.',
     issuer: 'Surge Freelancing Marketplace',
     date: '2024',
+    labels: ['Brand Strategy', 'Professional Development', 'Client Relations']
   },
   {
-    id: '5',
-    title: 'Virtual Assistant Masterclass',
-    image: masterclass,
-    description: 'Comprehensive training in virtual assistance, covering productivity tools, time management, and client relations.',
+    id: 'masterclass',
+    title: 'Masterclass Virtual Assistant',
+    image: getImageUrl('masterclass-certificate.png'),
+    description: 'Advanced certification in comprehensive virtual assistance services, including executive support, digital workflow management, and business process optimization. Expertise in remote collaboration and administrative excellence.',
     issuer: 'Surge Freelancing Marketplace',
     date: '2024',
+    labels: ['Virtual Assistance', 'Administrative Excellence', 'Digital Operations']
   },
   {
-    id: '6',
-    title: 'Website Management',
-    image: websiteManagement,
-    description: 'Professional certification in website management, maintenance, and optimization.',
+    id: 'website-management',
+    title: 'Digital Platform Management',
+    image: getImageUrl('website-management.png'),
+    description: 'Advanced certification in website administration, content management systems, and digital platform optimization. Expertise in user experience enhancement and technical maintenance protocols.',
     issuer: 'Surge Freelancing Marketplace',
     date: '2024',
+    labels: ['Website Administration', 'Technical Management', 'UX Optimization']
   }
-];
+].filter(cert => cert.image); // Only show certificates with valid images
 
-export const Certificates = () => {
-  const [selectedCertificate, setSelectedCertificate] = useState<Certificate | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const handleOpenModal = (certificate: Certificate) => {
-    setSelectedCertificate(certificate);
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setTimeout(() => setSelectedCertificate(null), 200); // Delay clearing the certificate until after animation
-  };
-
+const Certificates = () => {
   return (
-    <section className="relative py-24 overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-b from-gray-50 to-white dark:from-gray-900/50 dark:to-gray-800/50" />
-      <div className="container relative px-4 mx-auto">
-        <div className="max-w-3xl mx-auto text-center mb-16">
-          <SectionHeading
-            title="Certificates"
-            subtitle="Professional certifications and achievements"
-            className="mb-6"
-          />
+    <section
+      id="certificates"
+      className={classNames(
+        'relative py-24 bg-gradient-to-b from-gray-50/50 to-white dark:from-gray-900/50 dark:to-gray-900',
+      )}
+    >
+      {/* Background Pattern */}
+      <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.02]">
+        <div className="absolute inset-0" style={{ 
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+          backgroundSize: '30px 30px'
+        }} />
+      </div>
+
+      <div className="container mx-auto px-4">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
+          <span className="inline-block px-4 py-2 rounded-full bg-primary-100 dark:bg-primary-900/10 text-primary-600 dark:text-primary-400 text-sm font-medium mb-4">
+            Professional Excellence
+          </span>
+          <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+            Certifications & Achievements
+          </h2>
           <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-            Browse through my professional certifications from Surge Freelancing Marketplace, showcasing expertise in virtual assistance, content creation, and digital marketing. Each certificate represents dedicated learning and practical experience in delivering high-quality freelance services.
+            A collection of professional certifications demonstrating expertise in virtual business management, digital marketing, and technical operations
           </p>
-        </div>
+        </motion.div>
 
         <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
           viewport={{ once: true }}
-          transition={{ duration: 0.5, staggerChildren: 0.1 }}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
         >
           {certificates.map((certificate, index) => (
             <motion.div
               key={certificate.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
+              variants={itemVariants}
+              custom={{ delay: index * 0.1 }}
             >
               <CertificateCard
-                key={certificate.id}
-                title={certificate.title}
-                image={certificate.image}
-                description={certificate.description}
-                issuer={certificate.issuer}
-                date={certificate.date || ''}
-                onClick={() => handleOpenModal(certificate)}
+                certificate={certificate}
                 className="h-full"
               />
             </motion.div>
           ))}
         </motion.div>
-
-        <Modal
-          isOpen={isModalOpen}
-          onClose={handleCloseModal}
-          size="xl"
-          showClose
-          className="p-0"
-        >
-          {selectedCertificate && (
-            <div className="relative w-full h-full">
-              <img
-                src={selectedCertificate.image}
-                alt={selectedCertificate.title}
-                className="w-full h-full object-contain"
-              />
-            </div>
-          )}
-        </Modal>
       </div>
     </section>
   );

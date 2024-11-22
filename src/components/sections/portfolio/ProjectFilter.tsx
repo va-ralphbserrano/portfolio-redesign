@@ -1,35 +1,37 @@
 import React from 'react';
-import { ProjectCategory } from './data/types';
+import { ProjectCategory } from '@/types/project';
 import { classNames } from '@/utils/helpers';
 
-interface Category {
+interface CategoryItem {
   id: ProjectCategory;
   label: string;
+  key: string;
 }
 
 interface ProjectFilterProps {
-  categories: Category[];
+  categories: CategoryItem[];
   selectedCategory: ProjectCategory;
-  setSelectedCategory: (category: ProjectCategory) => void;
+  onCategoryChange: (category: ProjectCategory) => void;
 }
 
-const ProjectFilter: React.FC<ProjectFilterProps> = ({
+export const ProjectFilter: React.FC<ProjectFilterProps> = ({
   categories,
   selectedCategory,
-  setSelectedCategory,
+  onCategoryChange,
 }) => {
   return (
-    <div className="flex flex-wrap justify-center gap-4">
+    <div className="flex flex-wrap justify-center gap-2">
       {categories.map((category) => (
         <button
-          key={category.id}
-          onClick={() => setSelectedCategory(category.id)}
+          key={category.key}
+          onClick={() => onCategoryChange(category.id)}
           className={classNames(
-            'px-4 py-2 rounded-full transition-all duration-300',
+            'px-4 py-2 rounded-full text-sm font-medium transition-all duration-300',
             selectedCategory === category.id
-              ? 'bg-primary text-white'
-              : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+              ? 'bg-primary-500 text-white shadow-md hover:bg-primary-600'
+              : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
           )}
+          aria-pressed={selectedCategory === category.id}
         >
           {category.label}
         </button>
@@ -37,5 +39,3 @@ const ProjectFilter: React.FC<ProjectFilterProps> = ({
     </div>
   );
 };
-
-export default ProjectFilter;

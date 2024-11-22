@@ -1,3 +1,1 @@
-export { default as FormField } from './FormField';
-export { default as FormStatus } from './FormStatus';
-export * from './types';
+export { default as ContactForm } from './ContactForm';

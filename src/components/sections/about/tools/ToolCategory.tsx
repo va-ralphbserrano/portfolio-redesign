@@ -12,9 +12,14 @@ export const ToolCategory: React.FC<ToolCategoryProps> = ({
       variants={toolsVariants}
       className={classNames('space-y-4', className)}
     >
-      <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
-        {category.name}
-      </h3>
+      <div className="space-y-2">
+        <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+          {category.name}
+        </h3>
+        <p className="text-gray-600 dark:text-gray-400 text-sm">
+          {category.description}
+        </p>
+      </div>
       <ToolGrid tools={category.tools} />
     </motion.div>
   );

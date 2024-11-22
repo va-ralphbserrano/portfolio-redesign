@@ -1,23 +1,10 @@
 export enum ProjectCategory {
-  ALL = 'all',
-  TECHNICAL = 'technical',
-  WEB = 'web',
-  DESIGN = 'design',
-  MANAGEMENT = 'management',
-  EDUCATION = 'education',
-  DEMO = 'demo',
-  VIRTUAL_ASSISTANT = 'virtual_assistant',
-  KITCHEN_EQUIPMENT = 'kitchen_equipment',
-  INDUSTRIAL_EQUIPMENT = 'industrial_equipment',
-  COMMERCIAL = 'commercial',
-  CONSTRUCTION = 'construction',
-  UTILITIES = 'utilities',
-  COMPONENTS = 'components',
-  FOOD_SERVICE = 'food_service',
-  STORAGE = 'storage',
-  MANUFACTURING = 'manufacturing',
-  VIDEO = 'video',
-  AUTOCAD = 'autocad'
+  ALL = 'All Projects',
+  WEB_DEVELOPMENT = 'Web Development',
+  VIRTUAL_ASSISTANCE = 'Virtual Assistant Services',
+  PROJECT_MANAGEMENT = 'Project Management',
+  CONTENT_CREATION = 'Content Creation',
+  PROFESSIONAL_DEVELOPMENT = 'Professional Development'
 }
 
 export enum ProjectType {
@@ -38,19 +25,29 @@ export interface Project {
   id: string;
   title: string;
   category: ProjectCategory;
-  image: string;
+  type: ProjectType;
   description: string;
   technologies: string[];
-  type: ProjectType;
+  image: string;
+  gallery?: string[];
+  imageLabels?: string[];  // Labels for main image and gallery images
   githubUrl?: string;
   demoUrl?: string;
-  date: string;
-  featured: boolean;
-  highlights?: string[];
-  gallery?: string[];
-  thumbnail?: string;
-  demoLink?: string;
-  subcategory?: string;
+  featured?: boolean;
+  specs?: string[];
+  features?: string[];
+  timeline?: string;
+  date?: string;
+  longDescription?: string;  // Detailed description for the modal
+  role?: string;            // Your role in the project
+  team?: string[];          // Team members if applicable
+  challenges?: string[];    // Key challenges faced
+  outcomes?: string[];      // Project outcomes/achievements
+  testimonials?: {          // Client/user testimonials
+    text: string;
+    author: string;
+    role?: string;
+  }[];
 }
 
 export interface Certificate {

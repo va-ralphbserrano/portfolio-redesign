@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { HeroContent } from './HeroContent';
 import HeroImage from './HeroImage';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
+import { BackgroundElements } from './BackgroundElements';
 
 export const Hero: React.FC = () => {
   const prefersReducedMotion = useReducedMotion();
@@ -20,25 +21,33 @@ export const Hero: React.FC = () => {
   };
 
   return (
-    <section className="relative min-h-screen flex items-center bg-gradient-to-b from-gray-50/50 to-white dark:from-gray-900/50 dark:to-gray-900">
-      <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-0">
+    <section className="relative min-h-[calc(100vh-5rem)] flex items-center py-16 lg:py-24 overflow-hidden">
+      {/* Background Elements */}
+      <BackgroundElements />
+      
+      <div className="container mx-auto px-4 sm:px-6 relative">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+          {/* Content Section */}
           <motion.div
             initial="hidden"
             animate="visible"
             variants={prefersReducedMotion ? {} : variants}
-            className="flex items-center"
+            className="lg:col-span-7 xl:col-span-8"
           >
             <HeroContent />
           </motion.div>
           
+          {/* Image Section */}
           <motion.div
             initial="hidden"
             animate="visible"
             variants={prefersReducedMotion ? {} : variants}
-            className="flex items-center justify-center lg:justify-end"
+            className="lg:col-span-5 xl:col-span-4 flex items-center justify-center lg:justify-end"
           >
-            <HeroImage />
+            <div className="relative w-full max-w-md mx-auto lg:mx-0">
+              <div className="absolute inset-0 bg-gradient-to-r from-primary-500/20 to-primary-700/20 rounded-3xl blur-2xl transform -rotate-6 scale-105" />
+              <HeroImage />
+            </div>
           </motion.div>
         </div>
       </div>

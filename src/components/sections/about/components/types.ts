@@ -7,6 +7,8 @@ export interface AboutHeaderProps {
 
 export interface AboutSectionProps {
   title: string;
+  subtitle?: string;
+  icon?: string;
   children: ReactNode;
   className?: string;
 }

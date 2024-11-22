@@ -30,7 +30,7 @@ interface StandardInputProps extends BaseInputProps, Omit<React.InputHTMLAttribu
 
 type InputProps = TextareaProps | StandardInputProps;
 
-const Input = forwardRef<HTMLInputElement | HTMLTextAreaElement, InputProps>(({
+export const Input = forwardRef<HTMLInputElement | HTMLTextAreaElement, InputProps>(({
   label,
   error,
   success,

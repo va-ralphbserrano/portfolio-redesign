@@ -9,6 +9,7 @@ export interface Tool {
 
 export interface ToolCategory {
   name: string;
+  description: string;
   tools: Tool[];
 }
 

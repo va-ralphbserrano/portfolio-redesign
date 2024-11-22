@@ -9,7 +9,7 @@ interface PaginationProps {
   className?: string;
 }
 
-export const Pagination: React.FC<PaginationProps> = ({
+const Pagination: React.FC<PaginationProps> = ({
   currentPage,
   totalPages,
   onPageChange,
@@ -18,41 +18,39 @@ export const Pagination: React.FC<PaginationProps> = ({
   const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
 
   return (
-    <nav className={classNames('flex items-center justify-center space-x-1', className)}>
+    <nav className={classNames('flex items-center justify-center space-x-2', className)}>
       <button
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        className="p-2 rounded-md text-gray-400 hover:text-gray-500 disabled:opacity-50 disabled:cursor-not-allowed"
-        aria-label="Previous page"
+        className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        <ChevronLeftIcon className="h-5 w-5" />
+        <ChevronLeftIcon className="w-5 h-5" />
       </button>
-
-      <div className="flex space-x-1">
-        {pages.map((page) => (
-          <button
-            key={page}
-            onClick={() => onPageChange(page)}
-            className={classNames(
-              'px-4 py-2 text-sm font-medium rounded-md',
-              currentPage === page
-                ? 'bg-blue-600 text-white'
-                : 'text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800'
-            )}
-          >
-            {page}
-          </button>
-        ))}
-      </div>
+      
+      {pages.map(page => (
+        <button
+          key={page}
+          onClick={() => onPageChange(page)}
+          className={classNames(
+            'px-4 py-2 rounded-lg text-gray-700 dark:text-gray-300',
+            currentPage === page
+              ? 'bg-primary-500 dark:bg-primary-600 text-white dark:text-white'
+              : 'hover:bg-gray-100 dark:hover:bg-gray-800'
+          )}
+        >
+          {page}
+        </button>
+      ))}
 
       <button
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className="p-2 rounded-md text-gray-400 hover:text-gray-500 disabled:opacity-50 disabled:cursor-not-allowed"
-        aria-label="Next page"
+        className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        <ChevronRightIcon className="h-5 w-5" />
+        <ChevronRightIcon className="w-5 h-5" />
       </button>
     </nav>
   );
 };
+
+export default Pagination;

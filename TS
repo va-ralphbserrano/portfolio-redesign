@@ -36,3 +36,16 @@
      - **Resolution**: Specific change made to fix the error.  
    - Ensure that your summary is concise and formatted for easy review in a GitHub pull request.
 
+
+
+
+
+
+
+
+
+do this a folder at a time,
+D:\Github\portfolio-redesign\src\components\sections\portfolio
+1. analyze the files and have a deep upderstanding about the source code.
+2. look for the same source codes and files at the root folder if there are the same, consolidate, then verify.
+3. delete the subfolder to flatten the directory. before deleting verify first! use windows command

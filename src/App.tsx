@@ -13,11 +13,11 @@ import Footer from '@/components/layout/footer';
 import { PageTransition } from '@/components/common/PageTransition';
 import Hero from '@/components/sections/hero';
 import About from '@/components/sections/about';
-import Portfolio from '@/components/sections/portfolio';
+import { Portfolio } from '@/components/sections/portfolio';
 import Services from '@/components/sections/services/Services';
 import Contact from '@/components/sections/contact';
 import Certificates from '@/components/sections/certificates';
-import { projects } from '@/data/projects';
+import { projects } from '@/components/sections/portfolio/projects';
 
 /**
  * Main application component
@@ -45,6 +45,7 @@ const App: React.FC = () => {
             <Route path="/" element={<PageTransition><Hero /></PageTransition>} />
             <Route path="/about" element={<PageTransition><About /></PageTransition>} />
             <Route path="/portfolio" element={<PageTransition><Portfolio projects={projects} /></PageTransition>} />
+            <Route path="/certificates" element={<PageTransition><Certificates /></PageTransition>} />
             <Route path="/services" element={<PageTransition><Services /></PageTransition>} />
             <Route path="/contact" element={
               <PageTransition>
@@ -55,7 +56,6 @@ const App: React.FC = () => {
                 }} />
               </PageTransition>
             } />
-            <Route path="/certificates" element={<PageTransition><Certificates /></PageTransition>} />
             {/* Catch all route - redirect to home */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

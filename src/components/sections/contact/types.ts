@@ -7,53 +7,24 @@ export interface FormState {
   message: string;
 }
 
-export type FormErrors = {
-  [K in keyof FormState]?: string;
-};
-
-export interface FormResponse {
-  success: boolean;
-  message: string;
-}
-
-export interface ContactFormProps extends WithClassName {
-  onSubmit: (data: FormState) => Promise<FormResponse>;
-  isSubmitting?: boolean;
-  error?: string | null;
-}
-
-export interface FormFieldProps extends WithClassName {
-  label: string;
-  name: keyof FormState;
-  value: string;
-  error?: string | undefined;
-  onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
-  type?: string;
-  placeholder?: string;
-  required?: boolean;
-  rows?: number;
-}
-
-export interface FormButtonProps extends WithClassName {
-  isSubmitting?: boolean;
-  children: React.ReactNode;
-}
+export interface ContactFormData extends FormState {}
 
 export interface ContactSectionProps extends WithClassName {
   title?: string;
   description?: string;
 }
 
-export interface SocialLink {
-  name: string;
-  url: string;
-  icon: keyof typeof import('react-icons/hi');
-}
-
 export interface ContactInfo {
   label: string;
   value: string;
-  icon: keyof typeof import('react-icons/hi');
+  icon: string;
+  url: string;
+}
+
+export interface SocialLink {
+  name: string;
+  url: string;
+  icon: string;
 }
 
 export interface ContactData {
@@ -62,13 +33,13 @@ export interface ContactData {
   info: ContactInfo[];
   social: SocialLink[];
   form: {
-    submitEndpoint: string;
-    fields: {
-      [K in keyof FormState]: {
-        label: string;
-        placeholder: string;
-        required: boolean;
-      };
+    submitButton: string;
+    placeholders: {
+      [K in keyof FormState]: string;
+    };
+    messages: {
+      success: string;
+      error: string;
     };
   };
 }

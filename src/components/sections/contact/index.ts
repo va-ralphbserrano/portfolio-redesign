@@ -1,3 +1,3 @@
-export { default } from './ContactForm';
+export { default } from './ContactSection';
+export { contactData } from './contactData';
 export * from './types';
-export * from './form/types';

@@ -9,14 +9,11 @@ export const FooterBrand: React.FC<FooterSectionProps> = ({
   return (
     <motion.div variants={footerLinkVariants} className={className}>
       <Link to="/" className="inline-block">
-        <h3 className="text-2xl font-bold">
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-primary-400">
-            Ralph
-          </span>
-          <span className="text-gray-700 dark:text-gray-300">.dev</span>
+        <h3 className="text-2xl font-bold bg-gradient-to-r from-primary-500 to-primary-700 bg-clip-text text-transparent hover:opacity-80 transition-opacity">
+          Ralph.dev
         </h3>
       </Link>
-      <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+      <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mt-3">
         Transforming ideas into exceptional digital experiences with modern web technologies and virtual assistance expertise.
       </p>
     </motion.div>

@@ -15,18 +15,6 @@ export const Tools: React.FC<ToolsProps> = ({
       variants={toolsVariants}
       className={classNames('space-y-8', className)}
     >
-      <div className="text-center">
-        <motion.h2
-          variants={toolsVariants}
-          className="text-2xl font-bold text-gray-900 dark:text-white mb-4"
-        >
-          Tools & Technologies
-        </motion.h2>
-        <p className="text-gray-600 dark:text-gray-400">
-          Here&apos;s a list of tools I&apos;ve worked with
-        </p>
-      </div>
-
       <div className="space-y-12">
         {toolCategories.map((category) => (
           <ToolCategory

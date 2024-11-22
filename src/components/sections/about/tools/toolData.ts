@@ -1,71 +1,103 @@
-import {
-  SiTypescript,
-  SiJavascript,
-  SiReact,
-  SiNextdotjs,
-  SiTailwindcss,
-  SiNodedotjs,
-  SiExpress,
-  SiMongodb,
-  SiPostgresql,
-  SiPrisma,
-  SiGit,
-  SiDocker,
-  SiAmazonaws,
-  SiVercel,
-  SiNetlify,
-  SiFigma,
-  SiAdobexd,
-  SiAdobephotoshop,
-  SiVisualstudiocode,
-  SiPostman
-} from 'react-icons/si';
-import type { ToolCategory } from './types';
+import { 
+  FaDiscord, 
+  FaViber, 
+  FaSkype,
+  FaFacebookF,
+  FaInstagram,
+  FaLinkedinIn,
+  FaWordpress,
+  FaReact,
+  FaNpm,
+  FaCube,
+  FaLayerGroup,
+  FaCode,
+  FaPalette,
+  FaServer,
+  FaVideo,
+  FaDesktop,
+  FaFile,
+  FaFileExcel,
+  FaFilePowerpoint,
+  FaEnvelope,
+  FaGlobe,
+  FaTools,
+  FaLaptop,
+  FaDatabase,
+  FaHtml5,
+  FaCss3,
+  FaGithub,
+  FaMicrosoft,
+  FaSlack,
+  FaTrello,
+  FaFigma
+} from 'react-icons/fa';
 
-export const toolCategories: ToolCategory[] = [
-  {
-    name: 'Frontend Development',
-    tools: [
-      { name: 'TypeScript', icon: SiTypescript, color: 'text-blue-500' },
-      { name: 'JavaScript', icon: SiJavascript, color: 'text-yellow-400' },
-      { name: 'React', icon: SiReact, color: 'text-cyan-400' },
-      { name: 'Next.js', icon: SiNextdotjs, color: 'text-gray-900 dark:text-white' },
-      { name: 'Tailwind CSS', icon: SiTailwindcss, color: 'text-cyan-500' }
+import {
+  SiAdobephotoshop,
+  SiAdobeillustrator,
+  SiCanva,
+  SiAutodesk,
+  SiTypescript,
+  SiTailwindcss,
+  SiVite,
+  SiFramer,
+  SiAsana,
+  SiClickup,
+  SiZoom,
+  SiSalesforce,
+  SiZendesk,
+  SiIntercom,
+  SiAdobepremierepro,
+  SiNotion,
+  SiVisualstudiocode,
+  SiGoogle
+} from 'react-icons/si';
+
+import { BiGitBranch } from 'react-icons/bi';
+import { DiJavascript } from 'react-icons/di';
+
+import { aboutData } from '../../../../data/about';
+import { ToolCategory, Tool } from './types';
+
+const tools: Record<string, { description: string, items: Tool[] }> = {
+  'Design & Media': {
+    description: 'Proficient in industry-standard design and media tools, specializing in AutoCAD for technical drawings and Adobe suite for multimedia content creation.',
+    items: [
+      { name: 'AutoCAD', icon: FaCube, color: 'text-red-600' },
+      { name: 'Autodesk Inventor', icon: FaCube, color: 'text-orange-600' },
+      { name: 'Adobe Photoshop', icon: SiAdobephotoshop, color: 'text-blue-600' },
+      { name: 'Adobe Premiere Pro', icon: SiAdobepremierepro, color: 'text-purple-600' },
+      { name: 'DaVinci Resolve', icon: FaVideo, color: 'text-purple-600' },
+      { name: 'Canva', icon: SiCanva, color: 'text-blue-500' },
+      { name: 'Figma', icon: FaFigma, color: 'text-purple-500' }
     ]
   },
-  {
-    name: 'Backend Development',
-    tools: [
-      { name: 'Node.js', icon: SiNodedotjs, color: 'text-green-500' },
-      { name: 'Express', icon: SiExpress, color: 'text-gray-900 dark:text-white' },
-      { name: 'MongoDB', icon: SiMongodb, color: 'text-green-600' },
-      { name: 'PostgreSQL', icon: SiPostgresql, color: 'text-blue-600' },
-      { name: 'Prisma', icon: SiPrisma, color: 'text-gray-900 dark:text-white' }
-    ]
-  },
-  {
-    name: 'DevOps & Tools',
-    tools: [
-      { name: 'Git', icon: SiGit, color: 'text-orange-500' },
-      { name: 'Docker', icon: SiDocker, color: 'text-blue-500' },
-      { name: 'AWS', icon: SiAmazonaws, color: 'text-orange-400' },
-      { name: 'Vercel', icon: SiVercel, color: 'text-gray-900 dark:text-white' },
-      { name: 'Netlify', icon: SiNetlify, color: 'text-cyan-500' }
-    ]
-  },
-  {
-    name: 'Design & Prototyping',
-    tools: [
-      { name: 'Figma', icon: SiFigma, color: 'text-purple-500' },
-      { name: 'Adobe XD', icon: SiAdobexd, color: 'text-pink-500' },
-      { name: 'Photoshop', icon: SiAdobephotoshop, color: 'text-blue-600' }
-    ]
-  },
-  {
-    name: 'Development Tools',
-    tools: [
+  'Development': {
+    description: 'Experienced with modern development tools and technologies, focusing on web development using JavaScript and React ecosystem.',
+    items: [
       { name: 'VS Code', icon: SiVisualstudiocode, color: 'text-blue-500' },
-      { name: 'Postman', icon: SiPostman, color: 'text-orange-500' }
+      { name: 'Git', icon: BiGitBranch, color: 'text-orange-500' },
+      { name: 'GitHub', icon: FaGithub, color: 'text-gray-700 dark:text-gray-300' },
+      { name: 'HTML/CSS', icon: FaHtml5, color: 'text-orange-500' },
+      { name: 'JavaScript', icon: DiJavascript, color: 'text-yellow-400' },
+      { name: 'React', icon: FaReact, color: 'text-cyan-400' }
+    ]
+  },
+  'Productivity': {
+    description: 'Well-versed in collaboration and productivity tools, enabling efficient project management and seamless team communication.',
+    items: [
+      { name: 'Microsoft Office', icon: FaMicrosoft, color: 'text-blue-600' },
+      { name: 'Google Workspace', icon: SiGoogle, color: 'text-red-500' },
+      { name: 'Slack', icon: FaSlack, color: 'text-purple-500' },
+      { name: 'Trello', icon: FaTrello, color: 'text-blue-400' },
+      { name: 'Asana', icon: SiAsana, color: 'text-red-500' },
+      { name: 'Notion', icon: SiNotion, color: 'text-gray-700 dark:text-gray-300' }
     ]
   }
-];
+};
+
+export const toolCategories: ToolCategory[] = Object.entries(tools).map(([name, category]) => ({
+  name,
+  description: category.description,
+  tools: category.items
+}));

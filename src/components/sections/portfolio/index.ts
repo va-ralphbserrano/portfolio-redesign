@@ -1,2 +1,2 @@
-export { Portfolio as default, Portfolio } from './Portfolio';
-export * from './types';
+export { default as Portfolio } from './Portfolio';
+export type { Project, ProjectCategory } from '@/types/project';

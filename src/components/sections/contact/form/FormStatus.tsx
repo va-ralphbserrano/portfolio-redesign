@@ -1,35 +1,58 @@
-import { WithClassName } from '@/types/component';
+import React from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { HiCheckCircle, HiExclamationCircle } from 'react-icons/hi';
 import { classNames } from '@/utils/helpers';
 
-interface FormStatusProps extends WithClassName {
-  status: 'idle' | 'loading' | 'success' | 'error';
+interface FormStatusProps {
+  status: 'success' | 'error' | null;
   message?: string;
+  className?: string;
 }
 
-export const FormStatus: React.FC<FormStatusProps> = ({
-  status,
-  message,
-  className
-}) => {
-  if (status === 'idle' || !message) return null;
+export const FormStatus: React.FC<FormStatusProps> = ({ status, message, className }) => {
+  if (!status || !message) return null;
 
-  const statusClasses = {
-    loading: 'bg-blue-50 text-blue-700 dark:bg-blue-900/50 dark:text-blue-200',
-    success: 'bg-green-50 text-green-700 dark:bg-green-900/50 dark:text-green-200',
-    error: 'bg-red-50 text-red-700 dark:bg-red-900/50 dark:text-red-200'
+  const variants = {
+    initial: { opacity: 0, y: -10 },
+    animate: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: 10 }
   };
 
   return (
-    <div
-      className={classNames(
-        'p-4 rounded-lg',
-        statusClasses[status],
-        className
-      )}
-      role="alert"
-    >
-      <p className="text-sm font-medium">{message}</p>
-    </div>
+    <AnimatePresence mode="wait">
+      <motion.div
+        key={status}
+        initial="initial"
+        animate="animate"
+        exit="exit"
+        variants={variants}
+        className={classNames(
+          'p-4 rounded-lg',
+          status === 'success' ? 'bg-green-50 dark:bg-green-900/20' : 'bg-red-50 dark:bg-red-900/20',
+          className
+        )}
+      >
+        <div className="flex">
+          <div className="flex-shrink-0">
+            {status === 'success' ? (
+              <HiCheckCircle className="h-5 w-5 text-green-400" aria-hidden="true" />
+            ) : (
+              <HiExclamationCircle className="h-5 w-5 text-red-400" aria-hidden="true" />
+            )}
+          </div>
+          <div className="ml-3">
+            <p
+              className={classNames(
+                'text-sm font-medium',
+                status === 'success' ? 'text-green-800 dark:text-green-200' : 'text-red-800 dark:text-red-200'
+              )}
+            >
+              {message}
+            </p>
+          </div>
+        </div>
+      </motion.div>
+    </AnimatePresence>
   );
 };
 

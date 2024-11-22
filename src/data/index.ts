@@ -1,19 +1,17 @@
 import { metaConfig } from './meta';
-import { heroData } from './hero';
-import { aboutData } from './about';
-import { servicesData } from './services';
-import { certificates } from './certificates';
-import { contactData } from './contact';
-import { projects, getProjectsByCategory } from './projects';
+import { aboutData } from '@/components/sections/about/data';
+import { servicesData } from '@/components/sections/services/serviceData';
+import { projects, getPortfolioProjects, getTechnicalProjects } from '@/components/sections/portfolio/data/projects';
+import { contactData } from '@/components/sections/contact';
+import { heroData } from '@/components/sections/hero/data';
 
 // Export all data
 export * from './meta';
-export * from './hero';
-export * from './about';
-export * from './services';
-export * from './certificates';
-export * from './contact';
-export * from './projects';
+export { heroData } from '@/components/sections/hero/data';
+export { aboutData } from '@/components/sections/about/data';
+export { servicesData } from '@/components/sections/services/serviceData';
+export * from '@/components/sections/portfolio/data/projects';
+export { contactData } from '@/components/sections/contact';
 
 // Centralized data export
 export const siteData = {
@@ -22,8 +20,5 @@ export const siteData = {
   about: aboutData,
   services: servicesData,
   projects,
-  certificates,
   contact: contactData
 } as const;
-
-export type SiteData = typeof siteData;
