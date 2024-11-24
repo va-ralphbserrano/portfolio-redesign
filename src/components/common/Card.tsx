@@ -1,7 +1,7 @@
+import { classNames } from '@/shared/utils/helpers';
+import { HTMLMotionProps, motion } from 'framer-motion';
 import React from 'react';
-import { motion, HTMLMotionProps } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { classNames } from '@/utils/helpers';
 
 // Types
 interface WithChildren {

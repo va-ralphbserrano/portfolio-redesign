@@ -1,13 +1,13 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { HeroImageProps, heroImageVariants } from './types';
-import { useReducedMotion } from '@/hooks/useReducedMotion';
-import { classNames } from '@/utils/helpers';
-import heroImage from '@/assets/images/hero.png';
 import { ResponsiveImage } from '@/components/common/ResponsiveImage';
+import { useReducedMotion } from '@/core/hooks/useReducedMotion';
+import heroImage from '@/shared/assets/images/hero.png';
+import { classNames } from '@/shared/utils/helpers';
+import { motion } from 'framer-motion';
+import React from 'react';
+import { HeroImageProps, heroImageVariants } from './types';
 
-const HeroImage: React.FC<HeroImageProps> = ({ 
-  className, 
+const HeroImage: React.FC<HeroImageProps> = ({
+  className,
   width = 400,
   height = 400,
   loading = 'eager'

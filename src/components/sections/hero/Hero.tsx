@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { HeroContent } from './HeroContent';
 import HeroImage from './HeroImage';
-import { useReducedMotion } from '@/hooks/useReducedMotion';
+import { useReducedMotion } from '@/core/hooks/useReducedMotion';
 import { BackgroundElements } from './BackgroundElements';
 
 export const Hero: React.FC = () => {

@@ -1,0 +1,29 @@
+{
+  "version": "0.2",
+  "language": "en",
+  "dictionaries": [
+    "softwareTerms",
+    "typescript",
+    "node",
+    "npm"
+  ],
+  "words": [
+    "AutoCAD",
+    "Upwork",
+    "mozjpeg",
+    "gstatic",
+    "treemap",
+    "nosniff",
+    "subsampling",
+    "udacity",
+    "vitest",
+    "vite",
+    "tailwindcss"
+  ],
+  "ignorePaths": [
+    "node_modules/**",
+    "dist/**",
+    "build/**",
+    ".git/**"
+  ]
+}

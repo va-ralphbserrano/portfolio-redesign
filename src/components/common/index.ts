@@ -1,41 +1,17 @@
-export { default as AnimatedText } from './AnimatedText';
-export * from './AnimatedText';
-export { default as Badge } from './Badge';
-export * from './Badge';
-export { default as Button } from './Button';
-export * from './Button';
-export { default as Card } from './Card';
-export * from './Card';
-export { default as ErrorBoundary } from './ErrorBoundary';
-export * from './ErrorBoundary';
-export { default as Input } from './Input';
-export * from './Input';
-export { default as Loading } from './Loading';
-export * from './Loading';
-export { default as Modal } from './Modal';
-export * from './Modal';
-export { default as OptimizedVideo } from './OptimizedVideo';
-export * from './OptimizedVideo';
-export { default as PDF } from './PDF';
-export * from './PDF';
+// Button exports
+export * from './buttons';
+
+// Form exports
+export * from './forms';
+
+// Typography exports
+export * from './typography';
+
+// Component exports
+export { Card } from './Card';
+export { Modal } from './Modal';
 export { default as PageTransition } from './PageTransition';
-export * from './PageTransition';
 export { default as Pagination } from './Pagination';
-export * from './Pagination';
-export { default as ProjectDisplay } from './ProjectDisplay';
-export * from './ProjectDisplay';
-export { default as ResponsiveImage } from './ResponsiveImage';
-export * from './ResponsiveImage';
-export { default as SEO } from './SEO';
-export * from './SEO';
-export { default as ScrollLink } from './ScrollLink';
-export * from './ScrollLink';
-export { default as SectionHeading } from './SectionHeading';
-export * from './SectionHeading';
-export { default as Skeleton } from './Skeleton';
-export * from './Skeleton';
-export { default as TechnologyDisplay } from './TechnologyDisplay';
-export * from './TechnologyDisplay';
-export { default as Tooltip } from './Tooltip';
-export * from './Tooltip';
-export * from './types';
+export { ProjectDisplay } from './ProjectDisplay';
+export { ResponsiveImage } from './ResponsiveImage';
+export { Tooltip } from './Tooltip';

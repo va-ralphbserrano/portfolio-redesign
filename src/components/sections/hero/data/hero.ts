@@ -1,5 +1,5 @@
-import heroImage from '@/assets/images/hero.png';
-import resumePdf from '@/assets/docs/resume.pdf';
+import resumePdf from '@/shared/assets/docs/resume.pdf';
+import heroImage from '@/shared/assets/images/hero.png';
 
 export const heroData = {
   title: {

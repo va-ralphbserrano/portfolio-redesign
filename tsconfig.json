@@ -9,7 +9,7 @@
                                     ],
                             "allowJs":  false,
                             "skipLibCheck":  true,
-                            "esModuleInterop":  true,
+                            "esModuleInterop":  false,
                             "allowSyntheticDefaultImports":  true,
                             "strict":  true,
                             "forceConsistentCasingInFileNames":  true,
@@ -21,9 +21,14 @@
                             "jsx":  "react-jsx",
                             "baseUrl":  ".",
                             "paths":  {
-                                          "@/*":  [
-                                                      "src/*"
-                                                  ]
+                                          "@/*": ["src/*"],
+                                          "@/components/*": ["src/components/*"],
+                                          "@/modules/*": ["src/modules/*"],
+                                          "@/shared/*": ["src/shared/*"],
+                                          "@/core/*": ["src/core/*"],
+                                          "@/types/*": ["src/shared/types/*"],
+                                          "@/utils/*": ["src/shared/utils/*"],
+                                          "@/services/*": ["src/core/services/*"]
                                       },
                             "typeRoots":  [
                                               "./node_modules/@types",
@@ -31,14 +36,18 @@
                                           ],
                             "types":  [
                                           "node",
-                                          "vitest"
+                                          "@testing-library/jest-dom"
                                       ],
-                            "allowImportingTsExtensions":  true
+                            "allowImportingTsExtensions":  true,
+                            "noUnusedLocals":  true,
+                            "noUnusedParameters":  true,
+                            "noFallthroughCasesInSwitch":  true,
+                            "noImplicitReturns":  true,
+                            "noImplicitOverride":  true,
+                            "noUncheckedIndexedAccess":  true
                         },
     "include":  [
-                    "src",
-                    "scripts",
-                    "test"
+                    "src"
                 ],
     "references":  [
                        {

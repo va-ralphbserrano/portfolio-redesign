@@ -1,6 +1,6 @@
-import React, { Fragment } from 'react';
+import { classNames } from '@/shared/utils/helpers';
 import { Dialog, Transition } from '@headlessui/react';
-import { classNames } from '@/utils/helpers';
+import React, { Fragment } from 'react';
 
 const modalSizes = {
   sm: 'max-w-md',
@@ -21,9 +21,10 @@ interface ModalHeaderProps {
   showClose?: boolean;
   onClose?: () => void;
   className?: string;
+  children?: React.ReactNode;
 }
 
-interface ModalProps {
+export interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   children: React.ReactNode;
@@ -37,13 +38,14 @@ export const ModalBody: React.FC<ModalBodyProps> = ({ children, className }) => 
   <div className={classNames("px-6 py-4", className)}>{children}</div>
 );
 
-export const ModalHeader: React.FC<ModalHeaderProps> = ({ 
-  title, 
-  showClose, 
+export const ModalHeader: React.FC<ModalHeaderProps> = ({
+  title,
+  showClose,
   onClose,
-  className 
+  className,
+  children
 }) => {
-  if (!title && !showClose) return null;
+  if (!title && !showClose && !children) return null;
 
   return (
     <div className={classNames(
@@ -66,6 +68,9 @@ export const ModalHeader: React.FC<ModalHeaderProps> = ({
           </svg>
         </button>
       )}
+      {children && (
+        <div className="flex-1">{children}</div>
+      )}
     </div>
   );
 };
@@ -81,8 +86,8 @@ export const Modal: React.FC<ModalProps> = ({
 }) => {
   return (
     <Transition.Root show={isOpen} as={Fragment}>
-      <Dialog 
-        as="div" 
+      <Dialog
+        as="div"
         className="fixed inset-0 z-[9999] overflow-y-auto"
         onClose={() => closeOnClickOutside && onClose()}
       >

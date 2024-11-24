@@ -1,0 +1,93 @@
+{
+  // Editor settings
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "source.organizeImports": "explicit"
+  },
+  "editor.rulers": [80, 100],
+  "editor.bracketPairColorization.enabled": true,
+  "editor.guides.bracketPairs": true,
+
+  // Files settings
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewLine": true,
+  "files.trimFinalNewlines": true,
+
+  // TypeScript settings
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "typescript.preferences.importModuleSpecifier": "non-relative",
+
+  // Error Lens settings
+  "errorLens.enabledDiagnosticLevels": [
+    "error",
+    "warning",
+    "info"
+  ],
+  "errorLens.excludeBySource": [
+    "eslint"
+  ],
+
+  // GitLens settings
+  "gitlens.codeLens.enabled": true,
+  "gitlens.currentLine.enabled": true,
+
+  // Path Intellisense settings
+  "typescript.suggest.paths": true,
+
+  // Import Cost settings
+  "importCost.typescript.enable": true,
+  "importCost.bundleSizeThreshold": 50000,
+
+  // CSS Modules settings
+  "cssModules.camelCase": true,
+
+  // Tailwind CSS settings
+  "tailwindCSS.includeLanguages": {
+    "typescript": "javascript",
+    "typescriptreact": "javascript"
+  },
+  "tailwindCSS.experimental.classRegex": [
+    ["classNames\\(([^)]*)\\)", "\"([^\"]*)\""]
+  ],
+
+  // Color Highlight settings
+  "colorHighlight.markerType": "dot-before",
+
+  // Todo Tree settings
+  "todo-tree.general.tags": [
+    "TODO",
+    "FIXME",
+    "BUG",
+    "HACK",
+    "NOTE"
+  ],
+  "todo-tree.highlights.defaultHighlight": {
+    "foreground": "white",
+    "background": "#ffbd2a",
+    "iconColour": "#ffbd2a"
+  },
+
+  // Code Spell Checker settings
+  "cSpell.words": [
+    "tailwindcss",
+    "headlessui",
+    "heroicons",
+    "clsx",
+    "vite"
+  ],
+
+  // Material Icon Theme settings
+  "workbench.iconTheme": "material-icon-theme",
+  "material-icon-theme.activeIconPack": "react",
+
+  // Indent Rainbow settings
+  "indentRainbow.colors": [
+    "rgba(255,255,64,0.07)",
+    "rgba(127,255,127,0.07)",
+    "rgba(255,127,255,0.07)",
+    "rgba(79,236,236,0.07)"
+  ],
+  "editor.linkedEditing": true
+}

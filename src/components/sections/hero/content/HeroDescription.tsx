@@ -1,5 +1,5 @@
+import { classNames } from '@/shared/utils/helpers';
 import { motion } from 'framer-motion';
-import { classNames } from '@/utils/helpers';
 import { HeroDescriptionProps, heroTextVariants } from './types';
 
 export const HeroDescription: React.FC<HeroDescriptionProps> = ({

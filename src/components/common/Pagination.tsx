@@ -1,6 +1,6 @@
+import { classNames } from '@/shared/utils/helpers';
 import React from 'react';
 import { HiChevronLeft as ChevronLeftIcon, HiChevronRight as ChevronRightIcon } from 'react-icons/hi2';
-import { classNames } from '@/utils/helpers';
 
 interface PaginationProps {
   currentPage: number;
@@ -26,7 +26,7 @@ const Pagination: React.FC<PaginationProps> = ({
       >
         <ChevronLeftIcon className="w-5 h-5" />
       </button>
-      
+
       {pages.map(page => (
         <button
           key={page}

@@ -1,6 +1,6 @@
-import React, { useState, useCallback, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { classNames } from '@/utils/helpers';
+import { classNames } from '@/shared/utils/helpers';
+import { AnimatePresence, motion } from 'framer-motion';
+import React, { useCallback, useRef, useState } from 'react';
 
 // Types
 type TooltipPosition = 'top' | 'bottom' | 'left' | 'right';

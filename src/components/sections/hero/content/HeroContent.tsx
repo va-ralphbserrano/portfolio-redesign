@@ -1,10 +1,10 @@
+import { classNames } from '@/shared/utils/helpers';
 import { motion } from 'framer-motion';
-import { classNames } from '@/utils/helpers';
-import { HeroContentProps, heroContentVariants } from './types';
-import { HeroTitle } from './HeroTitle';
-import { HeroDescription } from './HeroDescription';
 import { HeroActions } from './HeroActions';
+import { HeroDescription } from './HeroDescription';
 import { HeroStats } from './HeroStats';
+import { HeroTitle } from './HeroTitle';
+import { HeroContentProps, heroContentVariants } from './types';
 
 export const HeroContent: React.FC<HeroContentProps> = ({
   className

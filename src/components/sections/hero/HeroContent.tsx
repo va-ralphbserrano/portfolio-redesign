@@ -1,12 +1,11 @@
-import React from 'react';
+import { useReducedMotion } from '@/core/hooks/useReducedMotion';
+import { classNames } from '@/shared/utils/helpers';
 import { motion } from 'framer-motion';
+import React from 'react';
 import { HiArrowRight, HiDownload } from 'react-icons/hi';
 import { useNavigate } from 'react-router-dom';
 import { heroData } from './data';
-import { useReducedMotion } from '@/hooks/useReducedMotion';
-import { getTechIcon } from '@/utils/icons/index';
-import { classNames } from '@/utils/helpers';
-import { HeroContentProps, heroContainerVariants, heroItemVariants } from './types';
+import { HeroContentProps, heroItemVariants } from './types';
 
 export const HeroContent: React.FC<HeroContentProps> = ({ className, id }) => {
   const navigate = useNavigate();

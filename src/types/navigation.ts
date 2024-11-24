@@ -1,13 +1,16 @@
-export interface NavLink {
-  id: string;
-  label: string;
+export interface NavigationLink {
+  name: string;
   href: string;
-  icon?: React.ReactNode;
-  isExternal?: boolean;
+  icon?: React.ComponentType<{ className?: string }>;
+}
+
+export interface NavigationSection {
+  name: string;
+  links: NavigationLink[];
 }
 
 export interface MobileNavProps {
   isOpen: boolean;
   onClose: () => void;
-  navLinks: NavLink[];
+  navLinks: NavigationLink[];
 }

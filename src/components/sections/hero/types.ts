@@ -1,15 +1,16 @@
 import { Variants, easeOut } from 'framer-motion';
-import { WithClassName } from '@/types/component';
+
+export interface WithClassName {
+  className?: string;
+}
+
+export interface BackgroundElementsProps extends WithClassName {}
 
 export interface HeroProps extends WithClassName {
   id?: string;
 }
 
 export interface HeroContentProps extends WithClassName {
-  id?: string;
-}
-
-export interface BackgroundElementsProps extends WithClassName {
   id?: string;
 }
 

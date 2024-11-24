@@ -1,51 +1,50 @@
- Task: Fix **TypeScript type errors** in my project to align with **GitHub-approved standards**. Follow these instructions **strictly**: 
+ Task: Fix **TypeScript type errors** in my project to align with **GitHub-approved standards**. Follow these instructions **strictly**: - Avoid creating new files unless explicitly required. Search the existing source code thoroughly before considering new files. - Always follow the DRY principle. - Ensure that your fixes are **strictly** limited to resolving **type-related issues** only.
 
-1. Run Type Checking:  
-   - Start by running `npm run build` to identify all TypeScript type errors in the project.  
+1. Run Type Checking:
+   - Start by running `npm run build` to identify all TypeScript type errors in the project.
    - Use the error messages to guide your fixes systematically.
 
-2. Fix Only Type Errors:  
-   - Address **type-related issues only**, such as:  
-     - Type mismatches.  
-     - Missing or incorrect return types.  
-     - Incorrect parameter types.  
-     - Redundant or improper `any` usage.  
-   - **Do not modify any logic, design, layout, functionality, or other non-type-related code.**  
+2. Fix Only Type Errors:
+   - Address **type-related issues only**, such as:
+     - Type mismatches.
+     - Missing or incorrect return types.
+     - Incorrect parameter types.
+     - Redundant or improper `any` usage.
+   - **Do not modify any logic, design, layout, functionality, or other non-type-related code.**
 
-3. Preserve Code Integrity:  
-   - Maintain the original file structure, formatting, and organization.  
-   - Avoid introducing unrelated changes, including stylistic edits, refactoring, or additions to functionality.  
+3. Preserve Code Integrity:
+   - Maintain the original file structure, formatting, and organization.
+   - Avoid introducing unrelated changes, including stylistic edits, refactoring, or additions to functionality.
 
-4. Adhere to GitHub Standards:  
-   - Ensure the code follows best practices for maintainability and readability.  
-   - Use TypeScript's strict mode features to enforce type safety, where applicable.  
-   - Document complex fixes using concise and meaningful comments.  
+4. Adhere to GitHub Standards:
+   - Ensure the code follows best practices for maintainability and readability.
+   - Use TypeScript's strict mode features to enforce type safety, where applicable.
+   - Document complex fixes using concise and meaningful comments.
 
-5. Verification and Testing:  
-   - After applying fixes, rerun `npm run build` to confirm all type errors are resolved.  
-   - If any errors persist, continue addressing them until the project builds successfully without errors.  
+5. Verification and Testing:
+   - After applying fixes, rerun `npm run build` to confirm all type errors are resolved.
+   - If any errors persist, continue addressing them until the project builds successfully without errors.
 
-6. Strict Compliance:  
-   - Do not make changes outside the scope of type error resolution.  
-   - Avoid creating new files unless explicitly required by the type fixes. Search the existing source code thoroughly before considering new files.  
+6. Strict Compliance:
+   - Do not make changes outside the scope of type error resolution.
 
-7. Deliverables:  
-   - Provide a clear summary of the fixes in the following format:  
-     - **Files Modified**: List of updated files.  
-     - **Original Type Error**: Brief description of the error.  
-     - **Resolution**: Specific change made to fix the error.  
+7. Deliverables:
+   - Provide a clear summary of the fixes in the following format:
+     - **Files Modified**: List of updated files.
+     - **Original Type Error**: Brief description of the error.
+     - **Resolution**: Specific change made to fix the error.
    - Ensure that your summary is concise and formatted for easy review in a GitHub pull request.
 
 
 
 
-
+now i like you to check every file on the codebase if they are needed there. i just need the essential and used files. delete those files that are not being used. verify first if it is safe to delete. or if you can consolidate it to other files to lessen the files. Avoid creating new files unless explicitly required. Search the existing source code thoroughly before considering new files.
 
 
 
 
 do this a folder at a time,
 D:\Github\portfolio-redesign\src\components\sections\portfolio
-1. analyze the files and have a deep upderstanding about the source code.
+1. analyze the files and have a deep understanding about the source code.
 2. look for the same source codes and files at the root folder if there are the same, consolidate, then verify.
 3. delete the subfolder to flatten the directory. before deleting verify first! use windows command

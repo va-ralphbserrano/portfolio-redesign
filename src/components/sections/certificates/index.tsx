@@ -1,16 +1,27 @@
-import React from 'react';
+import { containerVariants, fadeInVariants as itemVariants } from '@/shared/animations';
+import { classNames } from '@/shared/utils/helpers';
 import { motion } from 'framer-motion';
-import { classNames } from '@/utils/helpers';
-import { containerVariants, itemVariants } from '@/utils/animations';
 import CertificateCard from './CertificateCard';
 
-// Import all certificate images
-const certificateImages = import.meta.glob('@/assets/images/certificate/*.png', { eager: true });
+// Import certificate images directly
+import amazonVA from '@/shared/assets/images/certificate/amazon-va.png';
+import apprenticeship from '@/shared/assets/images/certificate/apprenticeship-certificate.png';
+import contentMarketing from '@/shared/assets/images/certificate/content-marketing.png';
+import freelancingBrand from '@/shared/assets/images/certificate/freelancing-brand.png';
+import masterclass from '@/shared/assets/images/certificate/masterclass-certificate.png';
+import websiteManagement from '@/shared/assets/images/certificate/website-management.png';
 
 // Helper function to get image URL safely
 const getImageUrl = (filename: string): string => {
-  const key = Object.keys(certificateImages).find(path => path.includes(filename));
-  return key ? (certificateImages[key] as { default: string }).default : '';
+  const images: Record<string, string> = {
+    'amazon-va.png': amazonVA,
+    'apprenticeship-certificate.png': apprenticeship,
+    'content-marketing.png': contentMarketing,
+    'freelancing-brand.png': freelancingBrand,
+    'masterclass-certificate.png': masterclass,
+    'website-management.png': websiteManagement,
+  };
+  return images[filename] || '';
 };
 
 export interface Certificate {
@@ -80,7 +91,7 @@ export const certificates: Certificate[] = [
   }
 ].filter(cert => cert.image); // Only show certificates with valid images
 
-const Certificates = () => {
+export const CertificatesSection = () => {
   return (
     <section
       id="certificates"
@@ -90,7 +101,7 @@ const Certificates = () => {
     >
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.02]">
-        <div className="absolute inset-0" style={{ 
+        <div className="absolute inset-0" style={{
           backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
           backgroundSize: '30px 30px'
         }} />
@@ -140,4 +151,4 @@ const Certificates = () => {
   );
 };
 
-export default Certificates;
+export default CertificatesSection;

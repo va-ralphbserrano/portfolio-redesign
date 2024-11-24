@@ -1,5 +1,5 @@
+import { classNames } from '@/shared/utils/helpers';
 import { motion } from 'framer-motion';
-import { classNames } from '@/utils/helpers';
 import { HeroStatProps, heroStatVariants } from './types';
 
 export const HeroStat: React.FC<HeroStatProps> = ({

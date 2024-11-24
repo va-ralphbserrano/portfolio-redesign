@@ -1,7 +1,7 @@
+import { classNames } from '@/shared/utils/helpers';
 import { motion } from 'framer-motion';
-import { classNames } from '@/utils/helpers';
-import { HeroStatsProps, heroStatVariants } from './types';
 import { HeroStat } from './HeroStat';
+import { HeroStatsProps, heroStatVariants } from './types';
 
 const stats = [
   { label: 'Years Experience', value: '5+' },

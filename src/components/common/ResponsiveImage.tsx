@@ -1,36 +1,51 @@
 import React from 'react';
-import { classNames } from '@/utils/helpers';
+import { classNames } from '@/shared/utils/helpers';
 
-export interface ResponsiveImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
+interface ResponsiveImageProps extends Omit<React.ImgHTMLAttributes<HTMLImageElement>, 'src' | 'alt'> {
   src: string;
   alt: string;
   className?: string;
+  aspectRatio?: 'square' | '4/3' | '16/9' | 'auto';
+  objectFit?: 'contain' | 'cover' | 'fill' | 'none' | 'scale-down';
   priority?: boolean;
-  loading?: 'lazy' | 'eager';
+  loading?: 'eager' | 'lazy';
 }
 
 export const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
   src,
   alt,
-  className,
+  className = '',
+  aspectRatio = 'auto',
+  objectFit = 'cover',
   priority = false,
-  loading = 'lazy',
+  loading,
   ...props
 }) => {
+  const aspectRatioClasses = {
+    square: 'aspect-square',
+    '4/3': 'aspect-[4/3]',
+    '16/9': 'aspect-[16/9]',
+    auto: 'aspect-auto'
+  };
+
   return (
-    <img
-      src={src}
-      alt={alt}
-      loading={priority ? 'eager' : loading}
-      className={classNames(
-        'transition-opacity duration-300',
-        className
-      )}
-      {...props}
-    />
+    <div className={classNames(
+      'relative overflow-hidden',
+      aspectRatioClasses[aspectRatio],
+      className
+    )}>
+      <img
+        src={src}
+        alt={alt}
+        className={classNames(
+          'w-full h-full',
+          `object-${objectFit}`
+        )}
+        loading={priority ? 'eager' : loading}
+        {...props}
+      />
+    </div>
   );
 };
 
 ResponsiveImage.displayName = 'ResponsiveImage';
-
-export default ResponsiveImage;

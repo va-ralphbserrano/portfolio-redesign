@@ -1,2 +1,5 @@
-export { default } from './Hero';
+import { Hero } from './Hero';
+
+export { Hero };
 export * from './types';
+export default Hero;

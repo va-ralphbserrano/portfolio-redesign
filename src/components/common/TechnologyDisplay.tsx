@@ -1,36 +1,23 @@
 import React from 'react';
-import { classNames } from '@/utils/helpers';
-
-export type Technology = string;
+import { Technology } from '../../types/project';
 
 interface TechnologyDisplayProps {
-  technologies: Technology[];
-  variant?: 'default' | 'pill';
+  technology: Technology;
   className?: string;
 }
 
-export const TechnologyDisplay: React.FC<TechnologyDisplayProps> = ({
-  technologies,
-  variant = 'default',
-  className
-}) => {
-  const baseClasses = 'inline-flex items-center';
-  const variantClasses = {
-    default: 'text-sm text-gray-600 dark:text-gray-400',
-    pill: 'px-3 py-1 text-xs font-medium rounded-full bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200'
-  };
-
+export const TechnologyDisplay: React.FC<TechnologyDisplayProps> = ({ technology, className = '' }) => {
   return (
-    <div className={classNames('flex flex-wrap gap-2', className)}>
-      {technologies.map((tech, index) => (
-        <span
-          key={index}
-          className={classNames(baseClasses, variantClasses[variant])}
-        >
-          {tech}
-        </span>
-      ))}
-    </div>
+    <span
+      className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+        technology.color || 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
+      } ${className}`}
+    >
+      {technology.icon && (
+        <span className="mr-1.5" dangerouslySetInnerHTML={{ __html: technology.icon }} />
+      )}
+      {technology.name}
+    </span>
   );
 };
 
