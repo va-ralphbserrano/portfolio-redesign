@@ -58,7 +58,7 @@ export default defineConfig(({ mode, command }) => {
   const isProd = mode === 'production';
   const isBuild = command === 'build';
   const shouldAnalyze = process.env.ANALYZE === 'true';
-  const basePath = '/va-rb-portfolio/';
+  const basePath = process.env.BASE_PATH || '/va-rb-portfolio/';
 
   return {
     base: isProd ? basePath : '/',
