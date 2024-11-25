@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+
+# Disallow admin and API routes
+Disallow: /api/
+Disallow: /admin/
+
+# Allow crawling of assets
+Allow: /assets/
+Allow: /images/
+
+# Sitemaps
+Sitemap: https://ralphserrano.dev/sitemap.xml
