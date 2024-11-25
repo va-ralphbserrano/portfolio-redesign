@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { experience } from '../../data';
+import { experience } from '@/modules/about/data';
 import { fadeIn, staggerContainer } from '@/shared/utils/animations';
 import { Badge } from '@/shared/components/display';
 import { HiBriefcase } from 'react-icons/hi';
@@ -30,7 +30,7 @@ export const ExperienceSection: React.FC = () => {
       {/* Timeline line */}
       <div className="absolute left-8 top-0 bottom-0 w-px bg-gradient-to-b from-primary-500/50 via-primary-500/25 to-transparent" />
 
-      {experience.map((item, index) => (
+      {(experience || []).map((item, index) => (
         <motion.div
           key={index}
           variants={fadeIn}
@@ -95,7 +95,7 @@ export const ExperienceSection: React.FC = () => {
 
             {/* Skills */}
             <div className="flex flex-wrap gap-2">
-              {item.skills.map((skill, idx) => (
+              {(item.skills || []).map((skill, idx) => (
                 <Badge
                   key={idx}
                   variant="secondary"

@@ -45,7 +45,10 @@ export const Hero: React.FC = () => {
             className="lg:col-span-5 xl:col-span-4 flex items-center justify-center lg:justify-end"
           >
             <div className="relative w-full max-w-md mx-auto lg:mx-0">
-              <div className="absolute inset-0 bg-gradient-to-r from-primary-500/20 to-primary-700/20 rounded-3xl blur-2xl transform -rotate-6 scale-105" />
+              <div 
+                className="absolute -z-10 inset-0 bg-gradient-to-br from-primary-500/20 via-primary-700/10 to-primary-900/20 
+                rounded-3xl transform -rotate-6 scale-105" 
+              />
               <HeroImage />
             </div>
           </motion.div>

@@ -42,8 +42,13 @@ import { HiBriefcase, HiGlobeAlt } from 'react-icons/hi';
 
 // About Section Data
 export const aboutData = {
-  tagline: "Crafting Digital Excellence",
-  description: "A seasoned professional with over a decade of experience in technical design, project management, and digital solutions. Combining precision engineering with innovative web development to deliver comprehensive solutions."
+  header: {
+    title: "About Me",
+    subtitle: "Building Innovative Solutions with Technical Excellence",
+    description: "A seasoned professional with over a decade of experience in technical design, project management, and digital solutions. Combining precision engineering with innovative web development to deliver comprehensive solutions that drive success."
+  },
+  tagline: "Building Innovative Solutions with Technical Excellence",
+  description: "A seasoned professional with over a decade of experience in technical design, project management, and digital solutions. Combining precision engineering with innovative web development to deliver comprehensive solutions that drive success."
 };
 
 // Personal Information - Focused on professional aspects
@@ -133,10 +138,12 @@ export const professionalProfiles = [
   }
 ];
 
-// Skills Data - Grouped by service categories
+// Skills Data - Grouped by categories
 export const skills = [
   {
     category: "Technical Design",
+    description: "Expertise in technical design and engineering solutions",
+    icon: SiAutodesk,
     skills: [
       {
         name: 'AutoCAD Design',
@@ -152,6 +159,8 @@ export const skills = [
   },
   {
     category: "Project Management",
+    description: "Strong project coordination and optimization skills",
+    icon: FaChartLine,
     skills: [
       {
         name: 'Project Coordination',
@@ -167,6 +176,8 @@ export const skills = [
   },
   {
     category: "Development",
+    description: "Modern web development technologies and frameworks",
+    icon: FaCode,
     skills: [
       {
         name: 'React/Next.js',
@@ -182,6 +193,8 @@ export const skills = [
   },
   {
     category: "Multimedia",
+    description: "Visual design and multimedia production",
+    icon: FaVideo,
     skills: [
       {
         name: 'Video Production',
@@ -248,6 +261,7 @@ export const experience = [
     company: "Surge Freelancing Marketplace",
     year: "2024",
     description: "Intensive training program focusing on virtual assistance and project management excellence.",
+    skills: ["Project Management", "Digital Workflow", "Communication"],
     achievements: [
       {
         metric: "100%",
@@ -262,14 +276,14 @@ export const experience = [
         description: "New productivity tools mastered"
       }
     ],
-    skills: ["Project Management", "Digital Workflow", "Communication"],
-    icon: HiBriefcase
+    icon: FaUserCog
   },
   {
     title: "AutoCAD Designer & Office Administrator",
     company: "JBY Industrial Supply and Services",
     year: "2011 - 2020",
     description: "Led technical design projects and optimized office operations.",
+    skills: ["AutoCAD", "Project Management", "Office Administration"],
     achievements: [
       {
         metric: "25%",
@@ -284,14 +298,14 @@ export const experience = [
         description: "Client satisfaction rate"
       }
     ],
-    skills: ["AutoCAD", "Project Management", "Office Administration"],
-    icon: HiBriefcase
+    icon: FaCode
   },
   {
     title: "Owner & Manager",
     company: "REHUB Internet Café",
     year: "2007 - 2011",
     description: "Managed all aspects of business operations and technical maintenance.",
+    skills: ["Business Management", "Technical Support", "Customer Service"],
     achievements: [
       {
         metric: "95%",
@@ -306,100 +320,102 @@ export const experience = [
         description: "Regular customers served"
       }
     ],
-    skills: ["Business Management", "Technical Support", "Customer Service"],
     icon: HiBriefcase
   }
 ];
 
-// Professional Tools - Categorized by function
+// Tools and Technologies
 export const tools = [
   {
     category: "Design & Media",
+    description: "Professional design and multimedia tools",
     items: [
       {
-        name: 'AutoCAD',
-        icon: SiAutodesk,
-        color: '#E51E25'
-      },
-      {
-        name: 'Adobe Photoshop',
+        name: "Adobe Photoshop",
         icon: SiAdobephotoshop,
-        color: '#31A8FF'
+        color: "#31A8FF"
       },
       {
-        name: 'Adobe Premiere Pro',
+        name: "Adobe Premiere Pro",
         icon: SiAdobepremierepro,
-        color: '#9999FF'
+        color: "#9999FF"
       },
       {
-        name: 'Figma',
+        name: "Figma",
         icon: SiFigma,
-        color: '#F24E1E'
+        color: "#F24E1E"
       },
       {
-        name: 'Canva',
+        name: "Canva",
         icon: SiCanva,
-        color: '#00C4CC'
+        color: "#00C4CC"
+      },
+      {
+        name: "AutoCAD",
+        icon: SiAutodesk,
+        color: "#E51E25"
       }
     ]
   },
   {
     category: "Development",
+    description: "Modern development tools and frameworks",
     items: [
       {
-        name: 'React',
-        icon: SiReact,
-        color: '#61DAFB'
+        name: "VS Code",
+        icon: SiVisualstudiocode,
+        color: "#007ACC"
       },
       {
-        name: 'TypeScript',
-        icon: SiTypescript,
-        color: '#3178C6'
-      },
-      {
-        name: 'Next.js',
-        icon: SiNextdotjs,
-        color: '#000000'
-      },
-      {
-        name: 'Tailwind CSS',
-        icon: SiTailwindcss,
-        color: '#06B6D4'
-      },
-      {
-        name: 'Git',
+        name: "Git",
         icon: SiGit,
-        color: '#F05032'
+        color: "#F05032"
+      },
+      {
+        name: "React",
+        icon: SiReact,
+        color: "#61DAFB"
+      },
+      {
+        name: "Next.js",
+        icon: SiNextdotjs,
+        color: "#000000"
+      },
+      {
+        name: "TypeScript",
+        icon: SiTypescript,
+        color: "#3178C6"
+      },
+      {
+        name: "Tailwind CSS",
+        icon: SiTailwindcss,
+        color: "#06B6D4"
       }
     ]
   },
   {
     category: "Productivity",
+    description: "Tools for efficient workflow and collaboration",
     items: [
       {
-        name: 'VS Code',
-        icon: SiVisualstudiocode,
-        color: '#007ACC'
-      },
-      {
-        name: 'Notion',
-        icon: SiNotion,
-        color: '#000000'
-      },
-      {
-        name: 'Jira',
-        icon: SiJira,
-        color: '#0052CC'
-      },
-      {
-        name: 'Slack',
-        icon: SiSlack,
-        color: '#4A154B'
-      },
-      {
-        name: 'Microsoft Office',
+        name: "Microsoft Office",
         icon: SiMicrosoftoffice,
-        color: '#D83B01'
+        color: "#D83B01"
+      },
+      {
+        name: "Notion",
+        icon: SiNotion,
+        color: "#000000"
+      },
+      {
+        name: "Jira",
+        icon: SiJira,
+        color: "#0052CC"
+      },
+      {
+        name: "Slack",
+        icon: SiSlack,
+        color: "#4A154B"
       }
     ]
   }

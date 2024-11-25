@@ -1,15 +1,31 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { aboutData } from './data';
 import { AboutHeader } from './sections/common/AboutHeader';
+import { AboutSection } from './sections/common/AboutSection';
 import { PersonalInfo } from './sections/personal-info/PersonalInfo';
-import { Skills } from './sections/skills/Skills';
 import { Education } from './sections/education/Education';
 import { ExperienceSection } from './sections/experience/Experience';
 import { Tools } from './sections/tools/Tools';
-import { serviceItemVariants } from '../services/components/types';
+import { SkillsSection } from './sections/skills/SkillsSection';
+import { aboutItemVariants } from './types';
 
 const About: React.FC = () => {
+  const [mounted, setMounted] = useState(false);
+  const [activeTab, setActiveTab] = useState('skills');
+
+  useEffect(() => {
+    setMounted(true);
+    return () => setMounted(false);
+  }, []);
+
+  const tabs = [
+    { id: 'skills', label: 'Skills & Expertise' },
+    { id: 'tools', label: 'Tools & Technologies' },
+    { id: 'experience', label: 'Experience' },
+    { id: 'education', label: 'Education' }
+  ];
+
   return (
     <section className="relative py-24">
       {/* Background Elements */}
@@ -37,118 +53,128 @@ const About: React.FC = () => {
         <div className="absolute inset-0 bg-radial-light dark:bg-radial-dark opacity-50" />
       </div>
 
-      <div className="container relative mx-auto px-4 max-w-7xl">
-        {/* Header */}
+      <div className="container relative mx-auto px-4">
+        {/* Main Header */}
         <motion.div
-          variants={serviceItemVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          className="text-center mb-20"
+          variants={aboutItemVariants}
+          className="text-center mb-16"
         >
-          <span className="inline-block px-4 py-2 rounded-full bg-primary-100 dark:bg-primary-900/10 text-primary-600 dark:text-primary-400 text-sm font-medium mb-4 shadow-sm">
-            About Me
-          </span>
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6 tracking-tight">
-            {aboutData.tagline}
-          </h2>
-          <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto leading-relaxed">
-            {aboutData.description}
-          </p>
+          <AboutHeader 
+            title={aboutData.header.title}
+            subtitle={aboutData.header.subtitle}
+            description={aboutData.header.description}
+          />
         </motion.div>
 
-        {/* Main Content */}
-        <div className="space-y-16">
-          {/* Personal Info and Skills */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <motion.div
-              variants={serviceItemVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              className="group"
+        <AnimatePresence mode="wait">
+          {mounted && (
+            <motion.div 
+              className="mt-16 space-y-24"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
             >
-              <div className="h-full p-8 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-2xl border border-gray-100 dark:border-gray-700/50 shadow-lg hover:shadow-xl transition-all duration-300">
-                <AboutHeader
-                  title="Personal Info"
-                  description="Get to know me better"
-                />
+              {/* Personal Information */}
+              <AboutSection
+                title="Personal Information"
+                description="Get to know me better through these key details about my professional background and expertise."
+              >
                 <PersonalInfo />
+              </AboutSection>
+
+              {/* Tabbed Sections */}
+              <div className="space-y-8">
+                {/* Tab Navigation */}
+                <div className="flex justify-center space-x-4">
+                  {tabs.map((tab) => (
+                    <button
+                      key={tab.id}
+                      onClick={() => setActiveTab(tab.id)}
+                      className={`px-6 py-3 rounded-lg font-medium transition-all duration-300 ${
+                        activeTab === tab.id
+                          ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/25'
+                          : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
+                      }`}
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Tab Content */}
+                <AnimatePresence mode="wait">
+                  {activeTab === 'skills' && (
+                    <motion.div
+                      key="skills"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -20 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <AboutSection
+                        title="Skills & Expertise"
+                        description="A comprehensive overview of my technical abilities and professional competencies."
+                      >
+                        <SkillsSection />
+                      </AboutSection>
+                    </motion.div>
+                  )}
+
+                  {activeTab === 'tools' && (
+                    <motion.div
+                      key="tools"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -20 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <AboutSection
+                        title="Tools & Technologies"
+                        description="The essential tools and technologies I use to bring ideas to life."
+                      >
+                        <Tools />
+                      </AboutSection>
+                    </motion.div>
+                  )}
+
+                  {activeTab === 'experience' && (
+                    <motion.div
+                      key="experience"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -20 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <AboutSection
+                        title="Professional Experience"
+                        description="A journey through my professional career and key achievements."
+                      >
+                        <ExperienceSection />
+                      </AboutSection>
+                    </motion.div>
+                  )}
+
+                  {activeTab === 'education' && (
+                    <motion.div
+                      key="education"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -20 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <AboutSection
+                        title="Education & Certifications"
+                        description="My academic background and professional certifications."
+                      >
+                        <Education />
+                      </AboutSection>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             </motion.div>
-
-            <motion.div
-              variants={serviceItemVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              className="group"
-            >
-              <div className="h-full p-8 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-2xl border border-gray-100 dark:border-gray-700/50 shadow-lg hover:shadow-xl transition-all duration-300">
-                <AboutHeader
-                  title="Professional Skills"
-                  description="My expertise spans across various technical domains"
-                />
-                <Skills />
-              </div>
-            </motion.div>
-          </div>
-
-          {/* Education and Experience */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <motion.div
-              variants={serviceItemVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              className="group"
-            >
-              <div className="h-full p-8 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-2xl border border-gray-100 dark:border-gray-700/50 shadow-lg hover:shadow-xl transition-all duration-300">
-                <AboutHeader
-                  title="Education"
-                  description="My academic journey and certifications"
-                />
-                <Education />
-              </div>
-            </motion.div>
-
-            <motion.div
-              variants={serviceItemVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              className="group"
-            >
-              <div className="h-full p-8 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-2xl border border-gray-100 dark:border-gray-700/50 shadow-lg hover:shadow-xl transition-all duration-300">
-                <AboutHeader
-                  title="Experience"
-                  description="My professional journey"
-                />
-                <ExperienceSection />
-              </div>
-            </motion.div>
-          </div>
-
-          {/* Tools Section */}
-          <motion.div
-            variants={serviceItemVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            className="group"
-          >
-            <div className="h-full p-8 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-2xl border border-gray-100 dark:border-gray-700/50 shadow-lg hover:shadow-xl transition-all duration-300">
-              <AboutHeader
-                title="Tools & Technologies"
-                description="The tools I use to bring ideas to life"
-              />
-              <Tools />
-            </div>
-          </motion.div>
-        </div>
-
-        {/* Bottom Pattern */}
-        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gray-200 dark:via-gray-700 to-transparent" />
+          )}
+        </AnimatePresence>
       </div>
     </section>
   );

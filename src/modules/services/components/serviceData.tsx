@@ -93,5 +93,31 @@ export const servicesData: ServicesData = {
         "Stakeholder communication"
       ]
     }
+  ],
+  faqs: [
+    {
+      question: "What types of technical design services do you offer?",
+      answer: "I offer comprehensive technical design services using AutoCAD, specializing in industrial equipment, commercial systems, and detailed documentation. This includes technical drawings, 3D modeling, system design, and specification compliance."
+    },
+    {
+      question: "Can you help with virtual assistance and project management?",
+      answer: "Yes, I provide comprehensive virtual assistance services including project coordination, technical documentation, process automation, digital workflow implementation, and administrative systems management. I also offer strategic project management services focusing on efficient delivery and stakeholder satisfaction."
+    },
+    {
+      question: "What web development technologies do you work with?",
+      answer: "I specialize in modern web development using React/Next.js, TypeScript, and Tailwind CSS. I focus on creating responsive, performant applications with optimized SEO and seamless API integrations."
+    },
+    {
+      question: "Do you offer multimedia production services?",
+      answer: "Yes, I provide professional multimedia production services including video post-production, motion graphics, visual content creation, audio enhancement, and content optimization for multiple platforms."
+    },
+    {
+      question: "What kind of technical support do you provide?",
+      answer: "I offer expert technical support services including system analysis and optimization, troubleshooting, software implementation and training, IT infrastructure management, and technical documentation."
+    },
+    {
+      question: "How do you ensure project quality and timely delivery?",
+      answer: "I employ modern project management methodologies with a focus on quality control, risk assessment, resource optimization, and clear stakeholder communication to ensure successful project delivery."
+    }
   ]
 };

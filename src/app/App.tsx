@@ -6,18 +6,29 @@
  */
 
 import { AnimatePresence } from 'framer-motion';
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { PageTransition } from '@/components/common/PageTransition';
 import { Footer } from '@/shared/components/layout/footer/Footer';
 import { Navbar } from '@/shared/components/layout/Navbar';
-import { About } from '@/modules/about';
-import CertificatesSection from '@/components/sections/certificates';
-import ContactSection from '@/features/contact/components';
-import { Hero } from '@/components/sections/hero/Hero';
-import { Portfolio } from '@/modules/portfolio/components';
-import { projects } from '@/modules/portfolio/components/projects';
-import { Services } from '@/modules/services/components';
+import { Button } from '@/components/common/buttons/Button';
+
+// Lazy load route components
+const Hero = lazy(() => import('@/components/sections/hero').then(m => ({ default: m.Hero })));
+const About = lazy(() => import('@/modules/about').then(m => ({ default: m.About })));
+const Portfolio = lazy(() => import('@/modules/portfolio/components/Portfolio').then(m => ({ default: m.Portfolio })));
+const CertificatesSection = lazy(() => import('@/components/sections/certificates'));
+const Services = lazy(() => import('@/modules/services/components').then(m => ({ default: m.Services })));
+const ContactSection = lazy(() => import('@/features/contact/components'));
+
+/**
+ * Loading spinner component for route transitions
+ */
+const RouteLoadingSpinner = () => (
+  <div className="flex items-center justify-center min-h-[50vh]">
+    <Button loading loadingText="Loading..." disabled />
+  </div>
+);
 
 /**
  * Main application component
@@ -41,20 +52,42 @@ const App: React.FC = () => {
       <Navbar />
       <main className="flex-grow pt-16 sm:pt-20">
         <AnimatePresence mode="wait">
-          <Routes location={location} key={location.pathname}>
-            <Route path="/" element={<PageTransition><Hero /></PageTransition>} />
-            <Route path="/about" element={<PageTransition><About /></PageTransition>} />
-            <Route path="/portfolio" element={<PageTransition><Portfolio projects={projects} /></PageTransition>} />
-            <Route path="/certificates" element={<PageTransition><CertificatesSection /></PageTransition>} />
-            <Route path="/services" element={<PageTransition><Services /></PageTransition>} />
-            <Route path="/contact" element={
-              <PageTransition>
-                <ContactSection />
-              </PageTransition>
-            } />
-            {/* Catch all route - redirect to home */}
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
+          <Suspense fallback={<RouteLoadingSpinner />}>
+            <Routes location={location} key={location.pathname}>
+              <Route path="/" element={
+                <PageTransition>
+                  <Hero />
+                </PageTransition>
+              } />
+              <Route path="/about" element={
+                <PageTransition>
+                  <About />
+                </PageTransition>
+              } />
+              <Route path="/portfolio" element={
+                <PageTransition>
+                  <Portfolio />
+                </PageTransition>
+              } />
+              <Route path="/certificates" element={
+                <PageTransition>
+                  <CertificatesSection />
+                </PageTransition>
+              } />
+              <Route path="/services" element={
+                <PageTransition>
+                  <Services />
+                </PageTransition>
+              } />
+              <Route path="/contact" element={
+                <PageTransition>
+                  <ContactSection />
+                </PageTransition>
+              } />
+              {/* Catch all route - redirect to home */}
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </Suspense>
         </AnimatePresence>
       </main>
       <Footer />

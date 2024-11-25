@@ -20,24 +20,20 @@ const categoryOptions = [
 ];
 
 interface PortfolioProps {
-  projects?: Project[];
   className?: string;
 }
 
 export const Portfolio: React.FC<PortfolioProps> = ({
-  projects: propProjects,
   className
 }) => {
   const [selectedCategory, setSelectedCategory] = useState<ProjectCategory>(ProjectCategory.ALL);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
 
-  const allProjects = propProjects ?? projects;
-
   const filteredProjects = useMemo(() => {
-    if (selectedCategory === ProjectCategory.ALL) return allProjects;
-    return allProjects.filter(project => project.category === selectedCategory);
-  }, [allProjects, selectedCategory]);
+    if (selectedCategory === ProjectCategory.ALL) return projects;
+    return projects.filter(project => project.category === selectedCategory);
+  }, [selectedCategory]);
 
   const totalPages = Math.ceil(filteredProjects.length / itemsPerPage);
   const currentProjects = filteredProjects.slice(

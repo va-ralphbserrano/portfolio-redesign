@@ -12,6 +12,7 @@ export * from './cn';
 export * from './classNames';
 export * from './formatDate';
 export * from './optimizeImage';
+export * from '../imageDimensions';
 
 export { validateForm } from './validation';
 export { storage } from './storage';

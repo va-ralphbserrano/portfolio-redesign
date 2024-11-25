@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
 import { ThemeProvider } from '../features/theme/context/ThemeContext';
 import { ErrorBoundary } from '../shared/components';
 import App from './App';
@@ -22,7 +23,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <BrowserRouter future={routerFutureConfig} basename={base}>
       <ThemeProvider>
         <ErrorBoundary>
-          <App />
+          <HelmetProvider>
+            <App />
+          </HelmetProvider>
         </ErrorBoundary>
       </ThemeProvider>
     </BrowserRouter>

@@ -4,10 +4,38 @@ import { classNames } from '@/shared/utils/helpers';
 import { ServicesProps, serviceItemVariants } from './types';
 import { ServiceCard } from './ServiceCard';
 import { servicesData } from './serviceData';
+import { SEO } from '@/shared/components/SEO';
+import { useLocation } from 'react-router-dom';
+
+// SEO metadata configuration
+const metaConfig = {
+  siteUrl: 'https://ralphserrano.dev',
+  title: 'Ralph Serrano - Full Stack Developer',
+  description: 'Full Stack Developer specializing in React, TypeScript, and Node.js. Creating modern web applications with a focus on performance and user experience.',
+  author: 'Ralph Bernard Serrano',
+  socialMedia: {
+    github: 'https://github.com/ralphs',
+    linkedin: 'https://linkedin.com/in/ralphserrano',
+    youtube: 'https://youtube.com/@ralphserrano',
+    facebook: 'https://facebook.com/ralphserrano',
+    instagram: 'https://instagram.com/ralphserrano',
+    upwork: 'https://www.upwork.com/freelancers/ralphserrano'
+  }
+};
 
 const Services: React.FC<ServicesProps> = ({
   className
 }) => {
+  const location = useLocation();
+
+  const route = {
+    path: location.pathname,
+    meta: {
+      title: "Services - Technical Design, Web Development & Virtual Solutions | Ralph Serrano",
+      description: "Professional services in AutoCAD Technical Design, Modern Web Development, and Virtual Assistance. Get expert solutions for your projects."
+    }
+  };
+
   return (
     <section
       className={classNames(
@@ -15,6 +43,13 @@ const Services: React.FC<ServicesProps> = ({
         className
       )}
     >
+      <SEO
+        title={route.meta.title}
+        description={route.meta.description}
+        servicesData={servicesData}
+        route={route}
+        metaConfig={metaConfig}
+      />
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.02]">
         <div className="absolute inset-0" style={{ 

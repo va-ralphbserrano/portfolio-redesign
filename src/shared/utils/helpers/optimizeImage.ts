@@ -7,8 +7,8 @@ export interface ImageConfig {
 
 export function optimizeImage(src: string, config: ImageConfig = {}): string {
   const {
-    width = 800,
-    height = 600,
+    width,
+    height,
     quality = 75,
     format = 'webp'
   } = config;
@@ -25,10 +25,14 @@ export function optimizeImage(src: string, config: ImageConfig = {}): string {
 
   // For local images, add optimization parameters
   const params = new URLSearchParams();
-  params.append('w', width.toString());
-  params.append('h', height.toString());
-  params.append('q', quality.toString());
-  params.append('fm', format);
+  
+  if (width) params.append('w', width.toString());
+  if (height) params.append('h', height.toString());
+  if (quality) params.append('q', quality.toString());
+  if (format) params.append('fm', format);
+
+  // Add auto format and compression
+  params.append('auto', 'format,compress');
 
   // Ensure src starts with a forward slash
   const normalizedSrc = src.startsWith('/') ? src : `/${src}`;

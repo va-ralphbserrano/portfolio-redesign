@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { skills } from '../../data';
+import { skills } from '../../data/index';
+import { AboutGrid } from '../../sections/common/AboutGrid';
 
 interface SkillBarProps {
   name: string;
@@ -45,62 +46,40 @@ const SkillBar: React.FC<SkillBarProps> = ({ name, percentage, color, delay }) =
             ease: "easeOut"
           }}
           className="h-full rounded-full bg-gradient-to-r from-primary-500 to-primary-600 dark:from-primary-400 dark:to-primary-500"
+          style={{ backgroundColor: color }}
         />
       </div>
     </div>
   </motion.div>
 );
 
-interface SkillCategoryProps {
-  category: string;
-  skills: Array<{
-    name: string;
-    percentage: number;
-    color: string;
-  }>;
-  index: number;
-}
+const Skills: React.FC = () => {
+  // Convert skills data to the format expected by AboutGrid
+  const skillFeatures = skills.map(category => ({
+    icon: category.icon,
+    title: category.category,
+    description: category.description
+  }));
 
-const SkillCategory: React.FC<SkillCategoryProps> = ({ category, skills: categorySkills, index }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true }}
-    transition={{ 
-      duration: 0.5,
-      delay: index * 0.2,
-      ease: "easeOut"
-    }}
-    className="space-y-4"
-  >
-    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-      {category}
-    </h3>
-    <div className="grid grid-cols-1 gap-4">
-      {categorySkills.map((skill, skillIndex) => (
-        <SkillBar
-          key={skill.name}
-          name={skill.name}
-          percentage={skill.percentage}
-          color={skill.color}
-          delay={index * 0.2 + skillIndex * 0.1}
-        />
-      ))}
-    </div>
-  </motion.div>
-);
-
-export const Skills: React.FC = () => {
   return (
-    <div className="space-y-8">
-      {skills.map((category, index) => (
-        <SkillCategory
-          key={category.category}
-          category={category.category}
-          skills={category.skills}
-          index={index}
-        />
-      ))}
+    <div className="space-y-16">
+      {/* Category Grid */}
+      <AboutGrid features={skillFeatures} />
+
+      {/* Skills List */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {skills.map((category, categoryIndex) => (
+          <div key={category.category} className="space-y-4">
+            {category.skills.map((skill, skillIndex) => (
+              <SkillBar
+                key={skill.name}
+                {...skill}
+                delay={categoryIndex * 0.2 + skillIndex * 0.1}
+              />
+            ))}
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
