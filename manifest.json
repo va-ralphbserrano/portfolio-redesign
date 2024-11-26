@@ -1,64 +1,10 @@
 {
-    "name": "Ralph Bernard Serrano Portfolio",
-    "short_name": "Ralph Portfolio",
-    "description": "Professional portfolio showcasing web design, video editing, and AutoCAD services",
-    "start_url": "/",
-    "display": "standalone",
-    "background_color": "#ffffff",
-    "theme_color": "#2ecc71",
-    "orientation": "any",
-    "icons": [
-        {
-            "src": "assets/favicon/android-chrome-192x192.png",
-            "sizes": "192x192",
-            "type": "image/png",
-            "purpose": "any maskable"
-        },
-        {
-            "src": "assets/favicon/android-chrome-512x512.png",
-            "sizes": "512x512",
-            "type": "image/png",
-            "purpose": "any maskable"
-        }
-    ],
-    "shortcuts": [
-        {
-            "name": "Portfolio",
-            "short_name": "Portfolio",
-            "description": "View my portfolio work",
-            "url": "/#portfolio",
-            "icons": [{ "src": "assets/favicon/android-chrome-192x192.png", "sizes": "192x192" }]
-        },
-        {
-            "name": "Contact",
-            "short_name": "Contact",
-            "description": "Contact me",
-            "url": "/#contact",
-            "icons": [{ "src": "assets/favicon/android-chrome-192x192.png", "sizes": "192x192" }]
-        }
-    ],
-    "screenshots": [
-        {
-            "src": "assets/images/screenshots/desktop.jpg",
-            "sizes": "1920x1080",
-            "type": "image/jpeg",
-            "form_factor": "wide",
-            "label": "Desktop view of Ralph Bernard Serrano's Portfolio"
-        },
-        {
-            "src": "assets/images/screenshots/mobile.jpg",
-            "sizes": "1080x1920",
-            "type": "image/jpeg",
-            "form_factor": "narrow",
-            "label": "Mobile view of Ralph Bernard Serrano's Portfolio"
-        }
-    ],
-    "categories": ["portfolio", "web development", "design"],
-    "lang": "en",
-    "dir": "ltr",
-    "prefer_related_applications": false,
-    "related_applications": [],
-    "iarc_rating_id": "",
-    "scope": "/",
-    "id": "portfolio_v1"
+  "short_name": "Portfolio",
+  "name": "VA Portfolio",
+  "description": "A modern portfolio showcasing my work and skills",
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff",
+  "icons": []
 }

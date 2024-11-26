@@ -1,0 +1,1 @@
+var i={hidden:{opacity:0,y:20},visible:function(){return{opacity:1,y:0,transition:{duration:.6,delay:.2*(arguments.length>0&&void 0!==arguments[0]?arguments[0]:0),ease:[.215,.61,.355,1]}}}};export{i as s};
