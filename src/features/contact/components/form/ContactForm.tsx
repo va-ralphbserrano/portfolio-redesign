@@ -1,14 +1,14 @@
-import { FormButton, FormStatus } from '@/components/common/forms';
-import { Input } from '@/components/common/forms';
+import React, { useEffect, useState } from 'react';
+import { Input, FormButton, FormStatus } from '@/components/common/forms';
 import { Textarea } from '@/components/common/forms/Textarea';
 import { motion } from 'framer-motion';
-import React, { useState, useEffect } from 'react';
-import { contactData } from '../contactData';
 import { fadeInVariants } from '@/shared/animations';
 import { ContactFormData } from '../types';
 import { EmailError, EmailErrorType } from '@/shared/utils/email';
 import { WithClassName } from '@/types/component';
 import { classNames } from '@/shared/utils/helpers';
+import emailjs from '@emailjs/browser';
+import { contactData } from '../contactData';
 
 export interface ContactFormProps extends WithClassName {
   isSubmitting?: boolean;
@@ -35,7 +35,7 @@ const ContactForm: React.FC<ContactFormProps> = ({
 
   useEffect(() => {
     // Initialize EmailJS with your public key
-    // emailjs.init(import.meta.env.VITE_EMAILJS_PUBLIC_KEY);
+    emailjs.init(import.meta.env.VITE_EMAILJS_PUBLIC_KEY);
   }, []);
 
   useEffect(() => {
@@ -73,19 +73,6 @@ const ContactForm: React.FC<ContactFormProps> = ({
     return Object.keys(newErrors).length === 0;
   };
 
-  const validateField = (name: string, value: string): boolean => {
-    switch (name) {
-      case 'name':
-        return value.length >= 2;
-      case 'email':
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-      case 'message':
-        return value.length >= 10;
-      default:
-        return true;
-    }
-  };
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -107,19 +94,19 @@ const ContactForm: React.FC<ContactFormProps> = ({
     }
 
     setIsLoading(true);
+    setIsSubmitting(true);
     
     try {
-      const response = await fetch('/api/contact', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to send message');
-      }
+      await emailjs.send(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID,
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+        {
+          from_name: formData.name,
+          from_email: formData.email,
+          subject: formData.subject,
+          message: formData.message,
+        }
+      );
 
       setFormData({
         name: '',
@@ -127,14 +114,17 @@ const ContactForm: React.FC<ContactFormProps> = ({
         subject: '',
         message: ''
       });
+      setSubmitStatus('success');
       setIsSuccess(true);
       return true;
     } catch (error) {
       console.error('Error sending message:', error);
+      setSubmitStatus('error');
       setIsError(true);
       return false;
     } finally {
       setIsLoading(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -152,8 +142,11 @@ const ContactForm: React.FC<ContactFormProps> = ({
       {submitStatus && (
         <FormStatus
           status={submitStatus}
-          successMessage="Thank you! Your message has been sent successfully."
-          errorMessage="Sorry, we couldn't send your message. Please check the errors below and try again."
+          message={submitStatus === 'success' 
+            ? "Thank you! Your message has been sent successfully."
+            : "Sorry, we couldn't send your message. Please try again."}
+          onDismiss={() => setSubmitStatus(null)}
+          className="w-full"
         />
       )}
 
@@ -205,10 +198,10 @@ const ContactForm: React.FC<ContactFormProps> = ({
       <div>
         <FormButton
           type="submit"
-          disabled={isLoading || externalIsSubmitting}
-          className="w-full sm:w-auto"
+          disabled={isSubmitting || externalIsSubmitting}
+          isLoading={isLoading}
         >
-          {(isLoading || externalIsSubmitting) ? 'Sending...' : contactData.form.submitButton}
+          {isLoading ? 'Sending...' : 'Send Message'}
         </FormButton>
       </div>
     </motion.form>

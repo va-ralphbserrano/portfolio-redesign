@@ -31,33 +31,34 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, className, on
         className={classNames('group relative cursor-pointer', className)}
         onClick={handleClick}
       >
-        <div className="h-full p-4 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-2xl border border-gray-100 dark:border-gray-700/50 shadow-lg hover:shadow-xl transition-all duration-300 flex flex-col">
+        <div className="h-full p-3 sm:p-4 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-2xl border border-gray-100 dark:border-gray-700/50 shadow-lg hover:shadow-xl transition-all duration-300 flex flex-col">
           {/* Project Image */}
-          <div className="relative aspect-[4/3] mb-4 overflow-hidden rounded-xl">
+          <div className="relative aspect-[4/3] mb-3 sm:mb-4 overflow-hidden rounded-xl">
             <div className="absolute inset-0 bg-gradient-to-br from-primary-400 to-primary-600 opacity-0 group-hover:opacity-10 transition-opacity duration-300" />
             <img
               src={project.image}
               alt={project.title}
               className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
+              loading="lazy"
             />
           </div>
 
           {/* Project Title */}
-          <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white group-hover:text-primary-500 dark:group-hover:text-primary-400 transition-colors duration-300">
+          <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 text-gray-900 dark:text-white group-hover:text-primary-500 dark:group-hover:text-primary-400 transition-colors duration-300 line-clamp-2">
             {project.title}
           </h3>
 
           {/* Project Description */}
-          <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">
+          <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 mb-3 sm:mb-4 line-clamp-3">
             {project.description}
           </p>
 
           {/* Technologies */}
-          <div className="flex flex-wrap gap-2 mb-4">
+          <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-3 sm:mb-4">
             {project.technologies.map((tech, index) => (
               <span
                 key={index}
-                className="px-3 py-1 text-sm bg-primary-50 dark:bg-primary-900/10 text-primary-600 dark:text-primary-400 rounded-full"
+                className="px-2 sm:px-3 py-1 text-xs sm:text-sm bg-primary-50 dark:bg-primary-900/10 text-primary-600 dark:text-primary-400 rounded-full"
               >
                 {tech}
               </span>
@@ -70,7 +71,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, className, on
           {/* View Project Button */}
           <button
             onClick={() => setIsModalOpen(true)}
-            className="w-full px-4 py-2 text-sm font-medium text-white bg-primary-500 hover:bg-primary-600 dark:bg-primary-600 dark:hover:bg-primary-700 rounded-lg transition-colors duration-300"
+            className="w-full px-3 sm:px-4 py-2 text-sm font-medium text-white bg-primary-500 hover:bg-primary-600 dark:bg-primary-600 dark:hover:bg-primary-700 rounded-lg transition-colors duration-300 active:scale-95 transform"
           >
             View Project
           </button>
@@ -82,11 +83,12 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, className, on
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         size="xl"
+        className="p-0 sm:p-4"
       >
-        <ModalHeader onClose={() => setIsModalOpen(false)}>
-          <h3 className="text-2xl font-bold">{project.title}</h3>
+        <ModalHeader onClose={() => setIsModalOpen(false)} className="p-4 sm:p-6">
+          <h3 className="text-xl sm:text-2xl font-bold">{project.title}</h3>
         </ModalHeader>
-        <ModalBody>
+        <ModalBody className="p-4 sm:p-6 space-y-4 sm:space-y-6">
           <div className="space-y-4">
             {/* Project Images */}
             <div className="relative w-full h-[50vh] rounded-xl overflow-hidden">

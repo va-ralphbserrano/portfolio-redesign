@@ -50,38 +50,50 @@ const App: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col bg-white dark:bg-gray-900">
       <Navbar />
-      <main className="flex-grow pt-16 sm:pt-20">
+      <main className="flex-grow pt-16 sm:pt-20 lg:pt-24">
         <AnimatePresence mode="wait">
           <Suspense fallback={<RouteLoadingSpinner />}>
             <Routes location={location} key={location.pathname}>
               <Route path="/" element={
                 <PageTransition>
-                  <Hero />
+                  <div className="min-h-[calc(100vh-4rem)] sm:min-h-[calc(100vh-5rem)] lg:min-h-[calc(100vh-6rem)]">
+                    <Hero />
+                  </div>
                 </PageTransition>
               } />
               <Route path="/about" element={
                 <PageTransition>
-                  <About />
+                  <div className="min-h-[calc(100vh-4rem)] sm:min-h-[calc(100vh-5rem)] lg:min-h-[calc(100vh-6rem)]">
+                    <About />
+                  </div>
                 </PageTransition>
               } />
               <Route path="/portfolio" element={
                 <PageTransition>
-                  <Portfolio />
+                  <div className="min-h-[calc(100vh-4rem)] sm:min-h-[calc(100vh-5rem)] lg:min-h-[calc(100vh-6rem)]">
+                    <Portfolio />
+                  </div>
                 </PageTransition>
               } />
               <Route path="/certificates" element={
                 <PageTransition>
-                  <CertificatesSection />
+                  <div className="min-h-[calc(100vh-4rem)] sm:min-h-[calc(100vh-5rem)] lg:min-h-[calc(100vh-6rem)]">
+                    <CertificatesSection />
+                  </div>
                 </PageTransition>
               } />
               <Route path="/services" element={
                 <PageTransition>
-                  <Services />
+                  <div className="min-h-[calc(100vh-4rem)] sm:min-h-[calc(100vh-5rem)] lg:min-h-[calc(100vh-6rem)]">
+                    <Services />
+                  </div>
                 </PageTransition>
               } />
               <Route path="/contact" element={
                 <PageTransition>
-                  <ContactSection />
+                  <div className="min-h-[calc(100vh-4rem)] sm:min-h-[calc(100vh-5rem)] lg:min-h-[calc(100vh-6rem)]">
+                    <ContactSection />
+                  </div>
                 </PageTransition>
               } />
               {/* Catch all route - redirect to home */}

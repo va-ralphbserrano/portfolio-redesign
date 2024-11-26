@@ -1,4 +1,4 @@
-import { ReactNode, HTMLAttributes } from 'react';
+import type { ElementType, HTMLAttributes, ReactNode } from 'react';
 import { Variants } from 'framer-motion';
 
 type ElementType = keyof JSX.IntrinsicElements;
@@ -8,10 +8,17 @@ export interface AnimatedLayoutProps {
   className?: string;
 }
 
-export interface ContainerProps<T extends keyof JSX.IntrinsicElements> {
-  children: ReactNode;
+export interface LayoutProps extends HTMLAttributes<HTMLDivElement> {
+  children?: ReactNode;
   className?: string;
-  as?: T;
+}
+
+export interface ContainerProps extends HTMLAttributes<HTMLDivElement> {
+  children?: ReactNode;
+  className?: string;
+  as?: ElementType;
+  fluid?: boolean;
+  gutter?: boolean;
 }
 
 export interface FooterProps {
@@ -19,30 +26,26 @@ export interface FooterProps {
 }
 
 export interface GridProps extends HTMLAttributes<HTMLDivElement> {
-  children: ReactNode;
-  cols?: {
-    xs?: number;
-    sm?: number;
-    md?: number;
-    lg?: number;
-    xl?: number;
-  };
-  gap?: number;
+  children?: ReactNode;
   className?: string;
+  cols?: number | { [key: string]: number };
+  gap?: number | { [key: string]: number };
+  as?: ElementType;
 }
 
 export interface NavbarProps {
   className?: string;
 }
 
-export interface SectionProps<T extends ElementType = 'section'> extends HTMLAttributes<HTMLElement> {
-  children: ReactNode;
+export interface SectionProps extends HTMLAttributes<HTMLElement> {
+  children?: ReactNode;
   className?: string;
-  id?: string;
-  as?: T;
-  fullWidth?: boolean;
   noPadding?: boolean;
+  fullWidth?: boolean;
   animate?: boolean;
+  containerClassName?: string;
+  as?: ElementType;
+  id?: string;
 }
 
 // Animation Variants
@@ -139,3 +142,8 @@ export const footerLinkVariants = {
     }
   }
 };
+
+export interface ErrorBoundaryProps {
+  children?: ReactNode;
+  fallback?: ReactNode;
+}

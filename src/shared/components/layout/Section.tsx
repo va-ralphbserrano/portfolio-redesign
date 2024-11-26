@@ -5,6 +5,7 @@ import { classNames } from '@/shared/utils/helpers';
 interface SectionProps extends HTMLMotionProps<"section"> {
   children: React.ReactNode;
   className?: string;
+  containerClassName?: string;
   id?: string;
   fullWidth?: boolean;
   noPadding?: boolean;
@@ -29,6 +30,7 @@ const sectionVariants: Variants = {
 export const Section: React.FC<SectionProps> = ({
   children,
   className,
+  containerClassName,
   ...props
 }) => {
   return (
@@ -40,13 +42,26 @@ export const Section: React.FC<SectionProps> = ({
       variants={sectionVariants}
       className={classNames(
         'relative',
-        !props.noPadding && 'py-12 sm:py-16 md:py-20 lg:py-24',
-        !props.fullWidth && 'container mx-auto px-4 sm:px-6 lg:px-8',
+        !props.noPadding && 'py-6 xs:py-8 sm:py-12 lg:py-16 xl:py-20',
+        'transition-[padding] duration-300 ease-out',
+        'motion-safe:hover:bg-gray-50/50 dark:motion-safe:hover:bg-gray-900/50',
+        'motion-safe:hover:scale-[1.001]',
         className
       )}
       {...props}
     >
-      {children}
+      <div className={classNames(
+        'relative z-10',
+        !props.fullWidth && [
+          'container mx-auto',
+          'px-3 xs:px-4 sm:px-6 lg:px-8 xl:px-12',
+          'max-w-screen-sm sm:max-w-screen-md lg:max-w-screen-lg xl:max-w-screen-xl 2xl:max-w-screen-2xl',
+          'transition-[padding,max-width] duration-300 ease-out'
+        ],
+        containerClassName
+      )}>
+        {children}
+      </div>
     </motion.section>
   );
 };

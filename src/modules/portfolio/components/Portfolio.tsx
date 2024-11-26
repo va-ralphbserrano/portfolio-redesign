@@ -50,28 +50,28 @@ export const Portfolio: React.FC<PortfolioProps> = ({
     <section
       id="portfolio"
       className={classNames(
-        'py-24 bg-gradient-to-b from-gray-50/50 to-white dark:from-gray-900/50 dark:to-gray-900',
+        'py-12 sm:py-16 lg:py-24 bg-gradient-to-b from-gray-50/50 to-white dark:from-gray-900/50 dark:to-gray-900',
         className
       )}
     >
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-2 xs:px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-16"
+          className="text-center mb-6 sm:mb-8 lg:mb-12"
         >
-          <span className="inline-block px-4 py-2 rounded-full bg-primary-100 dark:bg-primary-900/10 text-primary-600 dark:text-primary-400 text-sm font-medium mb-4">
+          <span className="inline-block px-3 py-1 sm:px-4 sm:py-1.5 rounded-full bg-primary-100 dark:bg-primary-900/10 text-primary-600 dark:text-primary-400 text-xs sm:text-sm font-medium mb-3 sm:mb-4">
             Portfolio
           </span>
-          <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+          <h2 className="text-2xl xs:text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4">
             My Latest Work
           </h2>
-          <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+          <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
             Explore my recent projects and discover how I bring ideas to life through clean code and modern design.
           </p>
         </motion.div>
 
-        <div className="mb-12">
+        <div className="mb-6 sm:mb-8 lg:mb-12">
           <ProjectFilter
             categories={categoryOptions}
             selectedCategory={selectedCategory}
@@ -79,14 +79,14 @@ export const Portfolio: React.FC<PortfolioProps> = ({
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 gap-3 xs:gap-4 sm:gap-6 lg:gap-8">
           {currentProjects.map((project) => (
             <ProjectCard key={project.id} project={project} />
           ))}
         </div>
 
         {totalPages > 1 && (
-          <div className="mt-16">
+          <div className="mt-8 sm:mt-12 lg:mt-16">
             <Pagination
               currentPage={currentPage}
               totalPages={totalPages}

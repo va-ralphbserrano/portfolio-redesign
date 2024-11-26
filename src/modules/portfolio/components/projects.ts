@@ -1,7 +1,7 @@
 // cSpell:words Canva canva dishwashing Dishwashing grillerie Grillerie
 
 // This file contains all project definitions
-import { Project, ProjectCategory, ProjectType } from '@/shared/types/project';
+import { Project, ProjectCategory, ProjectType } from '@/shared/types/project.js';
 
 // Import portfolio images
 import calendarManagement from '@/shared/assets/images/portfolio/calendar-management.png';
@@ -107,6 +107,9 @@ import sealingMould480 from '@/shared/assets/images/projects/480mm Sealing Mould
 import radius585 from '@/shared/assets/images/projects/585mm Radius.png';
 import sealingMould585Rev from '@/shared/assets/images/projects/585mm Sealing Mould revised.png';
 import sealingMould585 from '@/shared/assets/images/projects/585mm Sealing Mould.png';
+
+// Import technical project images - Ladder
+import ladder from '@/shared/assets/images/projects/Ladder.png';
 
 // Portfolio Projects
 const portfolioProjects: Project[] = [
@@ -563,6 +566,17 @@ const technicalProjects: Project[] = [
     ],
     date: "2023",
     featured: true
+  },
+  {
+    id: "tech-industrial-5",
+    title: "Industrial Access Ladder",
+    category: ProjectCategory.INDUSTRIAL,
+    type: ProjectType.INDUSTRIAL_DESIGN,
+    description: "Design of an industrial-grade access ladder with safety features and compliance with industrial standards.",
+    technologies: ["AutoCAD", "Industrial Design", "Safety Standards", "Structural Engineering"],
+    image: ladder,
+    date: "2023",
+    featured: false
   }
 ];
 

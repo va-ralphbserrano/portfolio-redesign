@@ -12,7 +12,14 @@ interface GridProps extends React.HTMLAttributes<HTMLDivElement> {
     xl?: GridCols;
     '2xl'?: GridCols;
   };
-  gap?: number;
+  gap?: number | {
+    xs?: number;
+    sm?: number;
+    md?: number;
+    lg?: number;
+    xl?: number;
+    '2xl'?: number;
+  };
   className?: string;
   children?: React.ReactNode;
 }
@@ -24,23 +31,40 @@ const getColsClass = (size: string, cols: GridCols | undefined): string | null =
 };
 
 export const Grid: React.FC<GridProps> = ({
-  cols = { xs: 1 },
-  gap = 4,
+  cols = { xs: 1, sm: 2, lg: 3 },
+  gap = { xs: 4, sm: 6, lg: 8 },
   className,
   children,
   ...props
 }) => {
   const colClasses = Object.entries(cols)
-    .map(([size, value]) => getColsClass(size, value))
+    .map(([size, value]) => {
+      if (size === 'xs') return `grid-cols-${value}`;
+      if (typeof value === 'number') return `${size}:grid-cols-${value}`;
+      return '';
+    })
     .filter(Boolean)
     .join(' ');
+
+  const gapClasses = typeof gap === 'number'
+    ? `gap-${gap}`
+    : Object.entries(gap)
+      .map(([size, value]) => {
+        if (size === 'xs') return `gap-${value}`;
+        return `${size}:gap-${value}`;
+      })
+      .join(' ');
 
   return (
     <div
       className={classNames(
-        'grid',
+        'grid w-full',
         colClasses,
-        `gap-${gap}`,
+        gapClasses,
+        'auto-rows-auto',
+        'items-stretch',
+        'transition-[grid-template-columns,gap] duration-300',
+        'mobile-padding',
         className
       )}
       {...props}

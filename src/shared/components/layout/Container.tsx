@@ -1,25 +1,32 @@
 import { classNames } from '@/shared/utils/helpers';
 import { ContainerProps } from './types';
 
-type ElementType = keyof JSX.IntrinsicElements;
-
-export const Container = <T extends ElementType = 'div'>({
-  children,
+const Container: React.FC<ContainerProps> = ({ 
+  children, 
   className,
-  as: Component = 'div' as T
-}: ContainerProps<T>) => {
-  const props = {
-    className: classNames(
-      'container mx-auto',
-      'px-4 sm:px-6 lg:px-8',
-      'max-w-7xl',
-      className
-    )
-  };
-
+  as: Component = 'div',
+  fluid = false,
+  gutter = true,
+  ...props 
+}) => {
   return (
-    // @ts-expect-error - polymorphic component type inference
-    <Component {...props}>
+    <Component
+      className={classNames(
+        'relative w-full',
+        !fluid && [
+          'mx-auto',
+          gutter && [
+            'px-3 xs:px-4 sm:px-6 lg:px-8 xl:px-12',
+            'mobile-padding'
+          ],
+          'max-w-[95%] xs:max-w-[90%] sm:max-w-[85%]',
+          'sm:max-w-screen-sm md:max-w-screen-md lg:max-w-screen-lg xl:max-w-screen-xl 2xl:max-w-screen-2xl'
+        ],
+        'transition-[padding,max-width] duration-300 ease-out',
+        className
+      )}
+      {...props}
+    >
       {children}
     </Component>
   );
